@@ -21,6 +21,7 @@ jobs:
           java-version: 11
           architecture: x64
           distribution: 'zulu'
+          cache: 'maven'
 
       - name: Run style checks
         run: ./mvnw clean verify
@@ -28,7 +29,16 @@ jobs:
       - name: Setup Maven settings.xml
         uses: whelk-io/maven-settings-xml-action@v20
         with:
-          servers: '[{ "id": "ossrh", "username": "${{ secrets.NEXUS_USERNAME }}", "password": "${{ secrets.NEXUS_PASSWORD }}" }]'
+          servers: |
+            [
+              { 
+                "id": "ossrh", 
+                "username": "${{ secrets.NEXUS_USERNAME }}",
+                "password": "${{ secrets.NEXUS_PASSWORD }}"
+              }
+            ]
+          output_file: .m2/settings.xml
+
 
       - name: Publish to Staging repository
         run: ./mvnw deploy

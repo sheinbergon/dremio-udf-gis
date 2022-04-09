@@ -4,8 +4,8 @@
 - [Apache Drill GIS Functionality](https://github.com/apache/drill/tree/master/contrib/udfs/src/main/java/org/apache/drill/exec/udfs/gis)  
 - [Christy Haragan's initial port](https://github.com/christyharagan/dremio-gis)  
 
-### What you get?
-- Mostly full OGC implementation for SQL (adheres to PostGIS standards)
+### What you get
+- Widespread OGC implementation for SQL (adheres to PostGIS standards)
   - Supported input formats: `WKT`
   - Supported output formats: `WKT`, `JSON`, `GeoJSON` 
 - Easily installable Maven-Central/Github artifacts shaded jar artifact  
@@ -39,6 +39,11 @@ SELECT ST_AsText(
         ST_GeomFromText('LINESTRING(50 50, 50 150)')
 ))
 ```
+
+### Roadmap
+- Frequent version/dependency updates
+- Serialize `SpatialReference` alongside WKB to preserve SRID information
+- Add more OGC/PostGIS matching functionality
 
 ### Caveats
  - Due to SRID not being serialized when calling [OGCGeometry.asBinary()](https://esri.github.io/geometry-api-java/javadoc/com/esri/core/geometry/ogc/OGCGeometry.html#asBinary--),
