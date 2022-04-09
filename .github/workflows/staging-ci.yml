@@ -25,7 +25,7 @@ jobs:
       - name: Run style checks
         run: ./mvnw clean verify
 
-      - name: maven-settings-xml-action
+      - name: Setup Maven settings.xml
         uses: whelk-io/maven-settings-xml-action@v20
         with:
           servers: '[{ "id": "ossrh", "username": "${{ secrets.NEXUS_USERNAME }}", "password": "${{ secrets.NEXUS_PASSWORD }}" }]'
