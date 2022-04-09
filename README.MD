@@ -7,7 +7,8 @@
 
 # Dremio GIS
 
-### Adds GIS functionality to Dremio. Derived from:   
+### Adds GIS functionality to Dremio.
+Derived from:   
 - [Apache Drill GIS Functionality](https://github.com/apache/drill/tree/master/contrib/udfs/src/main/java/org/apache/drill/exec/udfs/gis)  
 - [Christy Haragan's initial port](https://github.com/christyharagan/dremio-gis)  
 
@@ -31,15 +32,15 @@ That means that:
 - Metadata information, such as `SRID`, cannot be tied to the geometry data.  
   To be more specific, this implementation is tied to the ESRI geometry API serialization capabilities.
 
-In order to successfully use the provided functionality, you must first decode data to an `OGCGeometry` type, using `ST_GeomFromText`.  
-This library uses Dremios' Arrow buffers (`ArrowBuf`) to maintain geometry data in binary (`WKB`) format (for performance and efficiency) when  
+In order to successfully use the provided functionality, you must first decode data to an `OGCGeometry` type, using `ST_GeomFromText`.
+This library uses Dremios' Arrow buffers (`ArrowBuf`) to maintain geometry data in binary (`WKB`) format (for performance and efficiency) when
 interchanging it between GIS functions, which is of course undecipherable for the naked eye.  
 
 In order to resolve Data back to human readable format (`WKT`), use `ST_AsText`/`ST_AsGeoJson`
 
 Example:
 
-```roomsql
+```sql
 SELECT ST_AsText(
     ST_Difference(
      ST_GeomFromText('LINESTRING(50 100, 50 200)'),
