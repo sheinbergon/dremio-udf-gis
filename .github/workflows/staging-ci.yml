@@ -27,7 +27,7 @@ jobs:
         run: ./mvnw clean verify
 
       - name: Setup Maven settings.xml
-        uses: whelk-io/maven-settings-xml-action@v20
+        uses: s4u/maven-settings-action@v2.6.0
         with:
           servers: |
             [
@@ -37,8 +37,6 @@ jobs:
                 "password": "${{ secrets.NEXUS_PASSWORD }}"
               }
             ]
-          output_file: .m2/settings.xml
-
 
       - name: Publish to Staging repository
         run: ./mvnw deploy
