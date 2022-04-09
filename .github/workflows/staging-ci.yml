@@ -29,9 +29,7 @@ jobs:
           gpg-passphrase: GPG_PASSPHRASE
 
       - name: Run style checks
-        run: ./mvnw -P release clean verify
-        env:
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: ./mvnw clean verify
 
       - name: Publish to Staging repository
         run: ./mvnw deploy
