@@ -28,7 +28,7 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
-      - name: Publish to Staging repository
+      - name: Publish to Release repository
         run: ./mvnw -P release deploy
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}

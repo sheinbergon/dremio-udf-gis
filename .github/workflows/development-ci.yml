@@ -31,7 +31,7 @@ jobs:
       - name: Run style checks
         run: ./mvnw clean verify
 
-      - name: Publish to Staging repository
+      - name: Publish to Snapshot repository
         run: ./mvnw deploy
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
