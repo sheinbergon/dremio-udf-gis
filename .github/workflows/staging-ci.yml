@@ -23,16 +23,13 @@ jobs:
           distribution: 'zulu'
           cache: 'maven'
           server-id: ossrh
-          server-username: ${{ secrets.NEXUS_USERNAME }}
-          server-password: ${{ secrets.NEXUS_PASSWORD }}
-
-      - name: Run style checks
-        run: ./mvnw clean verify
-
-
-      - name: Test
-        run: cat  /home/runner/.m2/settings.xml
+          server-username: NEXUS_USERNAME
+          server-password: NEXUS_PASSWORD
 
       - name: Publish to Staging repository
         run: ./mvnw deploy
+        env:
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+
 
