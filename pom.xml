@@ -2,9 +2,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.dremio.gis</groupId>
+    <groupId>org.sheinbergon</groupId>
     <artifactId>dremio-udf-gis</artifactId>
     <properties>
+        <checkstyle.version>10.1</checkstyle.version>
         <dremio.version>20.1.0-202202061055110045-36733c65</dremio.version>
         <dremio-arrow.version>4.0.0-20210722102535-bda216e83f-dremio</dremio-arrow.version>
         <esri-geometry-api.version>2.2.4</esri-geometry-api.version>
@@ -44,9 +45,20 @@
     </repositories>
     <dependencies>
         <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>${checkstyle.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.dremio.sabot</groupId>
             <artifactId>dremio-sabot-kernel</artifactId>
             <version>${dremio.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
@@ -54,6 +66,12 @@
             <groupId>com.dremio.sabot</groupId>
             <artifactId>dremio-sabot-logical</artifactId>
             <version>${dremio.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
@@ -61,6 +79,12 @@
             <groupId>com.dremio</groupId>
             <artifactId>dremio-common</artifactId>
             <version>${dremio.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
@@ -104,7 +128,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>
-                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
@@ -189,11 +213,11 @@
     <distributionManagement>
         <repository>
             <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
         <snapshotRepository>
             <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
     <profiles>
@@ -215,6 +239,12 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <configuration>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

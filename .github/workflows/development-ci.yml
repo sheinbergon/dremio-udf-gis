@@ -1,4 +1,4 @@
-name: multi-platform-ci
+name: Development Actions
 
 on:
   push:
@@ -20,18 +20,22 @@ jobs:
         with:
           java-version: 11
           architecture: x64
+          distribution: 'zulu'
+          cache: 'maven'
+          server-id: ossrh
+          server-username: NEXUS_USERNAME
+          server-password: NEXUS_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
 
       - name: Run style checks
         run: ./mvnw clean verify
 
-      - name: maven-settings-xml-action
-        uses: whelk-io/maven-settings-xml-action@v20
+      - name: Publish to Staging repository
+        run: ./mvnw deploy
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-        with:
-          servers: '[{ "id": "ossrh", "username": "${{ NEXUS_USERNAME }}", "password": "${{ NEXUS_PASSWORD }}" }]'
 
-      - name: Publish to Staging repository
-        run: ./mvnw deploy
+
 
