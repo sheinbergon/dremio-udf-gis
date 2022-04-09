@@ -29,6 +29,10 @@ jobs:
       - name: Run style checks
         run: ./mvnw clean verify
 
+
+      - name: Test
+        run: cat  /home/runner/.m2/settings.xml
+
       - name: Publish to Staging repository
         run: ./mvnw deploy
 
