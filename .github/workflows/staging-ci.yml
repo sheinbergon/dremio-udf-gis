@@ -20,6 +20,7 @@ jobs:
         with:
           java-version: 11
           architecture: x64
+          distribution: 'zulu'
 
       - name: Run style checks
         run: ./mvnw clean verify
