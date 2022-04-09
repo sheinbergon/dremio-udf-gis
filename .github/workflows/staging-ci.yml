@@ -1,0 +1,37 @@
+name: multi-platform-ci
+
+on:
+  push:
+    branches-ignore:
+      - master
+      - main
+      - wip*
+jobs:
+  ci:
+    name: run style verification and publish to nexus staging repository
+    runs-on: ubuntu-20.04
+    steps:
+
+      - name: Git checkout
+        uses: actions/checkout@v2
+
+      - name: Java JDK 11 setup
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11
+          architecture: x64
+
+      - name: Run style checks
+        run: ./mvnw clean verify
+
+      - name: maven-settings-xml-action
+        uses: whelk-io/maven-settings-xml-action@v20
+        env:
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+        with:
+          servers: '[{ "id": "ossrh", "username": "${{ NEXUS_USERNAME }}", "password": "${{ NEXUS_PASSWORD }}" }]'
+
+      - name: Publish to Staging repository
+        run: ./mvnw deploy
+
