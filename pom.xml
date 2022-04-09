@@ -47,6 +47,12 @@
             <groupId>com.dremio.sabot</groupId>
             <artifactId>dremio-sabot-kernel</artifactId>
             <version>${dremio.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
@@ -54,6 +60,12 @@
             <groupId>com.dremio.sabot</groupId>
             <artifactId>dremio-sabot-logical</artifactId>
             <version>${dremio.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
@@ -61,6 +73,12 @@
             <groupId>com.dremio</groupId>
             <artifactId>dremio-common</artifactId>
             <version>${dremio.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
@@ -74,6 +92,12 @@
             <groupId>org.apache.arrow</groupId>
             <artifactId>arrow-vector</artifactId>
             <version>${dremio-arrow.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
             <scope>provided</scope>
         </dependency>
         <dependency>
