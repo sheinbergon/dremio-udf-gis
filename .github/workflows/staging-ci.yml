@@ -31,7 +31,7 @@ jobs:
       - name: Run style checks
         run: ./mvnw -P release clean verify
         env:
-          GPG_PASSPHRASE: ${{ MAVEN_GPG_PASSPHRASE }}
+          GPG_PASSPHRASE: ${{ GPG_PASSPHRASE }}
 
 
       - name: Publish to Staging repository
