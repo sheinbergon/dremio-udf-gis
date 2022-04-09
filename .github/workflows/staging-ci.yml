@@ -25,19 +25,20 @@ jobs:
           server-id: ossrh
           server-username: NEXUS_USERNAME
           server-password: NEXUS_PASSWORD
-          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
 
       - name: Run style checks
         run: ./mvnw -P release clean verify
+        env:
+          GPG_PASSPHRASE: ${{ MAVEN_GPG_PASSPHRASE }}
+
 
       - name: Publish to Staging repository
         run: ./mvnw deploy
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-          GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-
 
 
 

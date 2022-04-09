@@ -5,6 +5,7 @@
     <groupId>org.sheinbergon</groupId>
     <artifactId>dremio-udf-gis</artifactId>
     <properties>
+        <checkstyle.version>10.1</checkstyle.version>
         <dremio.version>20.1.0-202202061055110045-36733c65</dremio.version>
         <dremio-arrow.version>4.0.0-20210722102535-bda216e83f-dremio</dremio-arrow.version>
         <esri-geometry-api.version>2.2.4</esri-geometry-api.version>
@@ -43,6 +44,11 @@
         </repository>
     </repositories>
     <dependencies>
+        <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>${checkstyle.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.dremio.sabot</groupId>
             <artifactId>dremio-sabot-kernel</artifactId>
