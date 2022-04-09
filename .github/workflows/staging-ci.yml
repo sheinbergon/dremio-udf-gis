@@ -29,18 +29,6 @@ jobs:
       - name: Run style checks
         run: ./mvnw clean verify
 
-      - name: Setup Maven settings.xml
-        uses: s4u/maven-settings-action@v2.6.0
-        with:
-          servers: |
-            [
-              { 
-                "id": "ossrh", 
-                "username": "${{ secrets.NEXUS_USERNAME }}",
-                "password": "${{ secrets.NEXUS_PASSWORD }}"
-              }
-            ]
-
       - name: Publish to Staging repository
         run: ./mvnw deploy
 
