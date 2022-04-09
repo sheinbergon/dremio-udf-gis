@@ -22,6 +22,9 @@ jobs:
           architecture: x64
           distribution: 'zulu'
           cache: 'maven'
+          server-id: ossrh
+          server-username: ${{ secrets.NEXUS_USERNAME }}
+          server-password: ${{ secrets.NEXUS_PASSWORD }}
 
       - name: Run style checks
         run: ./mvnw clean verify
