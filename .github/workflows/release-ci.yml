@@ -1,14 +1,14 @@
-name: Development Actions
+name: Release Actions
 
 on:
   push:
-    branches-ignore:
-      - master
+    branches:
       - main
-      - wip*
+      - master
+
 jobs:
   ci:
-    name: run style verification and publish to nexus staging repository
+    name: publish to maven-central
     runs-on: ubuntu-20.04
     steps:
 
@@ -28,14 +28,9 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
-      - name: Run style checks
-        run: ./mvnw clean verify
-
       - name: Publish to Staging repository
-        run: ./mvnw deploy
+        run: ./mvnw -P release deploy
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-
-
-
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
