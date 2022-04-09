@@ -21,12 +21,12 @@ jobs:
           java-version: 11
           architecture: x64
           distribution: 'zulu'
-          #cache: 'maven'
+          cache: 'maven'
           server-id: ossrh
           server-username: NEXUS_USERNAME
           server-password: NEXUS_PASSWORD
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: GPG_PASSPHRASE
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Run style checks
         run: ./mvnw -P release clean verify
@@ -36,7 +36,7 @@ jobs:
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
 
 
