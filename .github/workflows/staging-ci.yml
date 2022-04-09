@@ -28,6 +28,11 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
+      - name: List M2
+        run: |
+          ls -l /home/runner/.m2/
+          cat /home/runner/.m2/settings.xml
+
       - name: Run style checks
         run: ./mvnw -P release clean verify
 
