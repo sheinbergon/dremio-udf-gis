@@ -1,4 +1,4 @@
-name: Development Actions
+name: development-actions
 
 on:
   push:

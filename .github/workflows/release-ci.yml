@@ -1,4 +1,4 @@
-name: Release Actions
+name: release-actions
 
 on:
   push:
