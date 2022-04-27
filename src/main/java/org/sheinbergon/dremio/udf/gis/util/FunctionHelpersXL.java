@@ -27,10 +27,10 @@ public final class FunctionHelpersXL {
   static final int BIT_TRUE = 1;
   static final int BIT_FALSE = 0;
   static final String POINT = "Point";
-  static final int DEFAULT_SRID = 4326;
+  public static final int DEFAULT_SRID = 4326;
 
 
-  static java.lang.String toUTF8String(
+  public static java.lang.String toUTF8String(
       final @Nonnull org.apache.arrow.vector.holders.VarCharHolder holder) {
     return com.dremio.exec.expr.fn.impl.StringFunctionHelpers.toStringFromUTF8(
         holder.start,
