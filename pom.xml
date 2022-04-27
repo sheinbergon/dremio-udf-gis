@@ -11,7 +11,7 @@
         <esri-geometry-api.version>2.2.4</esri-geometry-api.version>
         <proj4j.version>1.1.5</proj4j.version>
     </properties>
-    <version>0.1.2${artifact.version.suffix}</version>
+    <version>0.2.0${artifact.version.suffix}</version>
     <name>dremio-udf-gis</name>
     <description>GIS UDF extensions for Dremio</description>
     <url>https://github.com/sheinbergon/dremio-udf-gis</url>
@@ -183,8 +183,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.0</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>8</source>
+                    <target>8</target>
                 </configuration>
             </plugin>
             <plugin>

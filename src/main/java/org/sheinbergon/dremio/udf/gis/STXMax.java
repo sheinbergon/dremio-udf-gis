@@ -22,7 +22,6 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 import com.esri.core.geometry.ogc.OGCGeometry;
-import com.esri.core.geometry.ogc.OGCPoint;
 
 @FunctionTemplate(
     name = "ST_XMax",
@@ -39,13 +38,13 @@ public class STXMax implements SimpleFunction {
   }
 
   public void eval() {
-    var geom1 = FunctionHelpersXL.toGeometry(binaryInput);
+    com.esri.core.geometry.ogc.OGCGeometry geom1 = FunctionHelpersXL.toGeometry(binaryInput);
     output.value = xMax(geom1);
   }
 
   private double xMax(final OGCGeometry geometry) {
     if (FunctionHelpersXL.isAPoint(geometry)) {
-      return ((OGCPoint) geometry).X();
+      return ((com.esri.core.geometry.ogc.OGCPoint) geometry).X();
     } else {
       return FunctionHelpersXL.envelope(
           geometry,

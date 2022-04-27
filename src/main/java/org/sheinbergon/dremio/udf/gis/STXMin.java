@@ -21,8 +21,6 @@ import com.dremio.exec.expr.SimpleFunction;
 import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
-import com.esri.core.geometry.ogc.OGCGeometry;
-import com.esri.core.geometry.ogc.OGCPoint;
 
 @FunctionTemplate(
     name = "ST_XMin",
@@ -39,13 +37,13 @@ public class STXMin implements SimpleFunction {
   }
 
   public void eval() {
-    var geom1 = FunctionHelpersXL.toGeometry(binaryInput);
+    com.esri.core.geometry.ogc.OGCGeometry geom1 = FunctionHelpersXL.toGeometry(binaryInput);
     output.value = xMin(geom1);
   }
 
-  private double xMin(final OGCGeometry geometry) {
+  private double xMin(final com.esri.core.geometry.ogc.OGCGeometry geometry) {
     if (FunctionHelpersXL.isAPoint(geometry)) {
-      return ((OGCPoint) geometry).X();
+      return ((com.esri.core.geometry.ogc.OGCPoint) geometry).X();
     } else {
       return FunctionHelpersXL.envelope(
           geometry,

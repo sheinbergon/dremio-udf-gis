@@ -21,8 +21,6 @@ import com.dremio.exec.expr.SimpleFunction;
 import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
-import com.esri.core.geometry.ogc.OGCGeometry;
-import com.esri.core.geometry.ogc.OGCPoint;
 
 @FunctionTemplate(
     name = "ST_YMax",
@@ -39,13 +37,13 @@ public class STYMax implements SimpleFunction {
   }
 
   public void eval() {
-    var geom1 = FunctionHelpersXL.toGeometry(binaryInput);
+    com.esri.core.geometry.ogc.OGCGeometry geom1 = FunctionHelpersXL.toGeometry(binaryInput);
     output.value = yMax(geom1);
   }
 
-  private double yMax(final OGCGeometry geometry) {
+  private double yMax(final com.esri.core.geometry.ogc.OGCGeometry geometry) {
     if (FunctionHelpersXL.isAPoint(geometry)) {
-      return ((OGCPoint) geometry).Y();
+      return ((com.esri.core.geometry.ogc.OGCPoint) geometry).Y();
     } else {
       return FunctionHelpersXL.envelope(
           geometry,
