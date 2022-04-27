@@ -22,6 +22,7 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 import org.apache.arrow.memory.ArrowBuf;
+import org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL;
 
 import javax.inject.Inject;
 

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sheinbergon.dremio.udf.gis;
+package org.sheinbergon.dremio.udf.gis.util;
 
 import com.esri.core.geometry.Envelope;
 

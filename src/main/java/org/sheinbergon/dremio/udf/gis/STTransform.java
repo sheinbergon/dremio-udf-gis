@@ -23,6 +23,7 @@ import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 import com.dremio.exec.expr.annotations.Workspace;
 import com.esri.core.geometry.VertexGeometryAccessor;
+import org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;

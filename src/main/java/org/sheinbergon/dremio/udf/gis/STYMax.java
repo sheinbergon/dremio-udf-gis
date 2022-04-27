@@ -23,6 +23,7 @@ import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 import com.esri.core.geometry.ogc.OGCGeometry;
 import com.esri.core.geometry.ogc.OGCPoint;
+import org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL;
 
 @FunctionTemplate(
     name = "ST_YMax",

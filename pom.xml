@@ -11,7 +11,7 @@
         <esri-geometry-api.version>2.2.4</esri-geometry-api.version>
         <proj4j.version>1.1.5</proj4j.version>
     </properties>
-    <version>0.1.2${artifact.version.suffix}</version>
+    <version>0.1.5${artifact.version.suffix}</version>
     <name>dremio-udf-gis</name>
     <description>GIS UDF extensions for Dremio</description>
     <url>https://github.com/sheinbergon/dremio-udf-gis</url>
