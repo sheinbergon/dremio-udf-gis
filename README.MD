@@ -24,6 +24,7 @@ Derived from:
 - Take the shaded jar for the desired version and place inside your Dremio installation (`$DREMIO_HOME/jars/3rdparty`)
 - Restart your Dremio server(s)
 - Rejoice!
+- See the [Cheat Sheet](https://github.com/sheinbergon/dremio-udf-gis/wiki/GIS-Functions-Cheat-Sheet) for detailed usage instructions
 
 ### Usage Notes
 As opposed to PostGIS, Dremio is only a query engine based on existing/projected data sources/lakes.
