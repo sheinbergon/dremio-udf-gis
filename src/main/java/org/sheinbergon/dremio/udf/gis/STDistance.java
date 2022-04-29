@@ -21,7 +21,6 @@ import com.dremio.exec.expr.SimpleFunction;
 import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
-import org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL;
 
 @FunctionTemplate(
     name = "ST_Distance",
@@ -41,8 +40,8 @@ public class STDistance implements SimpleFunction {
   }
 
   public void eval() {
-    com.esri.core.geometry.ogc.OGCGeometry geom1 = FunctionHelpersXL.toGeometry(binaryInput1);
-    com.esri.core.geometry.ogc.OGCGeometry geom2 = FunctionHelpersXL.toGeometry(binaryInput2);
+    com.esri.core.geometry.ogc.OGCGeometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput1);
+    com.esri.core.geometry.ogc.OGCGeometry geom2 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput2);
     output.value = geom1.distance(geom2);
   }
 }

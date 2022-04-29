@@ -21,7 +21,6 @@ import com.dremio.exec.expr.SimpleFunction;
 import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
-import com.esri.core.geometry.ogc.OGCPoint;
 
 import javax.annotation.Nullable;
 

@@ -22,7 +22,6 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 import com.esri.core.geometry.ogc.OGCGeometry;
-import org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL;
 
 import javax.inject.Inject;
 
@@ -44,15 +43,15 @@ public class STEnvelope implements SimpleFunction {
   }
 
   public void eval() {
-    com.esri.core.geometry.ogc.OGCGeometry geom1 = FunctionHelpersXL.toGeometry(binaryInput);
+    com.esri.core.geometry.ogc.OGCGeometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
     com.esri.core.geometry.ogc.OGCGeometry enveloped = envelope(geom1);
-    byte[] bytes = FunctionHelpersXL.toBinary(enveloped);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(enveloped);
     buffer = buffer.reallocIfNeeded(bytes.length);
-    FunctionHelpersXL.populate(bytes, buffer, binaryOutput);
+    org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, binaryOutput);
   }
 
   private OGCGeometry envelope(final OGCGeometry geometry) {
-    if (FunctionHelpersXL.isAPoint(geometry)) {
+    if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isAPoint(geometry)) {
       return geometry;
     } else {
       return geometry.envelope();

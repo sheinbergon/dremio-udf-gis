@@ -22,7 +22,7 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 import org.apache.arrow.memory.ArrowBuf;
-import org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL;
+
 
 import javax.inject.Inject;
 
@@ -47,10 +47,10 @@ public class STBuffer implements SimpleFunction {
   }
 
   public void eval() {
-    com.esri.core.geometry.ogc.OGCGeometry geom1 = FunctionHelpersXL.toGeometry(binaryInput);
+    com.esri.core.geometry.ogc.OGCGeometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
     com.esri.core.geometry.ogc.OGCGeometry buffered = geom1.buffer(radiusInput.value);
-    byte[] bytes = FunctionHelpersXL.toBinary(buffered);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(buffered);
     buffer = buffer.reallocIfNeeded(bytes.length);
-    FunctionHelpersXL.populate(bytes, buffer, binaryOutput);
+    org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, binaryOutput);
   }
 }

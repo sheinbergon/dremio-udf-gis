@@ -21,7 +21,6 @@ import com.dremio.exec.expr.SimpleFunction;
 import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
-import org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL;
 
 @FunctionTemplate(
     name = "ST_Relate",
@@ -46,9 +45,9 @@ public class STRelate implements SimpleFunction {
 
   @Override
   public void eval() {
-    java.lang.String matrix = FunctionHelpersXL.toUTF8String(matrixParam);
-    com.esri.core.geometry.ogc.OGCGeometry geom1 = FunctionHelpersXL.toGeometry(binaryInput1);
-    com.esri.core.geometry.ogc.OGCGeometry geom2 = FunctionHelpersXL.toGeometry(binaryInput2);
-    output.value = FunctionHelpersXL.toBitValue(geom1.relate(geom2, matrix));
+    java.lang.String matrix = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toUTF8String(matrixParam);
+    com.esri.core.geometry.ogc.OGCGeometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput1);
+    com.esri.core.geometry.ogc.OGCGeometry geom2 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput2);
+    output.value = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBitValue(geom1.relate(geom2, matrix));
   }
 }
