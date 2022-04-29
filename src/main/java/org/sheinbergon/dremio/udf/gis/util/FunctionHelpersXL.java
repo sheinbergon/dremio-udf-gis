@@ -18,6 +18,7 @@
 package org.sheinbergon.dremio.udf.gis.util;
 
 import com.esri.core.geometry.Envelope;
+import org.apache.arrow.vector.holders.NullableFloat8Holder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -126,6 +127,28 @@ public final class FunctionHelpersXL {
       throw new java.lang.IllegalArgumentException(
           java.lang.String.format("Unsupported value holder type - %s",
               holder.getClass().getName()));
+    }
+  }
+
+  public static void extractY(
+      @Nullable final com.esri.core.geometry.ogc.OGCGeometry geometry,
+      @Nonnull final NullableFloat8Holder output) {
+    if (isAPoint(geometry)) {
+      output.value = ((com.esri.core.geometry.ogc.OGCPoint) geometry).Y();
+      output.isSet = BIT_TRUE;
+    } else {
+      output.isSet = BIT_FALSE;
+    }
+  }
+
+  public static void extractX(
+      @Nullable final com.esri.core.geometry.ogc.OGCGeometry geometry,
+      @Nonnull final NullableFloat8Holder output) {
+    if (isAPoint(geometry)) {
+      output.value = ((com.esri.core.geometry.ogc.OGCPoint) geometry).X();
+      output.isSet = BIT_TRUE;
+    } else {
+      output.isSet = BIT_FALSE;
     }
   }
 }
