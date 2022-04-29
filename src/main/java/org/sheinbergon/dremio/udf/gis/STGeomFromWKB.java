@@ -21,34 +21,31 @@ import com.dremio.exec.expr.SimpleFunction;
 import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
-import com.esri.core.geometry.ogc.OGCPoint;
 
-import javax.annotation.Nullable;
+import javax.inject.Inject;
 
 @FunctionTemplate(
-    name = "ST_Y",
+    name = "ST_GeomFromWKB",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
-public class STY implements SimpleFunction {
+public class STGeomFromWKB implements SimpleFunction {
+
   @Param
-  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder wkbInput;
 
   @Output
-  org.apache.arrow.vector.holders.Float8Holder output;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
+
+  @Inject
+  org.apache.arrow.memory.ArrowBuf buffer;
 
   public void setup() {
   }
 
   public void eval() {
-    com.esri.core.geometry.ogc.OGCGeometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
-    output.value = y(geom1);
-  }
-
-  private double y(@Nullable final com.esri.core.geometry.ogc.OGCGeometry geometry) {
-    if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isAPoint(geometry)) {
-      return ((com.esri.core.geometry.ogc.OGCPoint) geometry).Y();
-    } else {
-      return Double.NaN;
-    }
+    com.esri.core.geometry.ogc.OGCGeometry geom = FunctionHelpersXL.toGeometry(wkbInput);
+    byte[] bytes = FunctionHelpersXL.toBinary(geom);
+    buffer = buffer.reallocIfNeeded(bytes.length);
+    FunctionHelpersXL.populate(bytes, buffer, binaryOutput);
   }
 }

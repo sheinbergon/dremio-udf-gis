@@ -21,8 +21,6 @@ import com.dremio.exec.expr.SimpleFunction;
 import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
-import com.esri.core.geometry.ogc.OGCPoint;
-import org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL;
 
 import javax.annotation.Nullable;
 
@@ -41,13 +39,13 @@ public class STX implements SimpleFunction {
   }
 
   public void eval() {
-    var geom1 = FunctionHelpersXL.toGeometry(binaryInput);
+    com.esri.core.geometry.ogc.OGCGeometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
     output.value = x(geom1);
   }
 
   private double x(@Nullable final com.esri.core.geometry.ogc.OGCGeometry geometry) {
-    if (FunctionHelpersXL.isAPoint(geometry)) {
-      return ((OGCPoint) geometry).X();
+    if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isAPoint(geometry)) {
+      return ((com.esri.core.geometry.ogc.OGCPoint) geometry).X();
     } else {
       return Double.NaN;
     }

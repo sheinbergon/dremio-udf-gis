@@ -75,7 +75,7 @@ public final class FunctionHelpersXL {
 
   public static com.esri.core.geometry.ogc.OGCGeometry toGeometry(
       final @Nonnull org.apache.arrow.vector.holders.NullableVarBinaryHolder holder) {
-    var buffer = holder.buffer.nioBuffer(holder.start, holder.end - holder.start);
+    java.nio.ByteBuffer buffer = holder.buffer.nioBuffer(holder.start, holder.end - holder.start);
     return com.esri.core.geometry.ogc.OGCGeometry.fromBinary(buffer);
   }
 
@@ -109,7 +109,7 @@ public final class FunctionHelpersXL {
   public static double envelope(
       final @Nullable com.esri.core.geometry.ogc.OGCGeometry geometry,
       final @Nonnull java.util.function.Function<Envelope, Double> getter) {
-    var envelope = new com.esri.core.geometry.Envelope();
+    com.esri.core.geometry.Envelope envelope = new com.esri.core.geometry.Envelope();
     geometry.getEsriGeometry().queryEnvelope(envelope);
     return getter.apply(envelope);
   }
