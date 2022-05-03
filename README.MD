@@ -14,7 +14,7 @@ Derived from:
 
 ### What you get
 - Widespread OGC implementation for SQL (adheres to PostGIS standards)
-  - Supported input formats: `WKT`
+  - Supported input formats: `WKT`, `WKB`
   - Supported output formats: `WKT`, `JSON`, `GeoJSON` 
 - Easily installable Maven-Central/Github artifacts shaded jar artifact  
 - Dremio CE version compatibility (new versions will be released with each community edition) 
@@ -24,19 +24,20 @@ Derived from:
 - Take the shaded jar for the desired version and place inside your Dremio installation (`$DREMIO_HOME/jars/3rdparty`)
 - Restart your Dremio server(s)
 - Rejoice!
+- See the [Cheat Sheet](https://github.com/sheinbergon/dremio-udf-gis/wiki/GIS-Functions-Cheat-Sheet) for detailed usage instructions
 
 ### Usage Notes
 As opposed to PostGIS, Dremio is only a query engine based on existing/projected data sources/lakes.
 That means that:
 - `Geometry` is not a supported data type, meaning you can't query it directly
-- Metadata information, such as `SRID`, cannot be tied to the geometry data.  
+- Metadata information, such as `SRID`, **currently** cannot be tied to the geometry data.  
   To be more specific, this implementation is tied to the ESRI geometry API serialization capabilities.
 
-In order to successfully use the provided functionality, you must first decode data to an `OGCGeometry` type, using `ST_GeomFromText`.
-This library uses Dremios' Arrow buffers (`ArrowBuf`) to maintain geometry data in binary (`WKB`) format (for performance and efficiency) when
+In order to successfully use the provided functionality, you must first decode you geometry data either from `WKT` (using `ST_GeomFromText`) 
+or from `WKB` (using ST_GeomFromWKB). This library uses Dremios' Arrow buffers (`ArrowBuf`) to maintain geometry data in binary (`WKB`) format (for performance and efficiency) when
 interchanging it between GIS functions, which is of course undecipherable for the naked eye.  
 
-In order to resolve Data back to human readable format (`WKT`), use `ST_AsText`/`ST_AsGeoJson`
+In order to resolve Data back to human-readable format (`WKT`), use `ST_AsText`/`ST_AsGeoJson`
 
 Example:
 

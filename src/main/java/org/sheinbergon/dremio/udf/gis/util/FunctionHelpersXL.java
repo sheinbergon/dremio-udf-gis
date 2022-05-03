@@ -15,9 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sheinbergon.dremio.udf.gis;
+package org.sheinbergon.dremio.udf.gis.util;
 
 import com.esri.core.geometry.Envelope;
+import org.apache.arrow.vector.holders.NullableFloat8Holder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,10 +28,10 @@ public final class FunctionHelpersXL {
   static final int BIT_TRUE = 1;
   static final int BIT_FALSE = 0;
   static final String POINT = "Point";
-  static final int DEFAULT_SRID = 4326;
+  public static final int DEFAULT_SRID = 4326;
 
 
-  static java.lang.String toUTF8String(
+  public static java.lang.String toUTF8String(
       final @Nonnull org.apache.arrow.vector.holders.VarCharHolder holder) {
     return com.dremio.exec.expr.fn.impl.StringFunctionHelpers.toStringFromUTF8(
         holder.start,
@@ -75,7 +76,7 @@ public final class FunctionHelpersXL {
 
   public static com.esri.core.geometry.ogc.OGCGeometry toGeometry(
       final @Nonnull org.apache.arrow.vector.holders.NullableVarBinaryHolder holder) {
-    var buffer = holder.buffer.nioBuffer(holder.start, holder.end - holder.start);
+    java.nio.ByteBuffer buffer = holder.buffer.nioBuffer(holder.start, holder.end - holder.start);
     return com.esri.core.geometry.ogc.OGCGeometry.fromBinary(buffer);
   }
 
@@ -109,7 +110,7 @@ public final class FunctionHelpersXL {
   public static double envelope(
       final @Nullable com.esri.core.geometry.ogc.OGCGeometry geometry,
       final @Nonnull java.util.function.Function<Envelope, Double> getter) {
-    var envelope = new com.esri.core.geometry.Envelope();
+    com.esri.core.geometry.Envelope envelope = new com.esri.core.geometry.Envelope();
     geometry.getEsriGeometry().queryEnvelope(envelope);
     return getter.apply(envelope);
   }
@@ -126,6 +127,28 @@ public final class FunctionHelpersXL {
       throw new java.lang.IllegalArgumentException(
           java.lang.String.format("Unsupported value holder type - %s",
               holder.getClass().getName()));
+    }
+  }
+
+  public static void extractY(
+      @Nullable final com.esri.core.geometry.ogc.OGCGeometry geometry,
+      @Nonnull final NullableFloat8Holder output) {
+    if (isAPoint(geometry)) {
+      output.value = ((com.esri.core.geometry.ogc.OGCPoint) geometry).Y();
+      output.isSet = BIT_TRUE;
+    } else {
+      output.isSet = BIT_FALSE;
+    }
+  }
+
+  public static void extractX(
+      @Nullable final com.esri.core.geometry.ogc.OGCGeometry geometry,
+      @Nonnull final NullableFloat8Holder output) {
+    if (isAPoint(geometry)) {
+      output.value = ((com.esri.core.geometry.ogc.OGCPoint) geometry).X();
+      output.isSet = BIT_TRUE;
+    } else {
+      output.isSet = BIT_FALSE;
     }
   }
 }

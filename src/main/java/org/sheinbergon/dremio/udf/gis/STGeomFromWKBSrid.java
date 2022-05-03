@@ -21,17 +21,20 @@ import com.dremio.exec.expr.SimpleFunction;
 import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
-import com.esri.core.geometry.ogc.OGCGeometry;
 
 import javax.inject.Inject;
 
 @FunctionTemplate(
-    name = "ST_Envelope",
+    name = "ST_GeomFromWKB",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
-public class STEnvelope implements SimpleFunction {
+public class STGeomFromWKBSrid implements SimpleFunction {
+
   @Param
-  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder wkbInput;
+
+  @Param
+  org.apache.arrow.vector.holders.IntHolder sridInput;
 
   @Output
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
@@ -43,18 +46,10 @@ public class STEnvelope implements SimpleFunction {
   }
 
   public void eval() {
-    com.esri.core.geometry.ogc.OGCGeometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
-    com.esri.core.geometry.ogc.OGCGeometry enveloped = envelope(geom1);
-    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(enveloped);
+    com.esri.core.geometry.ogc.OGCGeometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(wkbInput);
+    geom.setSpatialReference(com.esri.core.geometry.SpatialReference.create(sridInput.value));
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(geom);
     buffer = buffer.reallocIfNeeded(bytes.length);
     org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, binaryOutput);
-  }
-
-  private OGCGeometry envelope(final OGCGeometry geometry) {
-    if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isAPoint(geometry)) {
-      return geometry;
-    } else {
-      return geometry.envelope();
-    }
   }
 }

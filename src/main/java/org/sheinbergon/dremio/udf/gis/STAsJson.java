@@ -43,9 +43,9 @@ public class STAsJson implements SimpleFunction {
   }
 
   public void eval() {
-    com.esri.core.geometry.ogc.OGCGeometry geom1 = FunctionHelpersXL.toGeometry(binaryInput);
-    byte[] bytes = FunctionHelpersXL.toJson(geom1);
+    com.esri.core.geometry.ogc.OGCGeometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toJson(geom1);
     buffer = buffer.reallocIfNeeded(bytes.length);
-    FunctionHelpersXL.populate(bytes, buffer, jsonOutput);
+    org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, jsonOutput);
   }
 }

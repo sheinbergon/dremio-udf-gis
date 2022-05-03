@@ -55,16 +55,16 @@ public class STPoint implements SimpleFunction {
     com.esri.core.geometry.SpatialReference srid = com.esri.core.geometry.SpatialReference.create(srid());
     com.esri.core.geometry.Point point = new com.esri.core.geometry.Point(longitude, latitude);
     com.esri.core.geometry.ogc.OGCPoint geometry = new com.esri.core.geometry.ogc.OGCPoint(point, srid);
-    byte[] bytes = FunctionHelpersXL.toBinary(geometry);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(geometry);
     buffer = buffer.reallocIfNeeded(bytes.length);
-    FunctionHelpersXL.populate(bytes, buffer, output);
+    org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, output);
   }
 
   private int srid() {
-    if (FunctionHelpersXL.isHolderSet(sridInput)) {
+    if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isHolderSet(sridInput)) {
       return sridInput.value;
     } else {
-      return FunctionHelpersXL.DEFAULT_SRID;
+      return org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.DEFAULT_SRID;
     }
   }
 }

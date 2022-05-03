@@ -69,13 +69,13 @@ public class STTransform implements SimpleFunction {
   }
 
   public void eval() {
-    com.esri.core.geometry.ogc.OGCGeometry geom = FunctionHelpersXL.toGeometry(binaryInput);
+    com.esri.core.geometry.ogc.OGCGeometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
     org.locationtech.proj4j.ProjCoordinate target = new org.locationtech.proj4j.ProjCoordinate();
     com.esri.core.geometry.SpatialReference targetSridReference = com.esri.core.geometry.SpatialReference.create(targetSrid);
     com.esri.core.geometry.ogc.OGCGeometry transformed = transformGeometry(geom, target, targetSridReference);
-    byte[] bytes = FunctionHelpersXL.toBinary(transformed);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(transformed);
     buffer = buffer.reallocIfNeeded(bytes.length);
-    FunctionHelpersXL.populate(bytes, buffer, binaryOutput);
+    org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, binaryOutput);
 
   }
 
@@ -83,7 +83,7 @@ public class STTransform implements SimpleFunction {
       final @Nonnull com.esri.core.geometry.ogc.OGCGeometry geometry,
       final @Nonnull org.locationtech.proj4j.ProjCoordinate to,
       final @Nonnull com.esri.core.geometry.SpatialReference srid) {
-    if (FunctionHelpersXL.isAPoint(geometry)) {
+    if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isAPoint(geometry)) {
       return transform((com.esri.core.geometry.ogc.OGCPoint) geometry, to, srid);
     } else {
       return transform(geometry, to, srid);

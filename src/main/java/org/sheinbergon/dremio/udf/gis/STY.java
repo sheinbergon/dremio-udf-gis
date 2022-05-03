@@ -21,9 +21,6 @@ import com.dremio.exec.expr.SimpleFunction;
 import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
-import com.esri.core.geometry.ogc.OGCPoint;
-
-import javax.annotation.Nullable;
 
 @FunctionTemplate(
     name = "ST_Y",
@@ -34,21 +31,14 @@ public class STY implements SimpleFunction {
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
   @Output
-  org.apache.arrow.vector.holders.Float8Holder output;
+  org.apache.arrow.vector.holders.NullableFloat8Holder output;
 
   public void setup() {
   }
 
   public void eval() {
-    var geom1 = FunctionHelpersXL.toGeometry(binaryInput);
-    output.value = y(geom1);
+    com.esri.core.geometry.ogc.OGCGeometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
+    org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.extractY(geom1, output);
   }
 
-  private double y(@Nullable final com.esri.core.geometry.ogc.OGCGeometry geometry) {
-    if (FunctionHelpersXL.isAPoint(geometry)) {
-      return ((OGCPoint) geometry).Y();
-    } else {
-      return Double.NaN;
-    }
-  }
 }

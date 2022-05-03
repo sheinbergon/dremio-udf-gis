@@ -43,9 +43,9 @@ public class STGeomFromText implements SimpleFunction {
   }
 
   public void eval() {
-    com.esri.core.geometry.ogc.OGCGeometry geom = FunctionHelpersXL.toGeometry(wktInput);
-    byte[] bytes = FunctionHelpersXL.toBinary(geom);
+    com.esri.core.geometry.ogc.OGCGeometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(wktInput);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(geom);
     buffer = buffer.reallocIfNeeded(bytes.length);
-    FunctionHelpersXL.populate(bytes, buffer, binaryOutput);
+    org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, binaryOutput);
   }
 }
