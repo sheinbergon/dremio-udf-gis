@@ -6,12 +6,12 @@
     <artifactId>dremio-udf-gis</artifactId>
     <properties>
         <checkstyle.version>10.1</checkstyle.version>
-        <dremio.version>20.1.0-202202061055110045-36733c65</dremio.version>
+        <dremio.version>21.1.1-202204292111390812-57b1832f</dremio.version>
         <dremio-arrow.version>4.0.0-20210722102535-bda216e83f-dremio</dremio-arrow.version>
         <esri-geometry-api.version>2.2.4</esri-geometry-api.version>
         <proj4j.version>1.1.5</proj4j.version>
     </properties>
-    <version>0.2.1${artifact.version.suffix}</version>
+    <version>0.3.0${artifact.version.suffix}</version>
     <name>dremio-udf-gis</name>
     <description>GIS UDF extensions for Dremio</description>
     <url>https://github.com/sheinbergon/dremio-udf-gis</url>
