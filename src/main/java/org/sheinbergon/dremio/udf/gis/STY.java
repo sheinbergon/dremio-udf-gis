@@ -37,8 +37,7 @@ public class STY implements SimpleFunction {
   }
 
   public void eval() {
-    com.esri.core.geometry.ogc.OGCGeometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
-    org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.extractY(geom1, output);
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
+    org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.extractY(geom, output);
   }
-
 }

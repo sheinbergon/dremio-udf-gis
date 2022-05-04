@@ -37,17 +37,16 @@ public class STXMin implements SimpleFunction {
   }
 
   public void eval() {
-    com.esri.core.geometry.ogc.OGCGeometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
-    output.value = xMin(geom1);
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
+    output.value = xMin(geom);
   }
 
-  private double xMin(final com.esri.core.geometry.ogc.OGCGeometry geometry) {
+  private double xMin(final org.locationtech.jts.geom.Geometry geometry) {
     if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isAPoint(geometry)) {
-      return ((com.esri.core.geometry.ogc.OGCPoint) geometry).X();
+      return ((org.locationtech.jts.geom.Point) geometry).getX();
     } else {
       return org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.envelope(
-          geometry,
-          com.esri.core.geometry.Envelope::getXMin);
+          geometry, org.locationtech.jts.geom.Envelope::getMinX);
     }
   }
 }

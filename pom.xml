@@ -10,6 +10,7 @@
         <dremio-arrow.version>4.0.0-20210722102535-bda216e83f-dremio</dremio-arrow.version>
         <proj4j.version>1.1.5</proj4j.version>
         <jts-core.version>1.18.2</jts-core.version>
+        <jts-io-common.version>1.18.2</jts-io-common.version>
     </properties>
     <version>0.2.2${artifact.version.suffix}</version>
     <name>dremio-udf-gis</name>
@@ -101,11 +102,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.esri.geometry</groupId>
-            <artifactId>esri-geometry-api</artifactId>
-            <version>${esri-geometry-api.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.locationtech.proj4j</groupId>
             <artifactId>proj4j</artifactId>
             <version>${proj4j.version}</version>
@@ -115,7 +111,11 @@
             <artifactId>jts-core</artifactId>
             <version>${jts-core.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.locationtech.jts.io</groupId>
+            <artifactId>jts-io-common</artifactId>
+            <version>${jts-io-common.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <resources>

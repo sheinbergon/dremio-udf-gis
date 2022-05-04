@@ -25,16 +25,13 @@ import com.dremio.exec.expr.annotations.Param;
 import javax.inject.Inject;
 
 @FunctionTemplate(
-    name = "ST_GeomFromHexWKB",
+    name = "ST_GeomFromWKB",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
-public class STGeomFromHexWKBSrid implements SimpleFunction {
+public class STGeomFromWKB implements SimpleFunction {
 
   @Param
-  org.apache.arrow.vector.holders.NullableVarCharHolder wkbHexInput;
-
-  @Param
-  org.apache.arrow.vector.holders.IntHolder sridInput;
+  org.apache.arrow.vector.holders.NullableVarCharHolder hexInput;
 
   @Output
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
@@ -46,10 +43,9 @@ public class STGeomFromHexWKBSrid implements SimpleFunction {
   }
 
   public void eval() {
-//    com.esri.core.geometry.ogc.OGCGeometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(wkbInput);
-//    geom.setSpatialReference(com.esri.core.geometry.SpatialReference.create(sridInput.value));
-//    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(geom);
-//    buffer = buffer.reallocIfNeeded(bytes.length);
-//    org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, binaryOutput);
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(hexInput);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(geom);
+    buffer = buffer.reallocIfNeeded(bytes.length);
+    org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, binaryOutput);
   }
 }

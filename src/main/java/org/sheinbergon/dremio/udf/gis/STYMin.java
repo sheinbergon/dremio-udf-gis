@@ -37,17 +37,16 @@ public class STYMin implements SimpleFunction {
   }
 
   public void eval() {
-    com.esri.core.geometry.ogc.OGCGeometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
-    output.value = yMin(geom1);
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
+    output.value = yMin(geom);
   }
 
-  private double yMin(final com.esri.core.geometry.ogc.OGCGeometry geometry) {
+  private double yMin(final org.locationtech.jts.geom.Geometry geometry) {
     if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isAPoint(geometry)) {
-      return ((com.esri.core.geometry.ogc.OGCPoint) geometry).Y();
+      return ((org.locationtech.jts.geom.Point) geometry).getY();
     } else {
       return org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.envelope(
-          geometry,
-          com.esri.core.geometry.Envelope::getYMin);
+          geometry, org.locationtech.jts.geom.Envelope::getMinY);
     }
   }
 }

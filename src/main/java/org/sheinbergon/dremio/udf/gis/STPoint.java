@@ -52,10 +52,11 @@ public class STPoint implements SimpleFunction {
   public void eval() {
     double longitude = longitudeInput.value;
     double latitude = latitudeInput.value;
-    com.esri.core.geometry.SpatialReference srid = com.esri.core.geometry.SpatialReference.create(srid());
-    com.esri.core.geometry.Point point = new com.esri.core.geometry.Point(longitude, latitude);
-    com.esri.core.geometry.ogc.OGCPoint geometry = new com.esri.core.geometry.ogc.OGCPoint(point, srid);
-    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(geometry);
+    org.locationtech.jts.geom.Coordinate coordinate = new org.locationtech.jts.geom.CoordinateXY(longitude, latitude);
+    org.locationtech.jts.geom.PrecisionModel precisionModel = new org.locationtech.jts.geom.PrecisionModel();
+    org.locationtech.jts.geom.GeometryFactory factory = new org.locationtech.jts.geom.GeometryFactory(precisionModel, srid());
+    org.locationtech.jts.geom.Point point = factory.createPoint(coordinate);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(point);
     buffer = buffer.reallocIfNeeded(bytes.length);
     org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, output);
   }
