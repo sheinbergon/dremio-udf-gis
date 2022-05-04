@@ -31,7 +31,7 @@ import javax.inject.Inject;
 public class STGeomFromWKB implements SimpleFunction {
 
   @Param
-  org.apache.arrow.vector.holders.NullableVarCharHolder hexInput;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder wkbInput;
 
   @Output
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
@@ -43,7 +43,7 @@ public class STGeomFromWKB implements SimpleFunction {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(hexInput);
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(wkbInput);
     byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(geom);
     buffer = buffer.reallocIfNeeded(bytes.length);
     org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, binaryOutput);

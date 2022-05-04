@@ -31,7 +31,7 @@ import javax.inject.Inject;
 public class STGeomFromWKBSrid implements SimpleFunction {
 
   @Param
-  org.apache.arrow.vector.holders.NullableVarCharHolder wkbHexInput;
+  org.apache.arrow.vector.holders.NullableVarCharHolder wkbInput;
 
   @Param
   org.apache.arrow.vector.holders.IntHolder sridInput;
@@ -46,10 +46,10 @@ public class STGeomFromWKBSrid implements SimpleFunction {
   }
 
   public void eval() {
-//    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(wkbInput);
-//    geom.setSpatialReference(com.esri.core.geometry.SpatialReference.create(sridInput.value));
-//    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(geom);
-//    buffer = buffer.reallocIfNeeded(bytes.length);
-//    org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, binaryOutput);
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(wkbInput);
+    geom.setSRID(sridInput.value);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(geom);
+    buffer = buffer.reallocIfNeeded(bytes.length);
+    org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, binaryOutput);
   }
 }
