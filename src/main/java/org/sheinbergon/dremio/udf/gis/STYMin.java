@@ -22,6 +22,8 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
+import javax.annotation.Nonnull;
+
 @FunctionTemplate(
     name = "ST_YMin",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
@@ -38,15 +40,16 @@ public class STYMin implements SimpleFunction {
 
   public void eval() {
     org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
-    output.value = yMin(geom);
+    output.value = this.yMin(geom);
   }
 
-  private double yMin(final org.locationtech.jts.geom.Geometry geometry) {
+  private double yMin(final @Nonnull org.locationtech.jts.geom.Geometry geometry) {
     if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isAPoint(geometry)) {
       return ((org.locationtech.jts.geom.Point) geometry).getY();
     } else {
       return org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.envelope(
-          geometry, org.locationtech.jts.geom.Envelope::getMinY);
+          geometry,
+          envelope -> envelope.getMinY());
     }
   }
 }

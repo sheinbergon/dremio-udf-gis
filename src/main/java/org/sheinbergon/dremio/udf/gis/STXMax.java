@@ -22,6 +22,9 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
+import javax.annotation.Nonnull;
+
+@SuppressWarnings("ALL")
 @FunctionTemplate(
     name = "ST_XMax",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
@@ -38,15 +41,16 @@ public class STXMax implements SimpleFunction {
 
   public void eval() {
     org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
-    output.value = xMax(geom);
+    output.value = this.xMax(geom);
   }
 
-  private double xMax(final org.locationtech.jts.geom.Geometry geometry) {
+  private double xMax(final @Nonnull org.locationtech.jts.geom.Geometry geometry) {
     if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isAPoint(geometry)) {
       return ((org.locationtech.jts.geom.Point) geometry).getX();
     } else {
       return org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.envelope(
-          geometry, org.locationtech.jts.geom.Envelope::getMaxX);
+          geometry,
+          envelope -> envelope.getMaxX());
     }
   }
 }
