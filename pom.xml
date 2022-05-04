@@ -177,8 +177,10 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>com.esri.geometry:esri-geometry-api</include>
+                                    <include>org.locationtech.jts:jts-core</include>
+                                    <include>org.locationtech.jts.io:jts-io-common</include>
                                     <include>org.locationtech.proj4j:proj4j</include>
+                                    <include>com.googlecode.json-simple:json-simple</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
