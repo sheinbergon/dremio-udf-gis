@@ -25,13 +25,13 @@ import com.dremio.exec.expr.annotations.Param;
 import javax.inject.Inject;
 
 @FunctionTemplate(
-    name = "ST_GeomFromHexWKB",
+    name = "ST_GeomFromWKB",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
 public class STGeomFromWKBSrid implements SimpleFunction {
 
   @Param
-  org.apache.arrow.vector.holders.NullableVarCharHolder wkbInput;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder wkbInput;
 
   @Param
   org.apache.arrow.vector.holders.IntHolder sridInput;
