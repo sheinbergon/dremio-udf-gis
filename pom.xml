@@ -12,7 +12,7 @@
         <jts-core.version>1.18.2</jts-core.version>
         <jts-io-common.version>1.18.2</jts-io-common.version>
     </properties>
-    <version>0.2.2${artifact.version.suffix}</version>
+    <version>0.2.3${artifact.version.suffix}</version>
     <name>dremio-udf-gis</name>
     <description>GIS UDF extensions for Dremio</description>
     <url>https://github.com/sheinbergon/dremio-udf-gis</url>
