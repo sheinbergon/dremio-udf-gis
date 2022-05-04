@@ -8,8 +8,8 @@
         <checkstyle.version>10.1</checkstyle.version>
         <dremio.version>20.1.0-202202061055110045-36733c65</dremio.version>
         <dremio-arrow.version>4.0.0-20210722102535-bda216e83f-dremio</dremio-arrow.version>
-        <esri-geometry-api.version>2.2.4</esri-geometry-api.version>
         <proj4j.version>1.1.5</proj4j.version>
+        <jts-core.version>1.18.2</jts-core.version>
     </properties>
     <version>0.2.2${artifact.version.suffix}</version>
     <name>dremio-udf-gis</name>
@@ -110,6 +110,12 @@
             <artifactId>proj4j</artifactId>
             <version>${proj4j.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts-core</artifactId>
+            <version>${jts-core.version}</version>
+        </dependency>
+
     </dependencies>
     <build>
         <resources>
