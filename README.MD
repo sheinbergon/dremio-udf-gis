@@ -34,7 +34,7 @@ Derived from:
 ### Usage Notes
 As opposed to PostGIS, Dremio is only a query engine based on existing/projected data sources/lakes.  
 That means that `Geometry` is not a natively supported data type, and you can only access it if     
-it's being properly project from the data sources (For example, PostGIS Geometry is read as a EWKB HEX encoded string).
+it's being properly project from the data sources (For example, PostGIS Geometry is read as an `EWKB` HEX encoded string).
 
 In order to successfully use the provided GIS functions, you must first make sure the geometry is in `WKB (BINARY)` format.  
 If it's not, you need to decode it:  
