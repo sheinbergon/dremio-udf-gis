@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 
 final class ByteBufferInputStream extends java.io.InputStream {
 
-  static ByteBufferInputStream toInStream(final @Nonnull java.nio.ByteBuffer buffer) {
+  static ByteBufferInputStream toInputStream(final @Nonnull java.nio.ByteBuffer buffer) {
     return new ByteBufferInputStream(buffer);
   }
 

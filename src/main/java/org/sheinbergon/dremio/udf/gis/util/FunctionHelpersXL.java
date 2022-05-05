@@ -82,7 +82,7 @@ public final class FunctionHelpersXL {
       final @Nonnull org.apache.arrow.vector.holders.NullableVarBinaryHolder holder
   ) {
     java.nio.ByteBuffer buffer = holder.buffer.nioBuffer(holder.start, holder.end - holder.start);
-    try (java.io.InputStream stream = org.sheinbergon.dremio.udf.gis.util.ByteBufferInputStream.toInStream(buffer)) {
+    try (java.io.InputStream stream = org.sheinbergon.dremio.udf.gis.util.ByteBufferInputStream.toInputStream(buffer)) {
       org.locationtech.jts.io.InputStreamInStream adapter = new org.locationtech.jts.io.InputStreamInStream(stream);
       org.locationtech.jts.io.WKBReader reader = new org.locationtech.jts.io.WKBReader();
       return reader.read(adapter);

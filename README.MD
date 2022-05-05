@@ -25,15 +25,21 @@ Derived from:
 - Restart your Dremio server(s)
 - Rejoice! (and see the [Cheat Sheet](https://github.com/sheinbergon/dremio-udf-gis/wiki/GIS-Functions-Cheat-Sheet) for detailed usage instructions)
 
+#### Version Compatbility
+
+| Library Version | Dremio Version |
+|-----------------|----------------|
+| 0.2.x           | 20.x.x         |
+
 ### Usage Notes
 As opposed to PostGIS, Dremio is only a query engine based on existing/projected data sources/lakes.  
 That means that `Geometry` is not a natively supported data type, and you can only access it if     
-it's being properly project from the data sources (For example, PostGIS Geometry is read as EWKB HEX encode string).
+it's being properly project from the data sources (For example, PostGIS Geometry is read as a EWKB HEX encoded string).
 
-In order to successfully use the provided GIS functions, you must first make the is in `WKB (BINARY)` format.  
-Otherwise, you can decode it:  
-- `WKT` (using `ST_GeomFromText`) 
-- `WKB (HEX)` (using Dremio's `FROM_HEX`)  
+In order to successfully use the provided GIS functions, you must first make sure the geometry is in `WKB (BINARY)` format.  
+If it's not, you need to decode it:  
+- if the input is in `WKT` format, use `ST_GeomFromText`
+- if the input is a HEX encoded`WKB`, use Dremio's `FROM_HEX`
 
 This library uses Dremios' Arrow buffers (`ArrowBuf`) to maintain geometry data in binary (`WKB`) format (for performance and efficiency)  
 when interchanging it between GIS functions, which is of course undecipherable for the naked eye. When running queries from the UI,  
