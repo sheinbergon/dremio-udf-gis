@@ -40,8 +40,8 @@ public class STDisjoint implements SimpleFunction {
   }
 
   public void eval() {
-    com.esri.core.geometry.ogc.OGCGeometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput1);
-    com.esri.core.geometry.ogc.OGCGeometry geom2 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput2);
+    org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput1);
+    org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput2);
     boolean contains = geom1.disjoint(geom2);
     output.value = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBitValue(contains);
   }

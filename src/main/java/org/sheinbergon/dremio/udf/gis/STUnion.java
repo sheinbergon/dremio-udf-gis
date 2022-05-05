@@ -45,9 +45,9 @@ public class STUnion implements SimpleFunction {
   }
 
   public void eval() {
-    com.esri.core.geometry.ogc.OGCGeometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput1);
-    com.esri.core.geometry.ogc.OGCGeometry geom2 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput2);
-    com.esri.core.geometry.ogc.OGCGeometry union = geom1.union(geom2);
+    org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput1);
+    org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput2);
+    org.locationtech.jts.geom.Geometry union = geom1.union(geom2);
     byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(union);
     buffer = buffer.reallocIfNeeded(bytes.length);
     org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, binaryOutput);

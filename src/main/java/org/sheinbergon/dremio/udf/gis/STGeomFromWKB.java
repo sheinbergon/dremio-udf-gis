@@ -43,7 +43,7 @@ public class STGeomFromWKB implements SimpleFunction {
   }
 
   public void eval() {
-    com.esri.core.geometry.ogc.OGCGeometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(wkbInput);
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(wkbInput);
     byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(geom);
     buffer = buffer.reallocIfNeeded(bytes.length);
     org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, binaryOutput);

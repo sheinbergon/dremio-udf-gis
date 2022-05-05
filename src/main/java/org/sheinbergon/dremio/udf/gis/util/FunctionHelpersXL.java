@@ -17,19 +17,17 @@
  */
 package org.sheinbergon.dremio.udf.gis.util;
 
-import com.esri.core.geometry.Envelope;
-import org.apache.arrow.vector.holders.NullableFloat8Holder;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public final class FunctionHelpersXL {
 
-  static final int BIT_TRUE = 1;
-  static final int BIT_FALSE = 0;
+  public static final int BIT_TRUE = 1;
+  public static final int BIT_FALSE = 0;
   static final String POINT = "Point";
   public static final int DEFAULT_SRID = 4326;
 
+  private static final int GEOMETRY_WRITER_DIMENSIONS = 2;
 
   public static java.lang.String toUTF8String(
       final @Nonnull org.apache.arrow.vector.holders.VarCharHolder holder) {
@@ -48,36 +46,47 @@ public final class FunctionHelpersXL {
   }
 
   public static byte[] toBinary(
-      final @Nonnull com.esri.core.geometry.ogc.OGCGeometry geometry) {
-    return geometry.asBinary().array();
+      final @Nonnull org.locationtech.jts.geom.Geometry geometry) {
+    org.locationtech.jts.io.WKBWriter writer = new org.locationtech.jts.io.WKBWriter(GEOMETRY_WRITER_DIMENSIONS, true);
+    return writer.write(geometry);
   }
 
   public static byte[] toText(
-      final @Nonnull com.esri.core.geometry.ogc.OGCGeometry geometry) {
-    return geometry.asText().getBytes(java.nio.charset.StandardCharsets.UTF_8);
-  }
-
-
-  public static byte[] toJson(
-      final @Nonnull com.esri.core.geometry.ogc.OGCGeometry geometry) {
-    return geometry.asJson().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+      final @Nonnull org.locationtech.jts.geom.Geometry geometry) {
+    org.locationtech.jts.io.WKTWriter writer = new org.locationtech.jts.io.WKTWriter(GEOMETRY_WRITER_DIMENSIONS);
+    return writer.write(geometry).getBytes(java.nio.charset.StandardCharsets.UTF_8);
   }
 
   public static byte[] toGeoJson(
-      final @Nonnull com.esri.core.geometry.ogc.OGCGeometry geometry) {
-    return geometry.asGeoJson().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+      final @Nonnull org.locationtech.jts.geom.Geometry geometry) {
+    org.locationtech.jts.io.geojson.GeoJsonWriter writer = new org.locationtech.jts.io.geojson.GeoJsonWriter();
+    return writer.write(geometry).getBytes(java.nio.charset.StandardCharsets.UTF_8);
   }
 
-  public static com.esri.core.geometry.ogc.OGCGeometry toGeometry(
-      final @Nonnull org.apache.arrow.vector.holders.NullableVarCharHolder holder) {
-    java.lang.String wkt = toUTF8String(holder);
-    return com.esri.core.geometry.ogc.OGCGeometry.fromText(wkt);
+  @Nonnull
+  public static org.locationtech.jts.geom.Geometry toGeometry(
+      final @Nonnull org.apache.arrow.vector.holders.NullableVarCharHolder holder
+  ) {
+    try {
+      java.lang.String wkt = toUTF8String(holder);
+      org.locationtech.jts.io.WKTReader reader = new org.locationtech.jts.io.WKTReader();
+      return reader.read(wkt);
+    } catch (org.locationtech.jts.io.ParseException x) {
+      throw new RuntimeException(x);
+    }
   }
 
-  public static com.esri.core.geometry.ogc.OGCGeometry toGeometry(
-      final @Nonnull org.apache.arrow.vector.holders.NullableVarBinaryHolder holder) {
+  public static org.locationtech.jts.geom.Geometry toGeometry(
+      final @Nonnull org.apache.arrow.vector.holders.NullableVarBinaryHolder holder
+  ) {
     java.nio.ByteBuffer buffer = holder.buffer.nioBuffer(holder.start, holder.end - holder.start);
-    return com.esri.core.geometry.ogc.OGCGeometry.fromBinary(buffer);
+    try (java.io.InputStream stream = org.sheinbergon.dremio.udf.gis.util.ByteBufferInputStream.toInputStream(buffer)) {
+      org.locationtech.jts.io.InputStreamInStream adapter = new org.locationtech.jts.io.InputStreamInStream(stream);
+      org.locationtech.jts.io.WKBReader reader = new org.locationtech.jts.io.WKBReader();
+      return reader.read(adapter);
+    } catch (java.io.IOException | org.locationtech.jts.io.ParseException x) {
+      throw new RuntimeException(x);
+    }
   }
 
   public static int toBitValue(final boolean value) {
@@ -107,17 +116,9 @@ public final class FunctionHelpersXL {
     output.buffer.setBytes(output.start, bytes);
   }
 
-  public static double envelope(
-      final @Nullable com.esri.core.geometry.ogc.OGCGeometry geometry,
-      final @Nonnull java.util.function.Function<Envelope, Double> getter) {
-    com.esri.core.geometry.Envelope envelope = new com.esri.core.geometry.Envelope();
-    geometry.getEsriGeometry().queryEnvelope(envelope);
-    return getter.apply(envelope);
-  }
-
   public static boolean isAPoint(
-      final @Nullable com.esri.core.geometry.ogc.OGCGeometry geometry) {
-    return geometry != null && geometry.geometryType().equals(POINT);
+      final @Nullable org.locationtech.jts.geom.Geometry geometry) {
+    return geometry != null && geometry.getGeometryType().equals(POINT);
   }
 
   public static boolean isHolderSet(final @Nonnull org.apache.arrow.vector.holders.ValueHolder holder) {
@@ -127,28 +128,6 @@ public final class FunctionHelpersXL {
       throw new java.lang.IllegalArgumentException(
           java.lang.String.format("Unsupported value holder type - %s",
               holder.getClass().getName()));
-    }
-  }
-
-  public static void extractY(
-      @Nullable final com.esri.core.geometry.ogc.OGCGeometry geometry,
-      @Nonnull final NullableFloat8Holder output) {
-    if (isAPoint(geometry)) {
-      output.value = ((com.esri.core.geometry.ogc.OGCPoint) geometry).Y();
-      output.isSet = BIT_TRUE;
-    } else {
-      output.isSet = BIT_FALSE;
-    }
-  }
-
-  public static void extractX(
-      @Nullable final com.esri.core.geometry.ogc.OGCGeometry geometry,
-      @Nonnull final NullableFloat8Holder output) {
-    if (isAPoint(geometry)) {
-      output.value = ((com.esri.core.geometry.ogc.OGCPoint) geometry).X();
-      output.isSet = BIT_TRUE;
-    } else {
-      output.isSet = BIT_FALSE;
     }
   }
 }

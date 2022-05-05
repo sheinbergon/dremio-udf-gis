@@ -22,6 +22,7 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
+@SuppressWarnings("ALL")
 @FunctionTemplate(
     name = "ST_XMax",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
@@ -37,17 +38,12 @@ public class STXMax implements SimpleFunction {
   }
 
   public void eval() {
-    com.esri.core.geometry.ogc.OGCGeometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
-    output.value = xMax(geom1);
-  }
-
-  private double xMax(final com.esri.core.geometry.ogc.OGCGeometry geometry) {
-    if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isAPoint(geometry)) {
-      return ((com.esri.core.geometry.ogc.OGCPoint) geometry).X();
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
+    if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isAPoint(geom)) {
+      output.value = ((org.locationtech.jts.geom.Point) geom).getX();
     } else {
-      return org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.envelope(
-          geometry,
-          com.esri.core.geometry.Envelope::getXMax);
+      org.locationtech.jts.geom.Envelope envelope = geom.getEnvelopeInternal();
+      output.value = envelope.getMaxX();
     }
   }
 }

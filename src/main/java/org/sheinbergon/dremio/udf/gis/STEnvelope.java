@@ -21,7 +21,6 @@ import com.dremio.exec.expr.SimpleFunction;
 import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
-import com.esri.core.geometry.ogc.OGCGeometry;
 
 import javax.inject.Inject;
 
@@ -43,18 +42,18 @@ public class STEnvelope implements SimpleFunction {
   }
 
   public void eval() {
-    com.esri.core.geometry.ogc.OGCGeometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
-    com.esri.core.geometry.ogc.OGCGeometry enveloped = envelope(geom1);
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
+    org.locationtech.jts.geom.Geometry enveloped = envelope(geom);
     byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(enveloped);
     buffer = buffer.reallocIfNeeded(bytes.length);
     org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, binaryOutput);
   }
 
-  private OGCGeometry envelope(final OGCGeometry geometry) {
+  private org.locationtech.jts.geom.Geometry envelope(final org.locationtech.jts.geom.Geometry geometry) {
     if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isAPoint(geometry)) {
       return geometry;
     } else {
-      return geometry.envelope();
+      return geometry.getEnvelope();
     }
   }
 }
