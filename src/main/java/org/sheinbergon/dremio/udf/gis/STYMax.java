@@ -22,8 +22,6 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
-import javax.annotation.Nonnull;
-
 @FunctionTemplate(
     name = "ST_YMax",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
@@ -40,16 +38,11 @@ public class STYMax implements SimpleFunction {
 
   public void eval() {
     org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
-    output.value = this.yMax(geom);
-  }
-
-  private double yMax(final @Nonnull org.locationtech.jts.geom.Geometry geometry) {
-    if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isAPoint(geometry)) {
-      return ((org.locationtech.jts.geom.Point) geometry).getY();
+    if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isAPoint(geom)) {
+      output.value = ((org.locationtech.jts.geom.Point) geom).getY();
     } else {
-      return org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.envelope(
-          geometry,
-          envelope -> envelope.getMaxY());
+      org.locationtech.jts.geom.Envelope envelope = geom.getEnvelopeInternal();
+      output.value = envelope.getMaxY();
     }
   }
 }

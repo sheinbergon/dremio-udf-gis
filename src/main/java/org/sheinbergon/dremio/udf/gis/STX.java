@@ -38,6 +38,11 @@ public class STX implements SimpleFunction {
 
   public void eval() {
     org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
-    org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.extractX(geom, output);
+    if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isAPoint(geom)) {
+      output.value = ((org.locationtech.jts.geom.Point) geom).getX();
+      output.isSet = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.BIT_TRUE;
+    } else {
+      output.isSet = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.BIT_FALSE;
+    }
   }
 }

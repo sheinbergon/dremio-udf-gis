@@ -17,15 +17,13 @@
  */
 package org.sheinbergon.dremio.udf.gis.util;
 
-import org.apache.arrow.vector.holders.NullableFloat8Holder;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public final class FunctionHelpersXL {
 
-  static final int BIT_TRUE = 1;
-  static final int BIT_FALSE = 0;
+  public static final int BIT_TRUE = 1;
+  public static final int BIT_FALSE = 0;
   static final String POINT = "Point";
   public static final int DEFAULT_SRID = 4326;
 
@@ -118,12 +116,6 @@ public final class FunctionHelpersXL {
     output.buffer.setBytes(output.start, bytes);
   }
 
-  public static double envelope(
-      final @Nullable org.locationtech.jts.geom.Geometry geometry,
-      final @Nonnull java.util.function.Function<org.locationtech.jts.geom.Envelope, Double> getter) {
-    return getter.apply(geometry.getEnvelopeInternal());
-  }
-
   public static boolean isAPoint(
       final @Nullable org.locationtech.jts.geom.Geometry geometry) {
     return geometry != null && geometry.getGeometryType().equals(POINT);
@@ -136,28 +128,6 @@ public final class FunctionHelpersXL {
       throw new java.lang.IllegalArgumentException(
           java.lang.String.format("Unsupported value holder type - %s",
               holder.getClass().getName()));
-    }
-  }
-
-  public static void extractY(
-      @Nullable final org.locationtech.jts.geom.Geometry geometry,
-      @Nonnull final NullableFloat8Holder output) {
-    if (isAPoint(geometry)) {
-      output.value = ((org.locationtech.jts.geom.Point) geometry).getY();
-      output.isSet = BIT_TRUE;
-    } else {
-      output.isSet = BIT_FALSE;
-    }
-  }
-
-  public static void extractX(
-      @Nullable final org.locationtech.jts.geom.Geometry geometry,
-      @Nonnull final NullableFloat8Holder output) {
-    if (isAPoint(geometry)) {
-      output.value = ((org.locationtech.jts.geom.Point) geometry).getX();
-      output.isSet = BIT_TRUE;
-    } else {
-      output.isSet = BIT_FALSE;
     }
   }
 }
