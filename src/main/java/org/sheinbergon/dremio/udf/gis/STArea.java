@@ -14,10 +14,30 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * <p>
- * Dremio GIS extension functions
- *
- * @author sheinbergon
- * @since 0.1.0
  */
 package org.sheinbergon.dremio.udf.gis;
+
+import com.dremio.exec.expr.SimpleFunction;
+import com.dremio.exec.expr.annotations.FunctionTemplate;
+import com.dremio.exec.expr.annotations.Output;
+import com.dremio.exec.expr.annotations.Param;
+
+@FunctionTemplate(
+    name = "ST_Area",
+    scope = FunctionTemplate.FunctionScope.SIMPLE,
+    nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
+public class STArea implements SimpleFunction {
+  @Param
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
+
+  @Output
+  org.apache.arrow.vector.holders.Float8Holder output;
+
+  public void setup() {
+  }
+
+  public void eval() {
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
+    output.value = geom.getArea();
+  }
+}
