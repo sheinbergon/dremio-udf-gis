@@ -21,7 +21,6 @@ import com.dremio.exec.expr.SimpleFunction;
 import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
-import org.sheinbergon.dremio.udf.gis.util.GeometryTransformation;
 
 import javax.inject.Inject;
 
@@ -31,13 +30,11 @@ import javax.inject.Inject;
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
 public class STTransform implements SimpleFunction {
 
-  private static final String CRS_TEMPLATE = "EPSG: %d";
-
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
   @Param
-  org.apache.arrow.vector.holders.NullableIntHolder targetSridInput;
+  org.apache.arrow.vector.holders.IntHolder targetSridInput;
 
   @Output
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
@@ -48,19 +45,18 @@ public class STTransform implements SimpleFunction {
   public void setup() {
   }
 
+
   public void eval() {
     org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
-    org.locationtech.proj4j.CoordinateTransform transform = transformation(geom);
-    org.locationtech.jts.geom.Geometry result = GeometryTransformation.transform(geom, transform);
+    org.locationtech.proj4j.CRSFactory crsFactory = new org.locationtech.proj4j.CRSFactory();
+    org.locationtech.proj4j.CoordinateReferenceSystem sourceCrs = crsFactory
+        .createFromName(java.lang.String.format("EPSG:%d", geom.getSRID()));
+    org.locationtech.proj4j.CoordinateReferenceSystem targetCrs = crsFactory
+        .createFromName(java.lang.String.format("EPSG:%d", targetSridInput.value));
+    org.locationtech.proj4j.CoordinateTransform transform = new org.locationtech.proj4j.BasicCoordinateTransform(sourceCrs, targetCrs);
+    org.locationtech.jts.geom.Geometry result = org.sheinbergon.dremio.udf.gis.util.GeometryTransformation.transform(geom, transform);
     byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(result);
     buffer = buffer.reallocIfNeeded(bytes.length);
     org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, binaryOutput);
-  }
-
-  private org.locationtech.proj4j.CoordinateTransform transformation(final org.locationtech.jts.geom.Geometry geom) {
-    org.locationtech.proj4j.CRSFactory crsFactory = new org.locationtech.proj4j.CRSFactory();
-    org.locationtech.proj4j.CoordinateReferenceSystem sourceCrs = crsFactory.createFromName(String.format(CRS_TEMPLATE, geom.getSRID()));
-    org.locationtech.proj4j.CoordinateReferenceSystem targetCrs = crsFactory.createFromName(String.format(CRS_TEMPLATE, targetSridInput.value));
-    return new org.locationtech.proj4j.BasicCoordinateTransform(sourceCrs, targetCrs);
   }
 }

@@ -29,7 +29,7 @@ import com.dremio.exec.expr.annotations.Param;
 public class STArea implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
-  
+
   @Output
   org.apache.arrow.vector.holders.Float8Holder output;
 
