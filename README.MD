@@ -31,6 +31,7 @@ Derived from:
 |-----------------|----------------|
 | 0.2.x           | 20.1.x         |
 | 0.3.x           | 21.1.x         |
+| 0.4.x           | 21.2.x         |
 
 ### Usage Notes
 As opposed to PostGIS, Dremio is only a query engine based on existing/projected data sources/lakes.  
