@@ -47,14 +47,9 @@ public class STTransform implements SimpleFunction {
 
 
   public void eval() {
+    int targetSrid = targetSridInput.value;
     org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
-    org.locationtech.proj4j.CRSFactory crsFactory = new org.locationtech.proj4j.CRSFactory();
-    org.locationtech.proj4j.CoordinateReferenceSystem sourceCrs = crsFactory
-        .createFromName(java.lang.String.format("EPSG:%d", geom.getSRID()));
-    org.locationtech.proj4j.CoordinateReferenceSystem targetCrs = crsFactory
-        .createFromName(java.lang.String.format("EPSG:%d", targetSridInput.value));
-    org.locationtech.proj4j.CoordinateTransform transform = new org.locationtech.proj4j.BasicCoordinateTransform(sourceCrs, targetCrs);
-    org.locationtech.jts.geom.Geometry result = org.sheinbergon.dremio.udf.gis.util.GeometryTransformation.transform(geom, transform);
+    org.locationtech.jts.geom.Geometry result = org.sheinbergon.dremio.udf.gis.util.GeometryTransformation.transform(geom, targetSrid);
     byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(result);
     buffer = buffer.reallocIfNeeded(bytes.length);
     org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, binaryOutput);

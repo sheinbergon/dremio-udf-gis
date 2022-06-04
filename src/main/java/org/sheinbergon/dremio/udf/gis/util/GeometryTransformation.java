@@ -6,7 +6,20 @@ import javax.annotation.Nonnull;
 
 public final class GeometryTransformation {
 
+
+  private static final String CRS_TEMPLATE = "EPSG:%d";
+
   public static org.locationtech.jts.geom.Geometry transform(
+      final @Nonnull org.locationtech.jts.geom.Geometry geom,
+      final int targetSrid) {
+    org.locationtech.proj4j.CRSFactory factory = new org.locationtech.proj4j.CRSFactory();
+    org.locationtech.proj4j.CoordinateReferenceSystem source = factory.createFromName(java.lang.String.format(CRS_TEMPLATE, geom.getSRID()));
+    org.locationtech.proj4j.CoordinateReferenceSystem target = factory.createFromName(java.lang.String.format(CRS_TEMPLATE, targetSrid));
+    org.locationtech.proj4j.CoordinateTransform transform = new org.locationtech.proj4j.BasicCoordinateTransform(source, target);
+    return transform(geom, transform);
+  }
+
+  private static org.locationtech.jts.geom.Geometry transform(
       final @Nonnull org.locationtech.jts.geom.Geometry geom,
       final @Nonnull org.locationtech.proj4j.CoordinateTransform transform) {
     if (geom instanceof org.locationtech.jts.geom.Polygon) {
