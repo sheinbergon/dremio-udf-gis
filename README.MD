@@ -23,7 +23,7 @@ Derived from:
 ### Installation
 - Take the shaded jar for the desired version and place inside your Dremio installation (`$DREMIO_HOME/jars/3rdparty`)
 - Restart your Dremio server(s)
-- Rejoice! (and see the [Cheat Sheet](https://github.com/sheinbergon/dremio-udf-gis/wiki/GIS-Functions-Cheat-Sheet) for detailed usage instructions)
+- Rejoice! (and see the [WIKI](https://github.com/sheinbergon/dremio-udf-gis/wiki) for detailed usage instructions)
 
 #### Version Compatbility
 
