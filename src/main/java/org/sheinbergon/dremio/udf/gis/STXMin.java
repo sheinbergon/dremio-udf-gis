@@ -22,6 +22,8 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
+
+
 @FunctionTemplate(
     name = "ST_XMin",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
@@ -37,8 +39,8 @@ public class STXMin implements SimpleFunction {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
-    if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isAPoint(geom)) {
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isAPoint(geom)) {
       output.value = ((org.locationtech.jts.geom.Point) geom).getX();
     } else {
       org.locationtech.jts.geom.Envelope envelope = geom.getEnvelopeInternal();

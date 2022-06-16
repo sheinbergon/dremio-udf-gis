@@ -20,6 +20,12 @@ package org.sheinbergon.dremio.udf.gis.util;
 import javax.annotation.Nonnull;
 
 public final class GeometryCollections {
+
+  public static org.locationtech.jts.geom.GeometryCollection empty() {
+    org.locationtech.jts.geom.GeometryFactory factory = new org.locationtech.jts.geom.GeometryFactory();
+    return factory.createGeometryCollection();
+  }
+
   public static org.locationtech.jts.geom.GeometryCollection collect(final org.locationtech.jts.geom.Geometry... geometries) {
     org.locationtech.jts.geom.GeometryFactory factory = new org.locationtech.jts.geom.GeometryFactory();
     java.util.List<Class<? extends org.locationtech.jts.geom.Geometry>> types = geometryTypes(geometries);
