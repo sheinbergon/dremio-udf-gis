@@ -21,28 +21,34 @@ import com.dremio.exec.expr.SimpleFunction;
 import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
+import org.locationtech.jts.geom.GeometryFactory;
 
+import javax.inject.Inject;
 
 @FunctionTemplate(
-    name = "ST_Length",
+    name = "ST_Centroid",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
-public class STLength implements SimpleFunction {
+public class STCentroid implements SimpleFunction {
   @Param
-  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput1;
 
   @Output
-  org.apache.arrow.vector.holders.Float8Holder output;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
+
+  @Inject
+  org.apache.arrow.memory.ArrowBuf buffer;
 
   public void setup() {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isLinear(geom)) {
-      output.value = geom.getLength();
-    } else {
-      output.value = 0.0;
-    }
+    org.locationtech.jts.geom.GeometryFactory factory = new GeometryFactory();
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
+    org.locationtech.jts.algorithm.Centroid centroid = new org.locationtech.jts.algorithm.Centroid(geom);
+    org.locationtech.jts.geom.Point point = factory.createPoint(centroid.getCentroid());
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(point);
+    buffer = buffer.reallocIfNeeded(bytes.length);
+    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
   }
 }

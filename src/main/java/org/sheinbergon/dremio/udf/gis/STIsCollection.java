@@ -24,25 +24,22 @@ import com.dremio.exec.expr.annotations.Param;
 
 
 @FunctionTemplate(
-    name = "ST_Length",
+    name = "ST_IsCollection",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
-public class STLength implements SimpleFunction {
+public class STIsCollection implements SimpleFunction {
   @Param
-  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput1;
 
   @Output
-  org.apache.arrow.vector.holders.Float8Holder output;
+  org.apache.arrow.vector.holders.BitHolder output;
 
   public void setup() {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isLinear(geom)) {
-      output.value = geom.getLength();
-    } else {
-      output.value = 0.0;
-    }
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
+    boolean result = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isACollection(geom);
+    output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBitValue(result);
   }
 }

@@ -56,6 +56,9 @@ public class STCollectAggregate implements AggrFunction {
     org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(indicator);
   }
 
+  // TODO - Come up with a better de/serialization mechanism (store geometries with collecting/expanding them each time),
+  // TODO   as the current one is somewhat inefficient.
+
   @Override
   public void add() {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(input)) {
@@ -92,17 +95,3 @@ public class STCollectAggregate implements AggrFunction {
     org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(indicator);
   }
 }
-
-
-/**
- * SELECT ST_Collect(ST_GeomFromText(geom))
- * FROM (
- * SELECT
- * FLATTEN(
- * CONVERT_FROM(
- * '["POINT(1 2)","LINESTRING(1.5 2.45,3.21 4)","POLYGON((1 2,1 4,3 4,3 2,1 2))"]',
- * 'json'
- * )
- * ) AS geom
- * )
- */

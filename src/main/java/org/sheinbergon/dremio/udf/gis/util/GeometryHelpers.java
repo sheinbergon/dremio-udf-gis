@@ -18,93 +18,106 @@
 package org.sheinbergon.dremio.udf.gis.util;
 
 
+import com.dremio.exec.expr.fn.impl.StringFunctionHelpers;
+import com.google.common.collect.Sets;
+import org.apache.arrow.memory.ArrowBuf;
+import org.apache.arrow.vector.holders.*;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.io.*;
+import org.locationtech.jts.io.geojson.GeoJsonWriter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.Set;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public final class GeometryHelpers {
 
   public static final int BIT_TRUE = 1;
   public static final int BIT_FALSE = 0;
-  static final String POINT = "Point";
   public static final int DEFAULT_SRID = 4326;
+
+  private static final Set<String> AREAL_TYPES = Sets.newHashSet(Geometry.TYPENAME_POLYGON, Geometry.TYPENAME_MULTIPOLYGON);
+
+  private static final Set<String> LINEAR_TYPES = Sets.newHashSet(Geometry.TYPENAME_LINESTRING, Geometry.TYPENAME_MULTILINESTRING);
 
   private static final int GEOMETRY_WRITER_DIMENSIONS = 2;
 
-  public static java.lang.String toUTF8String(
-      final @Nonnull org.apache.arrow.vector.holders.VarCharHolder holder) {
-    return com.dremio.exec.expr.fn.impl.StringFunctionHelpers.toStringFromUTF8(
+  private GeometryHelpers() {
+  }
+
+  public static String toUTF8String(final @Nonnull VarCharHolder holder) {
+    return StringFunctionHelpers.toStringFromUTF8(
         holder.start,
         holder.end,
         holder.buffer);
   }
 
-  private static java.lang.String toUTF8String(
-      final @Nonnull org.apache.arrow.vector.holders.NullableVarCharHolder holder) {
-    return com.dremio.exec.expr.fn.impl.StringFunctionHelpers.toStringFromUTF8(
+  private static String toUTF8String(final @Nonnull NullableVarCharHolder holder) {
+    return StringFunctionHelpers.toStringFromUTF8(
         holder.start,
         holder.end,
         holder.buffer);
   }
 
-  public static byte[] toBinary(
-      final @Nonnull org.locationtech.jts.geom.Geometry geometry) {
-    org.locationtech.jts.io.WKBWriter writer = new org.locationtech.jts.io.WKBWriter(GEOMETRY_WRITER_DIMENSIONS, true);
+  public static byte[] toBinary(final @Nonnull Geometry geometry) {
+    WKBWriter writer = new WKBWriter(GEOMETRY_WRITER_DIMENSIONS, true);
     return writer.write(geometry);
   }
 
   public static byte[] toText(
-      final @Nonnull org.locationtech.jts.geom.Geometry geometry) {
-    org.locationtech.jts.io.WKTWriter writer = new org.locationtech.jts.io.WKTWriter(GEOMETRY_WRITER_DIMENSIONS);
-    return writer.write(geometry).getBytes(java.nio.charset.StandardCharsets.UTF_8);
+      final @Nonnull Geometry geometry) {
+    WKTWriter writer = new WKTWriter(GEOMETRY_WRITER_DIMENSIONS);
+    return writer.write(geometry).getBytes(StandardCharsets.UTF_8);
   }
 
-  public static byte[] toGeoJson(
-      final @Nonnull org.locationtech.jts.geom.Geometry geometry) {
-    org.locationtech.jts.io.geojson.GeoJsonWriter writer = new org.locationtech.jts.io.geojson.GeoJsonWriter();
-    return writer.write(geometry).getBytes(java.nio.charset.StandardCharsets.UTF_8);
+  public static byte[] toGeoJson(final @Nonnull Geometry geometry) {
+    GeoJsonWriter writer = new GeoJsonWriter();
+    return writer.write(geometry).getBytes(StandardCharsets.UTF_8);
   }
 
   @Nonnull
-  public static org.locationtech.jts.geom.Geometry toGeometry(
-      final @Nonnull org.apache.arrow.vector.holders.NullableVarCharHolder holder
-  ) {
+  public static Geometry toGeometry(final @Nonnull NullableVarCharHolder holder) {
     try {
-      java.lang.String wkt = toUTF8String(holder);
-      org.locationtech.jts.io.WKTReader reader = new org.locationtech.jts.io.WKTReader();
+      String wkt = toUTF8String(holder);
+      WKTReader reader = new WKTReader();
       return reader.read(wkt);
-    } catch (org.locationtech.jts.io.ParseException x) {
+    } catch (ParseException x) {
       throw new RuntimeException(x);
     }
   }
 
-
-  public static org.locationtech.jts.geom.GeometryCollection addToGeometryCollection(
-      final @Nonnull org.locationtech.jts.geom.GeometryCollection collection,
-      final @Nonnull org.locationtech.jts.geom.Geometry addition) {
-    org.locationtech.jts.geom.Geometry[] geometries = java.util.stream.Stream.concat(
-        java.util.stream.IntStream
+  public static GeometryCollection addToGeometryCollection(
+      final @Nonnull GeometryCollection collection,
+      final @Nonnull Geometry addition) {
+    Geometry[] geometries = Stream.concat(
+        IntStream
             .range(0, collection.getNumGeometries())
             .mapToObj(index -> collection.getGeometryN(index)),
-        java.util.stream.Stream.of(addition)
+        Stream.of(addition)
     ).toArray(size -> new Geometry[size]);
-    return org.sheinbergon.dremio.udf.gis.util.GeometryCollections.collect(geometries);
+    return GeometryCollections.collect(geometries);
   }
 
-  public static org.locationtech.jts.geom.GeometryCollection toGeometryCollection(
-      final @Nonnull org.apache.arrow.vector.holders.NullableVarBinaryHolder holder) {
-    return (org.locationtech.jts.geom.GeometryCollection) toGeometry(holder);
+  public static GeometryCollection toGeometryCollection(
+      final @Nonnull NullableVarBinaryHolder holder) {
+    return (GeometryCollection) toGeometry(holder);
   }
 
-  public static org.locationtech.jts.geom.Geometry toGeometry(
-      final @Nonnull org.apache.arrow.vector.holders.NullableVarBinaryHolder holder) {
-    java.nio.ByteBuffer buffer = holder.buffer.nioBuffer(holder.start, holder.end - holder.start);
-    try (java.io.InputStream stream = org.sheinbergon.dremio.udf.gis.util.ByteBufferInputStream.toInputStream(buffer)) {
-      org.locationtech.jts.io.InputStreamInStream adapter = new org.locationtech.jts.io.InputStreamInStream(stream);
-      org.locationtech.jts.io.WKBReader reader = new org.locationtech.jts.io.WKBReader();
+  public static Geometry toGeometry(
+      final @Nonnull NullableVarBinaryHolder holder) {
+    ByteBuffer buffer = holder.buffer.nioBuffer(holder.start, holder.end - holder.start);
+    try (InputStream stream = ByteBufferInputStream.toInputStream(buffer)) {
+      InputStreamInStream adapter = new InputStreamInStream(stream);
+      WKBReader reader = new WKBReader();
       return reader.read(adapter);
-    } catch (java.io.IOException | org.locationtech.jts.io.ParseException x) {
+    } catch (IOException | ParseException x) {
       throw new RuntimeException(x);
     }
   }
@@ -115,8 +128,8 @@ public final class GeometryHelpers {
 
   public static void populate(
       final @Nonnull byte[] bytes,
-      final @Nonnull org.apache.arrow.memory.ArrowBuf buffer,
-      final @Nonnull org.apache.arrow.vector.holders.NullableVarCharHolder output) {
+      final @Nonnull ArrowBuf buffer,
+      final @Nonnull NullableVarCharHolder output) {
     output.buffer = buffer;
     output.start = 0;
     output.end = bytes.length;
@@ -125,8 +138,8 @@ public final class GeometryHelpers {
 
   public static void populate(
       final @Nonnull byte[] bytes,
-      final @Nonnull org.apache.arrow.memory.ArrowBuf buffer,
-      final @Nonnull org.apache.arrow.vector.holders.NullableVarBinaryHolder output) {
+      final @Nonnull ArrowBuf buffer,
+      final @Nonnull NullableVarBinaryHolder output) {
     output.buffer = buffer;
     output.start = 0;
     output.end = bytes.length;
@@ -134,52 +147,64 @@ public final class GeometryHelpers {
   }
 
   public static boolean isAPoint(
-      final @Nullable org.locationtech.jts.geom.Geometry geometry) {
-    return geometry != null && geometry.getGeometryType().equals(POINT);
+      final @Nullable Geometry geometry) {
+    return geometry != null && geometry.getGeometryType().equals(Geometry.TYPENAME_POINT);
   }
 
-  public static boolean isHolderSet(final @Nonnull org.apache.arrow.vector.holders.ValueHolder holder) {
-    if (holder instanceof org.apache.arrow.vector.holders.NullableIntHolder) {
-      return ((org.apache.arrow.vector.holders.NullableIntHolder) holder).isSet == BIT_TRUE;
-    } else if (holder instanceof org.apache.arrow.vector.holders.NullableBitHolder) {
-      return ((org.apache.arrow.vector.holders.NullableBitHolder) holder).isSet == BIT_TRUE;
-    } else if (holder instanceof org.apache.arrow.vector.holders.NullableVarBinaryHolder) {
-      return ((org.apache.arrow.vector.holders.NullableVarBinaryHolder) holder).isSet == BIT_TRUE;
+  public static boolean isAreal(
+      final @Nullable Geometry geometry) {
+    return geometry != null && AREAL_TYPES.contains(geometry.getGeometryType());
+  }
+
+  public static boolean isACollection(
+      final @Nullable Geometry geometry) {
+    return geometry instanceof GeometryCollection;
+  }
+
+  public static boolean isLinear(
+      final @Nullable Geometry geometry) {
+    return geometry != null && LINEAR_TYPES.contains(geometry.getGeometryType());
+  }
+
+  public static boolean isHolderSet(final @Nonnull ValueHolder holder) {
+    if (holder instanceof NullableIntHolder) {
+      return ((NullableIntHolder) holder).isSet == BIT_TRUE;
+    } else if (holder instanceof NullableBitHolder) {
+      return ((NullableBitHolder) holder).isSet == BIT_TRUE;
+    } else if (holder instanceof NullableVarBinaryHolder) {
+      return ((NullableVarBinaryHolder) holder).isSet == BIT_TRUE;
     } else {
-      throw new java.lang.IllegalArgumentException(
-          java.lang.String.format("Unsupported value holder type - %s",
+      throw new IllegalArgumentException(
+          String.format("Unsupported value holder type - %s",
               holder.getClass().getName()));
     }
   }
 
-  public static void markHolderSet(final @Nonnull org.apache.arrow.vector.holders.ValueHolder holder) {
-    if (holder instanceof org.apache.arrow.vector.holders.NullableIntHolder) {
-      ((org.apache.arrow.vector.holders.NullableIntHolder) holder).isSet = BIT_TRUE;
-    } else if (holder instanceof org.apache.arrow.vector.holders.NullableBitHolder) {
-      ((org.apache.arrow.vector.holders.NullableBitHolder) holder).isSet = BIT_TRUE;
-    } else if (holder instanceof org.apache.arrow.vector.holders.NullableVarBinaryHolder) {
-      ((org.apache.arrow.vector.holders.NullableVarBinaryHolder) holder).isSet = BIT_TRUE;
+  public static void markHolderSet(final @Nonnull ValueHolder holder) {
+    if (holder instanceof NullableIntHolder) {
+      ((NullableIntHolder) holder).isSet = BIT_TRUE;
+    } else if (holder instanceof NullableBitHolder) {
+      ((NullableBitHolder) holder).isSet = BIT_TRUE;
+    } else if (holder instanceof NullableVarBinaryHolder) {
+      ((NullableVarBinaryHolder) holder).isSet = BIT_TRUE;
     } else {
-      throw new java.lang.IllegalArgumentException(
-          java.lang.String.format("Unsupported value holder type - %s",
+      throw new IllegalArgumentException(
+          String.format("Unsupported value holder type - %s",
               holder.getClass().getName()));
     }
   }
 
-  public static void markHolderNotSet(final @Nonnull org.apache.arrow.vector.holders.ValueHolder holder) {
-    if (holder instanceof org.apache.arrow.vector.holders.NullableIntHolder) {
-      ((org.apache.arrow.vector.holders.NullableIntHolder) holder).isSet = BIT_FALSE;
-    } else if (holder instanceof org.apache.arrow.vector.holders.NullableBitHolder) {
-      ((org.apache.arrow.vector.holders.NullableBitHolder) holder).isSet = BIT_FALSE;
-    } else if (holder instanceof org.apache.arrow.vector.holders.NullableVarBinaryHolder) {
-      ((org.apache.arrow.vector.holders.NullableVarBinaryHolder) holder).isSet = BIT_FALSE;
+  public static void markHolderNotSet(final @Nonnull ValueHolder holder) {
+    if (holder instanceof NullableIntHolder) {
+      ((NullableIntHolder) holder).isSet = BIT_FALSE;
+    } else if (holder instanceof NullableBitHolder) {
+      ((NullableBitHolder) holder).isSet = BIT_FALSE;
+    } else if (holder instanceof NullableVarBinaryHolder) {
+      ((NullableVarBinaryHolder) holder).isSet = BIT_FALSE;
     } else {
-      throw new java.lang.IllegalArgumentException(
-          java.lang.String.format("Unsupported value holder type - %s",
+      throw new IllegalArgumentException(
+          String.format("Unsupported value holder type - %s",
               holder.getClass().getName()));
     }
-  }
-
-  private GeometryHelpers() {
   }
 }

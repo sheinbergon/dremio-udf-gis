@@ -24,10 +24,10 @@ import com.dremio.exec.expr.annotations.Param;
 
 
 @FunctionTemplate(
-    name = "ST_Length",
+    name = "ST_Perimeter",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
-public class STLength implements SimpleFunction {
+public class STPerimeter implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
@@ -39,7 +39,7 @@ public class STLength implements SimpleFunction {
 
   public void eval() {
     org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isLinear(geom)) {
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isAreal(geom)) {
       output.value = geom.getLength();
     } else {
       output.value = 0.0;

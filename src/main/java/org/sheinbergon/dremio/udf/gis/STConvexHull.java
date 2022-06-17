@@ -22,27 +22,31 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
+import javax.inject.Inject;
 
 @FunctionTemplate(
-    name = "ST_Length",
+    name = "ST_ConvexHull",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
-public class STLength implements SimpleFunction {
+public class STConvexHull implements SimpleFunction {
   @Param
-  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput1;
 
   @Output
-  org.apache.arrow.vector.holders.Float8Holder output;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
+
+  @Inject
+  org.apache.arrow.memory.ArrowBuf buffer;
 
   public void setup() {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isLinear(geom)) {
-      output.value = geom.getLength();
-    } else {
-      output.value = 0.0;
-    }
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
+    org.locationtech.jts.algorithm.ConvexHull convexHull = new org.locationtech.jts.algorithm.ConvexHull(geom);
+    org.locationtech.jts.geom.Geometry hull = convexHull.getConvexHull();
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(hull);
+    buffer = buffer.reallocIfNeeded(bytes.length);
+    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
   }
 }

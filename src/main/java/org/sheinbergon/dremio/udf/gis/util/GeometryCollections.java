@@ -17,27 +17,33 @@
  */
 package org.sheinbergon.dremio.udf.gis.util;
 
+import org.locationtech.jts.geom.*;
+
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public final class GeometryCollections {
 
-  public static org.locationtech.jts.geom.GeometryCollection empty() {
-    org.locationtech.jts.geom.GeometryFactory factory = new org.locationtech.jts.geom.GeometryFactory();
+  private GeometryCollections() {
+  }
+
+  public static GeometryCollection empty() {
+    GeometryFactory factory = new org.locationtech.jts.geom.GeometryFactory();
     return factory.createGeometryCollection();
   }
 
-  public static org.locationtech.jts.geom.GeometryCollection collect(final org.locationtech.jts.geom.Geometry... geometries) {
-    org.locationtech.jts.geom.GeometryFactory factory = new org.locationtech.jts.geom.GeometryFactory();
-    java.util.List<Class<? extends org.locationtech.jts.geom.Geometry>> types = geometryTypes(geometries);
+  public static GeometryCollection collect(final Geometry... geometries) {
+    GeometryFactory factory = new GeometryFactory();
+    List<Class<? extends Geometry>> types = geometryTypes(geometries);
     if (types.isEmpty()) {
       return geometryCollection(factory);
     } else if (types.size() == 1) {
-      java.lang.Class<? extends org.locationtech.jts.geom.Geometry> type = types.get(0);
-      if (type == org.locationtech.jts.geom.LineString.class) {
+      Class<? extends Geometry> type = types.get(0);
+      if (type == LineString.class) {
         return multiLineString(factory, geometries);
-      } else if (type == org.locationtech.jts.geom.Point.class) {
+      } else if (type == Point.class) {
         return multiPoint(factory, geometries);
-      } else if (type == org.locationtech.jts.geom.Polygon.class) {
+      } else if (type == Polygon.class) {
         return multiPolygon(factory, geometries);
       } else {
         return geometryCollection(factory, geometries);
@@ -92,9 +98,6 @@ public final class GeometryCollections {
   private static org.locationtech.jts.geom.GeometryCollection geometryCollection(
       final @Nonnull org.locationtech.jts.geom.GeometryFactory factory) {
     return factory.createGeometryCollection();
-  }
-
-  private GeometryCollections() {
   }
 
 }

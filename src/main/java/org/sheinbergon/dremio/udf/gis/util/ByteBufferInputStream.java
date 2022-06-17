@@ -21,14 +21,14 @@ import javax.annotation.Nonnull;
 
 final class ByteBufferInputStream extends java.io.InputStream {
 
-  static ByteBufferInputStream toInputStream(final @Nonnull java.nio.ByteBuffer buffer) {
-    return new ByteBufferInputStream(buffer);
-  }
-
   private final java.nio.ByteBuffer buffer;
 
   private ByteBufferInputStream(final @Nonnull java.nio.ByteBuffer buffer) {
     this.buffer = buffer;
+  }
+
+  static ByteBufferInputStream toInputStream(final @Nonnull java.nio.ByteBuffer buffer) {
+    return new ByteBufferInputStream(buffer);
   }
 
   @Override
