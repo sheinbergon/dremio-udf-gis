@@ -22,6 +22,8 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
+
+
 import javax.inject.Inject;
 
 @FunctionTemplate(
@@ -46,10 +48,10 @@ public class STGeomFromTextSrid implements SimpleFunction {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(wktInput);
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(wktInput);
     geom.setSRID(sridInput.value);
-    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(geom);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(geom);
     buffer = buffer.reallocIfNeeded(bytes.length);
-    org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, binaryOutput);
+    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
   }
 }
