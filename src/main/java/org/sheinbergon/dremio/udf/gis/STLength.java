@@ -22,6 +22,7 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
+
 @FunctionTemplate(
     name = "ST_Length",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
@@ -37,7 +38,11 @@ public class STLength implements SimpleFunction {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
-    output.value = geom.getLength();
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isLinear(geom)) {
+      output.value = geom.getLength();
+    } else {
+      output.value = 0.0;
+    }
   }
 }
