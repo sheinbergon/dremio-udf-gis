@@ -23,12 +23,13 @@ import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
 
+import javax.inject.Inject;
 
 @FunctionTemplate(
-    name = "ST_Contains",
+    name = "ST_Intersection",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
-public class STContains implements SimpleFunction {
+public class STIntersection implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput1;
 
@@ -36,7 +37,10 @@ public class STContains implements SimpleFunction {
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput2;
 
   @Output
-  org.apache.arrow.vector.holders.BitHolder output;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
+
+  @Inject
+  org.apache.arrow.memory.ArrowBuf buffer;
 
   public void setup() {
   }
@@ -44,6 +48,9 @@ public class STContains implements SimpleFunction {
   public void eval() {
     org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
     org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput2);
-    output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBitValue(geom1.contains(geom2));
+    org.locationtech.jts.geom.Geometry intersection = geom1.intersection(geom2);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(intersection);
+    buffer = buffer.reallocIfNeeded(bytes.length);
+    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
   }
 }

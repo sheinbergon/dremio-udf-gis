@@ -22,6 +22,7 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
+
 @FunctionTemplate(
     name = "ST_DWithin",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
@@ -44,8 +45,8 @@ public class STDWithin implements SimpleFunction {
 
   public void eval() {
     double distance = distanceInput.value;
-    org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput1);
-    org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput2);
-    output.value = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBitValue(geom1.distance(geom2) <= distance);
+    org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
+    org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput2);
+    output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBitValue(geom1.distance(geom2) <= distance);
   }
 }
