@@ -19,11 +19,13 @@ package org.sheinbergon.dremio.udf.gis.util;
 
 
 import com.dremio.exec.expr.fn.impl.StringFunctionHelpers;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.arrow.memory.ArrowBuf;
 import org.apache.arrow.vector.holders.*;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.io.*;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 
@@ -33,9 +35,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Set;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public final class GeometryHelpers {
 
@@ -93,21 +94,24 @@ public final class GeometryHelpers {
     }
   }
 
-  public static GeometryCollection addToGeometryCollection(
-      final @Nonnull GeometryCollection collection,
-      final @Nonnull Geometry addition) {
-    Geometry[] geometries = Stream.concat(
-        IntStream
-            .range(0, collection.getNumGeometries())
-            .mapToObj(index -> collection.getGeometryN(index)),
-        Stream.of(addition)
-    ).toArray(size -> new Geometry[size]);
-    return GeometryCollections.collect(geometries);
-  }
-
-  public static GeometryCollection toGeometryCollection(
-      final @Nonnull NullableVarBinaryHolder holder) {
-    return (GeometryCollection) toGeometry(holder);
+  public static GeometryCollection toGeometryCollection(final @Nonnull NullableVarBinaryHolder holder) {
+    try {
+      GeometryFactory factory = new GeometryFactory();
+      ArrowBuf buffer = holder.buffer;
+      WKBReader reader = new WKBReader();
+      List<Geometry> geometries = Lists.newLinkedList();
+      for (long index = 0L; index < buffer.readableBytes();) {
+        int size = buffer.getInt(index);
+        index += Integer.BYTES;
+        byte[] array = new byte[size];
+        buffer.getBytes(index, array);
+        index += size;
+        geometries.add(reader.read(array));
+      }
+      return GeometryCollections.collect(geometries.toArray(new Geometry[0]));
+    } catch (ParseException x) {
+      throw new RuntimeException(x);
+    }
   }
 
   public static Geometry toGeometry(
@@ -129,21 +133,31 @@ public final class GeometryHelpers {
   public static void populate(
       final @Nonnull byte[] bytes,
       final @Nonnull ArrowBuf buffer,
-      final @Nonnull NullableVarCharHolder output) {
-    output.buffer = buffer;
-    output.start = 0;
-    output.end = bytes.length;
-    output.buffer.setBytes(output.start, bytes);
+      final @Nonnull NullableVarCharHolder holder) {
+    holder.buffer = buffer;
+    holder.start = 0;
+    holder.end = bytes.length;
+    holder.buffer.setBytes(holder.start, bytes);
   }
 
   public static void populate(
       final @Nonnull byte[] bytes,
       final @Nonnull ArrowBuf buffer,
-      final @Nonnull NullableVarBinaryHolder output) {
-    output.buffer = buffer;
-    output.start = 0;
-    output.end = bytes.length;
-    output.buffer.setBytes(output.start, bytes);
+      final @Nonnull NullableVarBinaryHolder holder) {
+    holder.buffer = buffer;
+    holder.start = 0;
+    holder.end = bytes.length;
+    holder.buffer.setBytes(holder.start, bytes);
+  }
+
+  public static void append(
+      final @Nonnull byte[] bytes,
+      final @Nonnull ArrowBuf buffer,
+      final @Nonnull NullableVarBinaryHolder holder) {
+    holder.buffer = buffer;
+    holder.end += bytes.length;
+    holder.buffer.writeInt(bytes.length);
+    holder.buffer.writeBytes(bytes);
   }
 
   public static boolean isAPoint(

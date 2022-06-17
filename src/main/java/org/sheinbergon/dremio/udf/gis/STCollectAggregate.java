@@ -56,18 +56,13 @@ public class STCollectAggregate implements AggrFunction {
     org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(indicator);
   }
 
-  // TODO - Come up with a better de/serialization mechanism (store geometries with collecting/expanding them each time),
-  // TODO   as the current one is somewhat inefficient.
-
   @Override
   public void add() {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(input)) {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(input);
-      org.locationtech.jts.geom.GeometryCollection col = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometryCollection(value);
-      org.locationtech.jts.geom.GeometryCollection ext = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.addToGeometryCollection(col, geom);
-      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(ext);
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(geom);
       buffer = buffer.reallocIfNeeded(bytes.length);
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, value);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.append(bytes, buffer, value);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderSet(indicator);
     }
   }
