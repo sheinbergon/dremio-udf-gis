@@ -6,8 +6,6 @@
 
 # Dremio Geo-Spatial Extensions
 
-## Adds GIS functionality to Dremio.
-
 ### What you get
 - Widespread OGC implementation for SQL (adheres to PostGIS standards)
   - Supported input formats: `WKT`, `WKB (HEX or BINARY)`
