@@ -31,7 +31,7 @@ import javax.inject.Inject;
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
 public class STCentroid implements SimpleFunction {
   @Param
-  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput1;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
   @Output
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
@@ -44,7 +44,7 @@ public class STCentroid implements SimpleFunction {
 
   public void eval() {
     org.locationtech.jts.geom.GeometryFactory factory = new GeometryFactory();
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
     org.locationtech.jts.algorithm.Centroid centroid = new org.locationtech.jts.algorithm.Centroid(geom);
     org.locationtech.jts.geom.Point point = factory.createPoint(centroid.getCentroid());
     byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(point);

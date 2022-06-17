@@ -29,7 +29,7 @@ import com.dremio.exec.expr.annotations.Param;
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
 public class STIsEmpty implements SimpleFunction {
   @Param
-  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput1;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
   @Output
   org.apache.arrow.vector.holders.BitHolder output;
@@ -38,7 +38,7 @@ public class STIsEmpty implements SimpleFunction {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
     output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBitValue(geom.isEmpty());
   }
 }

@@ -62,9 +62,9 @@ public class STCollectAggregate implements AggrFunction {
   @Override
   public void add() {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(input)) {
-      org.locationtech.jts.geom.Geometry g = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(input);
+      org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(input);
       org.locationtech.jts.geom.GeometryCollection col = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometryCollection(value);
-      org.locationtech.jts.geom.GeometryCollection ext = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.addToGeometryCollection(col, g);
+      org.locationtech.jts.geom.GeometryCollection ext = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.addToGeometryCollection(col, geom);
       byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(ext);
       buffer = buffer.reallocIfNeeded(bytes.length);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, value);
