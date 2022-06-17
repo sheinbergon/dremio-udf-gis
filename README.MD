@@ -4,13 +4,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.sheinbergon/dremio-udf-gis?color=Crimson&style=for-the-badge)](https://search.maven.org/search?q=g:org.sheinbergon%20a:dremio-udf-gis*)
 [![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/sheinbergon/dremio-udf-gis?color=432f95&style=for-the-badge)](https://app.snyk.io/org/sheinbergon/project/94183993-505b-439c-9078-6276fa4c1626)
 
-
-# Dremio GIS
-
-### Adds GIS functionality to Dremio.
-Derived from:   
-- [Apache Drill GIS Functionality](https://github.com/apache/drill/tree/master/contrib/udfs/src/main/java/org/apache/drill/exec/udfs/gis)  
-- [Christy Haragan's initial port](https://github.com/christyharagan/dremio-gis)  
+# Dremio Geo-Spatial Extensions
 
 ### What you get
 - Widespread OGC implementation for SQL (adheres to PostGIS standards)
@@ -61,3 +55,9 @@ SELECT ST_AsText(
 ### Roadmap
 - Frequent version/dependency updates
 - Add more OGC/PostGIS matching functionality
+- Add Geography type support
+
+### Noteworthy Mentions
+Work in this repository was originally based on the following sources:  
+- [Apache Drill GIS Functionality](https://github.com/apache/drill/tree/master/contrib/udfs/src/main/java/org/apache/drill/exec/udfs/gis)
+- [Christy Haragan's initial port](https://github.com/christyharagan/dremio-gis)  

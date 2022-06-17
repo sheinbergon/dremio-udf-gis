@@ -22,6 +22,8 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
+
+
 import javax.inject.Inject;
 
 @FunctionTemplate(
@@ -43,9 +45,9 @@ public class STAsGeoJson implements SimpleFunction {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
-    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeoJson(geom);
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeoJson(geom);
     buffer = buffer.reallocIfNeeded(bytes.length);
-    org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, geoJsonOutput);
+    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, geoJsonOutput);
   }
 }
