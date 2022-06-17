@@ -23,6 +23,8 @@ import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 import org.apache.arrow.memory.ArrowBuf;
 
+
+
 import javax.inject.Inject;
 
 @FunctionTemplate(
@@ -56,16 +58,16 @@ public class STPoint implements SimpleFunction {
     org.locationtech.jts.geom.PrecisionModel precisionModel = new org.locationtech.jts.geom.PrecisionModel();
     org.locationtech.jts.geom.GeometryFactory factory = new org.locationtech.jts.geom.GeometryFactory(precisionModel, srid());
     org.locationtech.jts.geom.Point point = factory.createPoint(coordinate);
-    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toBinary(point);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(point);
     buffer = buffer.reallocIfNeeded(bytes.length);
-    org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.populate(bytes, buffer, output);
+    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, output);
   }
 
   private int srid() {
-    if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isHolderSet(sridInput)) {
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(sridInput)) {
       return sridInput.value;
     } else {
-      return org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.DEFAULT_SRID;
+      return org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.DEFAULT_SRID;
     }
   }
 }

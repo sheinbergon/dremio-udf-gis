@@ -19,6 +19,9 @@ package org.sheinbergon.dremio.udf.gis.util;
 
 // Inspired by https://github.com/teiid/teiid/blob/master/optional-geo/src/main/java/org/teiid/geo/GeometryTransformUtils.java
 
+import org.locationtech.jts.geom.*;
+import org.locationtech.proj4j.*;
+
 import javax.annotation.Nonnull;
 
 public final class GeometryTransformation {
@@ -26,35 +29,38 @@ public final class GeometryTransformation {
 
   private static final String CRS_TEMPLATE = "EPSG:%d";
 
-  public static org.locationtech.jts.geom.Geometry transform(
-      final @Nonnull org.locationtech.jts.geom.Geometry geom,
+  private GeometryTransformation() {
+  }
+
+  public static Geometry transform(
+      final @Nonnull Geometry geom,
       final int targetSrid) {
-    org.locationtech.proj4j.CRSFactory factory = new org.locationtech.proj4j.CRSFactory();
-    org.locationtech.proj4j.CoordinateReferenceSystem source = factory.createFromName(java.lang.String.format(CRS_TEMPLATE, geom.getSRID()));
-    org.locationtech.proj4j.CoordinateReferenceSystem target = factory.createFromName(java.lang.String.format(CRS_TEMPLATE, targetSrid));
-    org.locationtech.proj4j.CoordinateTransform transform = new org.locationtech.proj4j.BasicCoordinateTransform(source, target);
+    CRSFactory factory = new CRSFactory();
+    CoordinateReferenceSystem source = factory.createFromName(String.format(CRS_TEMPLATE, geom.getSRID()));
+    CoordinateReferenceSystem target = factory.createFromName(String.format(CRS_TEMPLATE, targetSrid));
+    CoordinateTransform transform = new BasicCoordinateTransform(source, target);
     return transform(geom, transform);
   }
 
-  private static org.locationtech.jts.geom.Geometry transform(
-      final @Nonnull org.locationtech.jts.geom.Geometry geom,
-      final @Nonnull org.locationtech.proj4j.CoordinateTransform transform) {
-    if (geom instanceof org.locationtech.jts.geom.Polygon) {
-      return transform(transform, (org.locationtech.jts.geom.Polygon) geom);
-    } else if (geom instanceof org.locationtech.jts.geom.Point) {
-      return transform(transform, (org.locationtech.jts.geom.Point) geom);
-    } else if (geom instanceof org.locationtech.jts.geom.LinearRing) {
-      return transform(transform, (org.locationtech.jts.geom.LinearRing) geom);
-    } else if (geom instanceof org.locationtech.jts.geom.LineString) {
-      return transform(transform, (org.locationtech.jts.geom.LineString) geom);
-    } else if (geom instanceof org.locationtech.jts.geom.MultiPolygon) {
-      return transform(transform, (org.locationtech.jts.geom.MultiPolygon) geom);
-    } else if (geom instanceof org.locationtech.jts.geom.MultiPoint) {
-      return transform(transform, (org.locationtech.jts.geom.MultiPoint) geom);
-    } else if (geom instanceof org.locationtech.jts.geom.MultiLineString) {
-      return transform(transform, (org.locationtech.jts.geom.MultiLineString) geom);
-    } else if (geom instanceof org.locationtech.jts.geom.GeometryCollection) {
-      return transform(transform, (org.locationtech.jts.geom.GeometryCollection) geom);
+  private static Geometry transform(
+      final @Nonnull Geometry geom,
+      final @Nonnull CoordinateTransform transform) {
+    if (geom instanceof Polygon) {
+      return transform(transform, (Polygon) geom);
+    } else if (geom instanceof Point) {
+      return transform(transform, (Point) geom);
+    } else if (geom instanceof LinearRing) {
+      return transform(transform, (LinearRing) geom);
+    } else if (geom instanceof LineString) {
+      return transform(transform, (LineString) geom);
+    } else if (geom instanceof MultiPolygon) {
+      return transform(transform, (MultiPolygon) geom);
+    } else if (geom instanceof MultiPoint) {
+      return transform(transform, (MultiPoint) geom);
+    } else if (geom instanceof MultiLineString) {
+      return transform(transform, (MultiLineString) geom);
+    } else if (geom instanceof GeometryCollection) {
+      return transform(transform, (GeometryCollection) geom);
     } else {
       throw new IllegalArgumentException(
           String.format("Unsupported geometry type for conversion - %s",
@@ -62,82 +68,82 @@ public final class GeometryTransformation {
     }
   }
 
-  private static org.locationtech.jts.geom.Coordinate[] convert(
-      final @Nonnull org.locationtech.proj4j.ProjCoordinate[] projCoordinates) {
-    org.locationtech.jts.geom.Coordinate[] jtsCoordinates = new org.locationtech.jts.geom.Coordinate[projCoordinates.length];
+  private static Coordinate[] convert(
+      final @Nonnull ProjCoordinate[] projCoordinates) {
+    Coordinate[] jtsCoordinates = new Coordinate[projCoordinates.length];
     for (int i = 0; i < projCoordinates.length; ++i) {
-      jtsCoordinates[i] = new org.locationtech.jts.geom.Coordinate(projCoordinates[i].x, projCoordinates[i].y);
+      jtsCoordinates[i] = new Coordinate(projCoordinates[i].x, projCoordinates[i].y);
     }
     return jtsCoordinates;
   }
 
-  private static org.locationtech.proj4j.ProjCoordinate[] convert(
-      final @Nonnull org.locationtech.jts.geom.Coordinate[] jtsCoordinates) {
-    org.locationtech.proj4j.ProjCoordinate[] projectionCoordinates = new org.locationtech.proj4j.ProjCoordinate[jtsCoordinates.length];
+  private static ProjCoordinate[] convert(
+      final @Nonnull Coordinate[] jtsCoordinates) {
+    ProjCoordinate[] projectionCoordinates = new ProjCoordinate[jtsCoordinates.length];
     for (int i = 0; i < jtsCoordinates.length; ++i) {
-      projectionCoordinates[i] = new org.locationtech.proj4j.ProjCoordinate(jtsCoordinates[i].x, jtsCoordinates[i].y);
+      projectionCoordinates[i] = new ProjCoordinate(jtsCoordinates[i].x, jtsCoordinates[i].y);
     }
     return projectionCoordinates;
   }
 
-  protected static org.locationtech.jts.geom.Coordinate[] transformCoordinates(
-      @Nonnull final org.locationtech.proj4j.CoordinateTransform transform,
-      @Nonnull final org.locationtech.jts.geom.Coordinate[] source) {
+  static Coordinate[] transformCoordinates(
+      @Nonnull final CoordinateTransform transform,
+      @Nonnull final Coordinate[] source) {
     return convert(transformCoordinates(transform, convert(source)));
   }
 
   @Nonnull
-  private static org.locationtech.proj4j.ProjCoordinate[] transformCoordinates(
-      @Nonnull final org.locationtech.proj4j.CoordinateTransform transform,
-      @Nonnull final org.locationtech.proj4j.ProjCoordinate[] source) {
-    org.locationtech.proj4j.ProjCoordinate[] out = new org.locationtech.proj4j.ProjCoordinate[source.length];
+  private static ProjCoordinate[] transformCoordinates(
+      @Nonnull final CoordinateTransform transform,
+      @Nonnull final ProjCoordinate[] source) {
+    ProjCoordinate[] out = new ProjCoordinate[source.length];
     for (int index = 0; index < source.length; ++index) {
-      out[index] = transform.transform(source[index], new org.locationtech.proj4j.ProjCoordinate());
+      out[index] = transform.transform(source[index], new ProjCoordinate());
     }
     return out;
   }
 
   @Nonnull
-  private static org.locationtech.jts.geom.Polygon transform(
-      @Nonnull final org.locationtech.proj4j.CoordinateTransform transform,
-      @Nonnull final org.locationtech.jts.geom.Polygon polygon) {
+  private static Polygon transform(
+      @Nonnull final CoordinateTransform transform,
+      @Nonnull final Polygon polygon) {
     return polygon.getFactory().createPolygon(
         transformCoordinates(
             transform, polygon.getCoordinates()));
   }
 
   @Nonnull
-  private static org.locationtech.jts.geom.Geometry transform(
-      @Nonnull final org.locationtech.proj4j.CoordinateTransform transform,
-      @Nonnull final org.locationtech.jts.geom.Point point) {
+  private static Geometry transform(
+      @Nonnull final CoordinateTransform transform,
+      @Nonnull final Point point) {
     return point.getFactory().createPoint(
         transformCoordinates(
             transform, point.getCoordinates())[0]);
   }
 
   @Nonnull
-  private static org.locationtech.jts.geom.Geometry transform(
-      @Nonnull final org.locationtech.proj4j.CoordinateTransform transform,
-      @Nonnull final org.locationtech.jts.geom.LinearRing linearRing) {
+  private static Geometry transform(
+      @Nonnull final CoordinateTransform transform,
+      @Nonnull final LinearRing linearRing) {
     return linearRing.getFactory()
         .createLinearRing(
             transformCoordinates(transform, linearRing.getCoordinates()));
   }
 
   @Nonnull
-  private static org.locationtech.jts.geom.Geometry transform(
-      @Nonnull final org.locationtech.proj4j.CoordinateTransform transform,
-      @Nonnull final org.locationtech.jts.geom.LineString lineString) {
+  private static Geometry transform(
+      @Nonnull final CoordinateTransform transform,
+      @Nonnull final LineString lineString) {
     return lineString.getFactory().createLineString(
         transformCoordinates(
             transform, lineString.getCoordinates()));
   }
 
   @Nonnull
-  private static org.locationtech.jts.geom.Geometry transform(
+  private static Geometry transform(
       @Nonnull final org.locationtech.proj4j.CoordinateTransform transform,
-      @Nonnull final org.locationtech.jts.geom.MultiPolygon multiPolygon) {
-    org.locationtech.jts.geom.Polygon[] polygon = new org.locationtech.jts.geom.Polygon[multiPolygon.getNumGeometries()];
+      @Nonnull final MultiPolygon multiPolygon) {
+    Polygon[] polygon = new Polygon[multiPolygon.getNumGeometries()];
     for (int i = 0; i < polygon.length; ++i) {
       polygon[i] = multiPolygon.getFactory()
           .createPolygon(transformCoordinates(transform,
@@ -147,19 +153,19 @@ public final class GeometryTransformation {
   }
 
   @Nonnull
-  private static org.locationtech.jts.geom.Geometry transform(
+  private static Geometry transform(
       @Nonnull final org.locationtech.proj4j.CoordinateTransform transform,
-      @Nonnull final org.locationtech.jts.geom.MultiPoint multiPoint) {
+      @Nonnull final MultiPoint multiPoint) {
     return multiPoint.getFactory().createMultiPointFromCoords(
         transformCoordinates(
             transform, multiPoint.getCoordinates()));
   }
 
   @Nonnull
-  private static org.locationtech.jts.geom.Geometry transform(
-      @Nonnull final org.locationtech.proj4j.CoordinateTransform transform,
-      @Nonnull final org.locationtech.jts.geom.MultiLineString multiLineString) {
-    org.locationtech.jts.geom.LineString[] lineString = new org.locationtech.jts.geom.LineString[multiLineString.getNumGeometries()];
+  private static Geometry transform(
+      @Nonnull final CoordinateTransform transform,
+      @Nonnull final MultiLineString multiLineString) {
+    LineString[] lineString = new LineString[multiLineString.getNumGeometries()];
     for (int index = 0; index < lineString.length; ++index) {
       lineString[index] = multiLineString.getFactory()
           .createLineString(transformCoordinates(transform,
@@ -169,16 +175,13 @@ public final class GeometryTransformation {
   }
 
   @Nonnull
-  private static org.locationtech.jts.geom.Geometry transform(
-      @Nonnull final org.locationtech.proj4j.CoordinateTransform transform,
-      @Nonnull final org.locationtech.jts.geom.GeometryCollection collection) {
-    org.locationtech.jts.geom.Geometry[] geometry = new org.locationtech.jts.geom.Geometry[collection.getNumGeometries()];
+  private static Geometry transform(
+      @Nonnull final CoordinateTransform transform,
+      @Nonnull final GeometryCollection collection) {
+    Geometry[] geometry = new Geometry[collection.getNumGeometries()];
     for (int index = 0; index < geometry.length; ++index) {
       geometry[index] = transform(collection.getGeometryN(index), transform);
     }
     return collection.getFactory().createGeometryCollection(geometry);
-  }
-
-  private GeometryTransformation() {
   }
 }

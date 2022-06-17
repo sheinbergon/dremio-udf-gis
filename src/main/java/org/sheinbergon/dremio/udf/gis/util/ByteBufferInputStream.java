@@ -18,17 +18,19 @@
 package org.sheinbergon.dremio.udf.gis.util;
 
 import javax.annotation.Nonnull;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 
-final class ByteBufferInputStream extends java.io.InputStream {
+final class ByteBufferInputStream extends InputStream {
 
-  static ByteBufferInputStream toInputStream(final @Nonnull java.nio.ByteBuffer buffer) {
-    return new ByteBufferInputStream(buffer);
+  private final ByteBuffer buffer;
+
+  private ByteBufferInputStream(final @Nonnull ByteBuffer buffer) {
+    this.buffer = buffer;
   }
 
-  private final java.nio.ByteBuffer buffer;
-
-  private ByteBufferInputStream(final @Nonnull java.nio.ByteBuffer buffer) {
-    this.buffer = buffer;
+  static ByteBufferInputStream toInputStream(final @Nonnull ByteBuffer buffer) {
+    return new ByteBufferInputStream(buffer);
   }
 
   @Override
