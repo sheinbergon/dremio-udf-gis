@@ -22,6 +22,8 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
+
+
 @FunctionTemplate(
     name = "ST_X",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
@@ -37,12 +39,12 @@ public class STX implements SimpleFunction {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.toGeometry(binaryInput);
-    if (org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.isAPoint(geom)) {
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isAPoint(geom)) {
       output.value = ((org.locationtech.jts.geom.Point) geom).getX();
-      output.isSet = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.BIT_TRUE;
+      output.isSet = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.BIT_TRUE;
     } else {
-      output.isSet = org.sheinbergon.dremio.udf.gis.util.FunctionHelpersXL.BIT_FALSE;
+      output.isSet = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.BIT_FALSE;
     }
   }
 }
