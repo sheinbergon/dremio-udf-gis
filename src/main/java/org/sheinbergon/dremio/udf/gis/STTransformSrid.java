@@ -30,7 +30,7 @@ import javax.inject.Inject;
     name = "ST_Transform",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
-public class STTransform implements SimpleFunction {
+public class STTransformSrid implements SimpleFunction {
 
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;

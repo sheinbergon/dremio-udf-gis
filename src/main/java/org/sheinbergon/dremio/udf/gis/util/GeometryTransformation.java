@@ -38,6 +38,22 @@ public final class GeometryTransformation {
     CRSFactory factory = new CRSFactory();
     CoordinateReferenceSystem source = factory.createFromName(String.format(CRS_TEMPLATE, geom.getSRID()));
     CoordinateReferenceSystem target = factory.createFromName(String.format(CRS_TEMPLATE, targetSrid));
+    return transform(geom, source, target);
+  }
+
+  public static Geometry transform(
+      final @Nonnull Geometry geom,
+      final @Nonnull String targetProj4Parameters) {
+    CRSFactory factory = new CRSFactory();
+    CoordinateReferenceSystem source = factory.createFromName(String.format(CRS_TEMPLATE, geom.getSRID()));
+    CoordinateReferenceSystem target = factory.createFromParameters(null, targetProj4Parameters);
+    return transform(geom, source, target);
+  }
+
+  private static Geometry transform(
+      final @Nonnull Geometry geom,
+      final @Nonnull CoordinateReferenceSystem source,
+      final @Nonnull CoordinateReferenceSystem target) {
     CoordinateTransform transform = new BasicCoordinateTransform(source, target);
     return transform(geom, transform);
   }

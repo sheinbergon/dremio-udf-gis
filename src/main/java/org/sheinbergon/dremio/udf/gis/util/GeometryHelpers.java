@@ -25,7 +25,8 @@ import org.apache.arrow.memory.ArrowBuf;
 import org.apache.arrow.vector.holders.*;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineSegment;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.*;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 
@@ -60,7 +61,7 @@ public final class GeometryHelpers {
         holder.buffer);
   }
 
-  private static String toUTF8String(final @Nonnull NullableVarCharHolder holder) {
+  public static String toUTF8String(final @Nonnull NullableVarCharHolder holder) {
     return StringFunctionHelpers.toStringFromUTF8(
         holder.start,
         holder.end,
@@ -96,11 +97,10 @@ public final class GeometryHelpers {
 
   public static GeometryCollection toGeometryCollection(final @Nonnull NullableVarBinaryHolder holder) {
     try {
-      GeometryFactory factory = new GeometryFactory();
       ArrowBuf buffer = holder.buffer;
       WKBReader reader = new WKBReader();
       List<Geometry> geometries = Lists.newLinkedList();
-      for (long index = 0L; index < buffer.readableBytes();) {
+      for (long index = 0L; index < buffer.readableBytes(); ) {
         int size = buffer.getInt(index);
         index += Integer.BYTES;
         byte[] array = new byte[size];
@@ -114,6 +114,20 @@ public final class GeometryHelpers {
     }
   }
 
+  @Nonnull
+  public static Point toPoint(
+      final @Nonnull NullableVarBinaryHolder holder) {
+    return (Point) toGeometry(holder);
+  }
+
+  @Nonnull
+  public static LineSegment toLineSegment(
+      final @Nonnull Point point1,
+      final @Nonnull Point point2) {
+    return new LineSegment(point1.getX(), point1.getY(), point2.getX(), point2.getY());
+  }
+
+  @Nonnull
   public static Geometry toGeometry(
       final @Nonnull NullableVarBinaryHolder holder) {
     ByteBuffer buffer = holder.buffer.nioBuffer(holder.start, holder.end - holder.start);

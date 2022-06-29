@@ -22,28 +22,36 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
+import javax.inject.Inject;
 
 @FunctionTemplate(
-    name = "ST_Overlaps",
+    name = "ST_Transform",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
-public class STOverlaps implements SimpleFunction {
-  @Param
-  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput1;
+public class STTransformProj4 implements SimpleFunction {
 
   @Param
-  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput2;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
+
+  @Param
+  org.apache.arrow.vector.holders.NullableVarCharHolder targetProj4ParametersInput;
 
   @Output
-  org.apache.arrow.vector.holders.BitHolder output;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
+
+  @Inject
+  org.apache.arrow.memory.ArrowBuf buffer;
 
   public void setup() {
   }
 
+
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
-    org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput2);
-    boolean contains = geom1.overlaps(geom2);
-    output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBitValue(contains);
+    java.lang.String proj4Parameters = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toUTF8String(targetProj4ParametersInput);
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+    org.locationtech.jts.geom.Geometry result = org.sheinbergon.dremio.udf.gis.util.GeometryTransformation.transform(geom, proj4Parameters);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(result);
+    buffer = buffer.reallocIfNeeded(bytes.length);
+    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
   }
 }
