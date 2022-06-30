@@ -24,10 +24,7 @@ import com.google.common.collect.Sets;
 import org.apache.arrow.memory.ArrowBuf;
 import org.apache.arrow.vector.holders.*;
 import org.locationtech.jts.algorithm.Angle;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.*;
 import org.locationtech.jts.io.*;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 
@@ -48,10 +45,15 @@ public final class GeometryHelpers {
 
   private static final Set<String> AREAL_TYPES = Sets.newHashSet(Geometry.TYPENAME_POLYGON, Geometry.TYPENAME_MULTIPOLYGON);
   private static final Set<String> LINEAR_TYPES = Sets.newHashSet(Geometry.TYPENAME_LINESTRING, Geometry.TYPENAME_MULTILINESTRING);
-  private static final int GEOMETRY_WRITER_DIMENSIONS = 2;
+  private static final int GEOMETRY_DIMENSIONS = 2;
   private static final double AZIMUTH_NORTH_RADIANS = Angle.toRadians(90.0);
 
   private GeometryHelpers() {
+  }
+
+  public static Geometry emptyGeometry() {
+    GeometryFactory factory = new GeometryFactory();
+    return factory.createEmpty(GEOMETRY_DIMENSIONS);
   }
 
   public static String toUTF8String(final @Nonnull VarCharHolder holder) {
@@ -69,13 +71,13 @@ public final class GeometryHelpers {
   }
 
   public static byte[] toBinary(final @Nonnull Geometry geometry) {
-    WKBWriter writer = new WKBWriter(GEOMETRY_WRITER_DIMENSIONS, true);
+    WKBWriter writer = new WKBWriter(GEOMETRY_DIMENSIONS, true);
     return writer.write(geometry);
   }
 
   public static byte[] toText(
       final @Nonnull Geometry geometry) {
-    WKTWriter writer = new WKTWriter(GEOMETRY_WRITER_DIMENSIONS);
+    WKTWriter writer = new WKTWriter(GEOMETRY_DIMENSIONS);
     return writer.write(geometry).getBytes(StandardCharsets.UTF_8);
   }
 
@@ -143,7 +145,6 @@ public final class GeometryHelpers {
     double a = Angle.angle(p1.getCoordinate(), p2.getCoordinate());
     return Angle.normalizePositive(AZIMUTH_NORTH_RADIANS - a);
   }
-
 
   @Nonnull
   public static Geometry toGeometry(
