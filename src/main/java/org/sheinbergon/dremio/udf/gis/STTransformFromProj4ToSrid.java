@@ -22,32 +22,40 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
+import javax.inject.Inject;
 
 @FunctionTemplate(
-    name = "ST_Angle",
+    name = "ST_Transform",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
-public class STAngle4Points implements SimpleFunction {
+public class STTransformFromProj4ToSrid implements SimpleFunction {
+
   @Param
-  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput1;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
+
   @Param
-  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput2;
+  org.apache.arrow.vector.holders.NullableVarCharHolder sourceProj4ParametersInput;
+
   @Param
-  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput3;
-  @Param
-  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput4;
+  org.apache.arrow.vector.holders.IntHolder targetSridInput;
 
   @Output
-  org.apache.arrow.vector.holders.Float8Holder output;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
+
+  @Inject
+  org.apache.arrow.memory.ArrowBuf buffer;
 
   public void setup() {
   }
 
+
   public void eval() {
-    org.locationtech.jts.geom.Point p1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toPoint(binaryInput1);
-    org.locationtech.jts.geom.Point p2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toPoint(binaryInput2);
-    org.locationtech.jts.geom.Point p3 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toPoint(binaryInput3);
-    org.locationtech.jts.geom.Point p4 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toPoint(binaryInput4);
-    output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toAngleRadians(p1, p2, p3, p4);
+    int target = targetSridInput.value;
+    String source = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toUTF8String(sourceProj4ParametersInput);
+    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+    org.locationtech.jts.geom.Geometry result = org.sheinbergon.dremio.udf.gis.util.GeometryTransformation.transform(geom, source, target);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(result);
+    buffer = buffer.reallocIfNeeded(bytes.length);
+    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
   }
 }

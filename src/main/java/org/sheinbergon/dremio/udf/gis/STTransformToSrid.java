@@ -28,13 +28,13 @@ import javax.inject.Inject;
     name = "ST_Transform",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
-public class STTransformProj4 implements SimpleFunction {
+public class STTransformToSrid implements SimpleFunction {
 
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
   @Param
-  org.apache.arrow.vector.holders.NullableVarCharHolder targetProj4ParametersInput;
+  org.apache.arrow.vector.holders.IntHolder targetSridInput;
 
   @Output
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
@@ -47,9 +47,9 @@ public class STTransformProj4 implements SimpleFunction {
 
 
   public void eval() {
-    java.lang.String proj4Parameters = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toUTF8String(targetProj4ParametersInput);
+    int target = targetSridInput.value;
     org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-    org.locationtech.jts.geom.Geometry result = org.sheinbergon.dremio.udf.gis.util.GeometryTransformation.transform(geom, proj4Parameters);
+    org.locationtech.jts.geom.Geometry result = org.sheinbergon.dremio.udf.gis.util.GeometryTransformation.transform(geom, target);
     byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(result);
     buffer = buffer.reallocIfNeeded(bytes.length);
     org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
