@@ -23,9 +23,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.arrow.memory.ArrowBuf;
 import org.apache.arrow.vector.holders.*;
+import org.locationtech.jts.algorithm.Angle;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.LineSegment;
+import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.*;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
@@ -100,7 +101,7 @@ public final class GeometryHelpers {
       ArrowBuf buffer = holder.buffer;
       WKBReader reader = new WKBReader();
       List<Geometry> geometries = Lists.newLinkedList();
-      for (long index = 0L; index < buffer.readableBytes(); ) {
+      for (long index = 0L; index < buffer.readableBytes();) {
         int size = buffer.getInt(index);
         index += Integer.BYTES;
         byte[] array = new byte[size];
@@ -121,10 +122,20 @@ public final class GeometryHelpers {
   }
 
   @Nonnull
-  public static LineSegment toLineSegment(
-      final @Nonnull Point point1,
-      final @Nonnull Point point2) {
-    return new LineSegment(point1.getX(), point1.getY(), point2.getX(), point2.getY());
+  public static LineString toLineString(
+      final @Nonnull NullableVarBinaryHolder holder) {
+    return (LineString) toGeometry(holder);
+  }
+
+  @Nonnull
+  public static double toAngleRadians(
+      final @Nonnull Point s1,
+      final @Nonnull Point e1,
+      final @Nonnull Point s2,
+      final @Nonnull Point e2) {
+    double a1 = Angle.angle(s1.getCoordinate(), e1.getCoordinate());
+    double a2 = Angle.angle(s2.getCoordinate(), e2.getCoordinate());
+    return Angle.normalizePositive(a1 - a2);
   }
 
   @Nonnull

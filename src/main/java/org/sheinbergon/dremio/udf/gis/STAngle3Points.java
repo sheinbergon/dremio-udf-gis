@@ -27,15 +27,13 @@ import com.dremio.exec.expr.annotations.Param;
     name = "ST_Angle",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
-public class STAnglePoint implements SimpleFunction {
+public class STAngle3Points implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput1;
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput2;
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput3;
-  @Param
-  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput4;
 
   @Output
   org.apache.arrow.vector.holders.Float8Holder output;
@@ -47,16 +45,6 @@ public class STAnglePoint implements SimpleFunction {
     org.locationtech.jts.geom.Point p1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toPoint(binaryInput1);
     org.locationtech.jts.geom.Point p2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toPoint(binaryInput2);
     org.locationtech.jts.geom.Point p3 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toPoint(binaryInput3);
-    org.locationtech.jts.geom.Coordinate intersection = null;
-
-    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput4)) {
-      org.locationtech.jts.geom.Point p4 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toPoint(binaryInput4);
-      org.locationtech.jts.geom.LineSegment s1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toLineSegment(p1, p2);
-      org.locationtech.jts.geom.LineSegment s2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toLineSegment(p3, p4);
-      intersection = s1.lineIntersection(s2);
-    } else {
-      intersection = p2.getCoordinate();
-    }
-    output.value = org.locationtech.jts.algorithm.Angle.angleBetween(p1.getCoordinate(), intersection, p3.getCoordinate());
+    output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toAngleRadians(p2, p1, p2, p3);
   }
 }
