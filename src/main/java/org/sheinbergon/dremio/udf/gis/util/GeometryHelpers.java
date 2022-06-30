@@ -47,10 +47,9 @@ public final class GeometryHelpers {
   public static final int DEFAULT_SRID = 4326;
 
   private static final Set<String> AREAL_TYPES = Sets.newHashSet(Geometry.TYPENAME_POLYGON, Geometry.TYPENAME_MULTIPOLYGON);
-
   private static final Set<String> LINEAR_TYPES = Sets.newHashSet(Geometry.TYPENAME_LINESTRING, Geometry.TYPENAME_MULTILINESTRING);
-
   private static final int GEOMETRY_WRITER_DIMENSIONS = 2;
+  private static final double AZIMUTH_NORTH_RADIANS = Angle.toRadians(90.0);
 
   private GeometryHelpers() {
   }
@@ -127,7 +126,6 @@ public final class GeometryHelpers {
     return (LineString) toGeometry(holder);
   }
 
-  @Nonnull
   public static double toAngleRadians(
       final @Nonnull Point s1,
       final @Nonnull Point e1,
@@ -137,6 +135,15 @@ public final class GeometryHelpers {
     double a2 = Angle.angle(s2.getCoordinate(), e2.getCoordinate());
     return Angle.normalizePositive(a1 - a2);
   }
+
+
+  public static double toAzimuthRadians(
+      final @Nonnull Point p1,
+      final @Nonnull Point p2) {
+    double a = Angle.angle(p1.getCoordinate(), p2.getCoordinate());
+    return Angle.normalizePositive(AZIMUTH_NORTH_RADIANS - a);
+  }
+
 
   @Nonnull
   public static Geometry toGeometry(
