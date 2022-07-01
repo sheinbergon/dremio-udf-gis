@@ -38,6 +38,32 @@ public final class GeometryTransformation {
     CRSFactory factory = new CRSFactory();
     CoordinateReferenceSystem source = factory.createFromName(String.format(CRS_TEMPLATE, geom.getSRID()));
     CoordinateReferenceSystem target = factory.createFromName(String.format(CRS_TEMPLATE, targetSrid));
+    return transform(geom, source, target);
+  }
+
+  public static Geometry transform(
+      final @Nonnull Geometry geom,
+      final @Nonnull String targetProj4Parameters) {
+    CRSFactory factory = new CRSFactory();
+    CoordinateReferenceSystem source = factory.createFromName(String.format(CRS_TEMPLATE, geom.getSRID()));
+    CoordinateReferenceSystem target = factory.createFromParameters(null, targetProj4Parameters);
+    return transform(geom, source, target);
+  }
+
+  public static Geometry transform(
+      final @Nonnull Geometry geom,
+      final @Nonnull String sourceProj4Parameters,
+      final int targetSrid) {
+    CRSFactory factory = new CRSFactory();
+    CoordinateReferenceSystem source = factory.createFromParameters(null, sourceProj4Parameters);
+    CoordinateReferenceSystem target = factory.createFromName(String.format(CRS_TEMPLATE, targetSrid));
+    return transform(geom, source, target);
+  }
+
+  private static Geometry transform(
+      final @Nonnull Geometry geom,
+      final @Nonnull CoordinateReferenceSystem source,
+      final @Nonnull CoordinateReferenceSystem target) {
     CoordinateTransform transform = new BasicCoordinateTransform(source, target);
     return transform(geom, transform);
   }
@@ -45,27 +71,29 @@ public final class GeometryTransformation {
   private static Geometry transform(
       final @Nonnull Geometry geom,
       final @Nonnull CoordinateTransform transform) {
+    Geometry transformed = null;
     if (geom instanceof Polygon) {
-      return transform(transform, (Polygon) geom);
+      transformed = transform(transform, (Polygon) geom);
     } else if (geom instanceof Point) {
-      return transform(transform, (Point) geom);
+      transformed = transform(transform, (Point) geom);
     } else if (geom instanceof LinearRing) {
-      return transform(transform, (LinearRing) geom);
+      transformed = transform(transform, (LinearRing) geom);
     } else if (geom instanceof LineString) {
-      return transform(transform, (LineString) geom);
+      transformed = transform(transform, (LineString) geom);
     } else if (geom instanceof MultiPolygon) {
-      return transform(transform, (MultiPolygon) geom);
+      transformed = transform(transform, (MultiPolygon) geom);
     } else if (geom instanceof MultiPoint) {
-      return transform(transform, (MultiPoint) geom);
+      transformed = transform(transform, (MultiPoint) geom);
     } else if (geom instanceof MultiLineString) {
-      return transform(transform, (MultiLineString) geom);
+      transformed = transform(transform, (MultiLineString) geom);
     } else if (geom instanceof GeometryCollection) {
-      return transform(transform, (GeometryCollection) geom);
+      transformed = transform(transform, (GeometryCollection) geom);
     } else {
       throw new IllegalArgumentException(
           String.format("Unsupported geometry type for conversion - %s",
               geom.getGeometryType()));
     }
+    return transformed;
   }
 
   private static Coordinate[] convert(
