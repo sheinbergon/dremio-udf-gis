@@ -23,9 +23,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.arrow.memory.ArrowBuf;
 import org.apache.arrow.vector.holders.*;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.algorithm.Angle;
+import org.locationtech.jts.geom.*;
 import org.locationtech.jts.io.*;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 
@@ -45,12 +44,16 @@ public final class GeometryHelpers {
   public static final int DEFAULT_SRID = 4326;
 
   private static final Set<String> AREAL_TYPES = Sets.newHashSet(Geometry.TYPENAME_POLYGON, Geometry.TYPENAME_MULTIPOLYGON);
-
   private static final Set<String> LINEAR_TYPES = Sets.newHashSet(Geometry.TYPENAME_LINESTRING, Geometry.TYPENAME_MULTILINESTRING);
-
-  private static final int GEOMETRY_WRITER_DIMENSIONS = 2;
+  private static final int GEOMETRY_DIMENSIONS = 2;
+  private static final double AZIMUTH_NORTH_RADIANS = Angle.toRadians(90.0);
 
   private GeometryHelpers() {
+  }
+
+  public static Geometry emptyGeometry() {
+    GeometryFactory factory = new GeometryFactory();
+    return factory.createEmpty(GEOMETRY_DIMENSIONS);
   }
 
   public static String toUTF8String(final @Nonnull VarCharHolder holder) {
@@ -60,7 +63,7 @@ public final class GeometryHelpers {
         holder.buffer);
   }
 
-  private static String toUTF8String(final @Nonnull NullableVarCharHolder holder) {
+  public static String toUTF8String(final @Nonnull NullableVarCharHolder holder) {
     return StringFunctionHelpers.toStringFromUTF8(
         holder.start,
         holder.end,
@@ -68,13 +71,13 @@ public final class GeometryHelpers {
   }
 
   public static byte[] toBinary(final @Nonnull Geometry geometry) {
-    WKBWriter writer = new WKBWriter(GEOMETRY_WRITER_DIMENSIONS, true);
+    WKBWriter writer = new WKBWriter(GEOMETRY_DIMENSIONS, true);
     return writer.write(geometry);
   }
 
   public static byte[] toText(
       final @Nonnull Geometry geometry) {
-    WKTWriter writer = new WKTWriter(GEOMETRY_WRITER_DIMENSIONS);
+    WKTWriter writer = new WKTWriter(GEOMETRY_DIMENSIONS);
     return writer.write(geometry).getBytes(StandardCharsets.UTF_8);
   }
 
@@ -96,7 +99,6 @@ public final class GeometryHelpers {
 
   public static GeometryCollection toGeometryCollection(final @Nonnull NullableVarBinaryHolder holder) {
     try {
-      GeometryFactory factory = new GeometryFactory();
       ArrowBuf buffer = holder.buffer;
       WKBReader reader = new WKBReader();
       List<Geometry> geometries = Lists.newLinkedList();
@@ -114,6 +116,37 @@ public final class GeometryHelpers {
     }
   }
 
+  @Nonnull
+  public static Point toPoint(
+      final @Nonnull NullableVarBinaryHolder holder) {
+    return (Point) toGeometry(holder);
+  }
+
+  @Nonnull
+  public static LineString toLineString(
+      final @Nonnull NullableVarBinaryHolder holder) {
+    return (LineString) toGeometry(holder);
+  }
+
+  public static double toAngleRadians(
+      final @Nonnull Point s1,
+      final @Nonnull Point e1,
+      final @Nonnull Point s2,
+      final @Nonnull Point e2) {
+    double a1 = Angle.angle(s1.getCoordinate(), e1.getCoordinate());
+    double a2 = Angle.angle(s2.getCoordinate(), e2.getCoordinate());
+    return Angle.normalizePositive(a1 - a2);
+  }
+
+
+  public static double toAzimuthRadians(
+      final @Nonnull Point p1,
+      final @Nonnull Point p2) {
+    double a = Angle.angle(p1.getCoordinate(), p2.getCoordinate());
+    return Angle.normalizePositive(AZIMUTH_NORTH_RADIANS - a);
+  }
+
+  @Nonnull
   public static Geometry toGeometry(
       final @Nonnull NullableVarBinaryHolder holder) {
     ByteBuffer buffer = holder.buffer.nioBuffer(holder.start, holder.end - holder.start);
