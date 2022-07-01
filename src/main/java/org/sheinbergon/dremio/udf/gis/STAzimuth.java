@@ -22,25 +22,25 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
-@FunctionTemplate(name = "ST_Overlaps", scope = FunctionTemplate.FunctionScope.SIMPLE,
+
+@FunctionTemplate(
+    name = "ST_Azimuth",
+    scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
-public class STOverlaps implements SimpleFunction {
+public class STAzimuth implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput1;
-
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput2;
-
   @Output
-  org.apache.arrow.vector.holders.BitHolder output;
+  org.apache.arrow.vector.holders.Float8Holder output;
 
   public void setup() {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
-    org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput2);
-    boolean contains = geom1.overlaps(geom2);
-    output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBitValue(contains);
+    org.locationtech.jts.geom.Point p1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toPoint(binaryInput1);
+    org.locationtech.jts.geom.Point p2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toPoint(binaryInput2);
+    output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toAzimuthRadians(p1, p2);
   }
 }
