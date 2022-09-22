@@ -42,7 +42,6 @@ public class STOverlaps implements SimpleFunction {
   public void eval() {
     org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
     org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput2);
-    boolean contains = geom1.overlaps(geom2);
-    output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBitValue(contains);
+    output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBitValue(geom1.overlaps(geom2));
   }
 }
