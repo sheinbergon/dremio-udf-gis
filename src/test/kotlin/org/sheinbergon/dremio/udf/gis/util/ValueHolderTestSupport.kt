@@ -1,10 +1,12 @@
 package org.sheinbergon.dremio.udf.gis.util
 
+import com.dremio.sabot.exec.context.BufferManagerImpl
 import org.apache.arrow.memory.RootAllocator
 import org.apache.arrow.vector.holders.BitHolder
 import org.apache.arrow.vector.holders.Float8Holder
 import org.apache.arrow.vector.holders.NullableFloat8Holder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
+import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.apache.arrow.vector.holders.VarCharHolder
 import org.locationtech.jts.io.WKBWriter
 import org.locationtech.jts.io.WKTReader
@@ -16,6 +18,10 @@ private val allocator = RootAllocator()
 private val reader = WKTReader()
 
 private val writer = WKBWriter()
+
+private val manager = BufferManagerImpl(allocator)
+
+internal fun allocateBuffer() = manager.managedBuffer
 
 internal fun VarCharHolder.setUtf8(text: String) {
   val bytes = text.toByteArray(StandardCharsets.UTF_8)
@@ -46,6 +52,13 @@ internal fun NullableVarBinaryHolder.reset() {
 internal fun VarCharHolder.reset() {
   end = 0
   start = 0
+  buffer = null
+}
+
+internal fun NullableVarCharHolder.reset() {
+  end = 0
+  start = 0
+  isSet = 0
   buffer = null
 }
 

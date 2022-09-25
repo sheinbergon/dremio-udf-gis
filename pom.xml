@@ -16,6 +16,7 @@
         <kotlin.version>1.7.10</kotlin.version>
         <kotest.version>5.4.2</kotest.version>
         <joda.version>2.9</joda.version>
+        <carrotsearch.version>0.7.0</carrotsearch.version>
         <arrow-memory-netty.version>8.0.0</arrow-memory-netty.version>
     </properties>
     <version>0.3.6${artifact.version.suffix}</version>
@@ -118,6 +119,12 @@
             <artifactId>joda-time</artifactId>
             <version>${joda.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.carrotsearch</groupId>
+            <artifactId>hppc</artifactId>
+            <version>${carrotsearch.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.locationtech.proj4j</groupId>
