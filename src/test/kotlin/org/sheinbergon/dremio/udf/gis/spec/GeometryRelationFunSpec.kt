@@ -2,6 +2,7 @@ package org.sheinbergon.dremio.udf.gis.spec
 
 import com.dremio.exec.expr.SimpleFunction
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.core.test.TestScope
 import io.kotest.matchers.ints.shouldBeExactly
 import org.apache.arrow.vector.holders.BitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
@@ -12,51 +13,55 @@ import org.sheinbergon.dremio.udf.gis.util.setFromWkt
 
 abstract class GeometryRelationFunSpec<F : SimpleFunction> : FunSpec() {
 
-    init {
-        beforeEach {
-            function.wkbInput1.reset()
-            function.wkbInput2.reset()
-            function.output.reset()
-        }
-
-        afterEach {
-            function.wkbInput1.release()
-        }
+  init {
+    beforeEach {
+      function.wkbInput1.reset()
+      function.wkbInput2.reset()
+      function.output.reset()
     }
 
-    protected fun testTrueGeometryRelation(
-        name: String,
-        wkt1: String,
-        wkt2: String
-    ) = test(name) {
-        function.apply {
-            wkbInput1.setFromWkt(wkt1)
-            wkbInput2.setFromWkt(wkt2)
-            setup()
-            eval()
-            output.valueIsTrue()
-        }
+    afterEach {
+      function.wkbInput1.release()
     }
+  }
 
-    protected fun testFalseGeometryRelation(
-        name: String,
-        wkt1: String,
-        wkt2: String
-    ) = test(name) {
-        function.apply {
-            wkbInput1.setFromWkt(wkt1)
-            wkbInput2.setFromWkt(wkt2)
-            setup()
-            eval()
-            output.valueIsFalse()
-        }
+  protected fun testTrueGeometryRelation(
+    name: String,
+    wkt1: String,
+    wkt2: String,
+    precursor: suspend TestScope.() -> Unit = {}
+  ) = test(name) {
+    precursor(this)
+    function.apply {
+      wkbInput1.setFromWkt(wkt1)
+      wkbInput2.setFromWkt(wkt2)
+      setup()
+      eval()
+      output.valueIsTrue()
     }
+  }
 
-    private fun BitHolder.valueIsTrue() = this.value shouldBeExactly 1
-    private fun BitHolder.valueIsFalse() = this.value shouldBeExactly 0
+  protected fun testFalseGeometryRelation(
+    name: String,
+    wkt1: String,
+    wkt2: String,
+    precursor: suspend TestScope.() -> Unit = {}
+  ) = test(name) {
+    precursor(this)
+    function.apply {
+      wkbInput1.setFromWkt(wkt1)
+      wkbInput2.setFromWkt(wkt2)
+      setup()
+      eval()
+      output.valueIsFalse()
+    }
+  }
 
-    protected abstract val function: F
-    protected abstract val F.wkbInput1: NullableVarBinaryHolder
-    protected abstract val F.wkbInput2: NullableVarBinaryHolder
-    protected abstract val F.output: BitHolder
+  protected fun BitHolder.valueIsTrue() = this.value shouldBeExactly 1
+  protected fun BitHolder.valueIsFalse() = this.value shouldBeExactly 0
+
+  protected abstract val function: F
+  protected abstract val F.wkbInput1: NullableVarBinaryHolder
+  protected abstract val F.wkbInput2: NullableVarBinaryHolder
+  protected abstract val F.output: BitHolder
 }

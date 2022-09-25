@@ -15,80 +15,80 @@ import org.sheinbergon.dremio.udf.gis.util.setFromWkt
 
 abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : FunSpec() {
 
-    init {
-        beforeEach {
-            function.output.reset()
-            function.wkbInput.reset()
-        }
-
-        afterEach {
-            function.wkbInput.release()
-        }
+  init {
+    beforeEach {
+      function.output.reset()
+      function.wkbInput.reset()
     }
 
-    protected fun testGeometryAccesssor(
-        name: String,
-        wkt: String,
-        value: Double
-    ) = test(name) {
-        function.apply {
-            wkbInput.setFromWkt(wkt)
-            setup()
-            eval()
-            output.isSetTo(value)
-        }
+    afterEach {
+      function.wkbInput.release()
     }
+  }
 
-    protected fun testNoResultGeometryAccessor(
-        name: String,
-        wkt: String
-    ) = test(name) {
-        function.apply {
-            wkbInput.setFromWkt(wkt)
-            setup()
-            eval()
-            output.isNotSet()
-        }
+  protected fun testGeometryAccesssor(
+    name: String,
+    wkt: String,
+    value: Double
+  ) = test(name) {
+    function.apply {
+      wkbInput.setFromWkt(wkt)
+      setup()
+      eval()
+      output.isSetTo(value)
     }
+  }
 
-    private fun O.isSetTo(value: Double) = when (this) {
-        is NullableFloat8Holder -> this.valueIsSetTo(value)
-        is Float8Holder -> this.valueIsSetTo(value)
-        else -> throw IllegalArgumentException("Unsupported value holder type '${this::class.simpleName}'")
+  protected fun testNoResultGeometryAccessor(
+    name: String,
+    wkt: String
+  ) = test(name) {
+    function.apply {
+      wkbInput.setFromWkt(wkt)
+      setup()
+      eval()
+      output.isNotSet()
     }
+  }
 
-    private fun O.isNotSet() = when (this) {
-        is NullableFloat8Holder -> this.valueIsNotSet()
-        else -> throw IllegalArgumentException("Unsupported value holder type '${this::class.simpleName}'")
+  private fun O.isSetTo(value: Double) = when(this) {
+    is NullableFloat8Holder -> this.valueIsSetTo(value)
+    is Float8Holder -> this.valueIsSetTo(value)
+    else -> throw IllegalArgumentException("Unsupported value holder type '${this::class.simpleName}'")
+  }
+
+  private fun O.isNotSet() = when(this) {
+    is NullableFloat8Holder -> this.valueIsNotSet()
+    else -> throw IllegalArgumentException("Unsupported value holder type '${this::class.simpleName}'")
+  }
+
+  private fun O.reset() = when(this) {
+    is NullableFloat8Holder -> (this as NullableFloat8Holder).reset()
+    is Float8Holder -> (this as Float8Holder).reset()
+    else -> throw IllegalArgumentException("Unsupported value holder type '${this::class.simpleName}'")
+  }
+
+  protected abstract val function: F
+  protected abstract val F.wkbInput: NullableVarBinaryHolder
+  protected abstract val F.output: O
+
+  private fun NullableFloat8Holder.valueIsSetTo(double: Double) {
+    run {
+      isSet shouldBeExactly 1
+      value shouldBeExactly double
     }
+  }
 
-    private fun O.reset() = when (this) {
-        is NullableFloat8Holder -> (this as NullableFloat8Holder).reset()
-        is Float8Holder -> (this as Float8Holder).reset()
-        else -> throw IllegalArgumentException("Unsupported value holder type '${this::class.simpleName}'")
+  private fun Float8Holder.valueIsSetTo(double: Double) {
+    run {
+      value shouldBeExactly double
     }
+  }
 
-    protected abstract val function: F
-    protected abstract val F.wkbInput: NullableVarBinaryHolder
-    protected abstract val F.output: O
-
-    private fun NullableFloat8Holder.valueIsSetTo(double: Double) {
-        run {
-            isSet shouldBeExactly 1
-            value shouldBeExactly double
-        }
+  private fun NullableFloat8Holder.valueIsNotSet() {
+    run {
+      isSet shouldBeExactly 0
+      value shouldBeExactly 0.0
     }
-
-    private fun Float8Holder.valueIsSetTo(double: Double) {
-        run {
-            value shouldBeExactly double
-        }
-    }
-
-    private fun NullableFloat8Holder.valueIsNotSet() {
-        run {
-            isSet shouldBeExactly 0
-            value shouldBeExactly 0.0
-        }
-    }
+  }
 }
