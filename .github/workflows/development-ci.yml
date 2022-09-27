@@ -32,6 +32,9 @@ jobs:
       - name: Run tests and style checks
         run: ./mvnw clean verify
 
+      - name: Codecov coverage upload
+        uses: codecov/codecov-action@v3
+
       - name: Publish to Snapshot repository
         run: ./mvnw deploy -Dmaven.test.skip=true -Dcheckstyle.skip=true -Ddetekt.skip=true
         env:
