@@ -5,7 +5,6 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.apache.arrow.vector.holders.NullableVarCharHolder
-import org.locationtech.jts.io.WKTWriter
 import org.sheinbergon.dremio.udf.gis.util.GeometryHelpers
 import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
@@ -31,7 +30,6 @@ abstract class GeometryOverlayFunSpec<F : SimpleFunction> : FunSpec() {
 
   private fun NullableVarBinaryHolder.valueIsAsDescribedInText(text: String) {
     val evaluated = GeometryHelpers.toGeometry(this)
-    println(WKTWriter().write(evaluated))
     val expected = NullableVarCharHolder()
       .apply { setUtf8(text) }
       .let(GeometryHelpers::toGeometry)

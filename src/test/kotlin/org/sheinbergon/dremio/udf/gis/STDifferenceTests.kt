@@ -8,14 +8,14 @@ internal class STDifferenceTests : GeometryOverlayFunSpec<STDifference>() {
 
   init {
     testGeometryOverlay(
-      "Calling STDifference on non-intersecting POINT and LINESTRING returns the POINT",
+      "Calling ST_Difference on non-intersecting POINT and LINESTRING returns the POINT",
       "POINT (-1 -1)",
       "LINESTRING (2 0, 0 2)",
       "POINT (-1 -1)"
     )
 
     testGeometryOverlay(
-      "Calling STDifference on 2 intersecting POLYGONs returns their difference",
+      "Calling ST_Difference on 2 intersecting POLYGONs returns their difference",
       "POLYGON((1 2,1 5,4 5,4 2,1 2))",
       "POLYGON((3 1,3 3,5 3,5 1,3 1))",
       "POLYGON((1 2,1 5,4 5,4 3,3 3,3 2,1 2))"
