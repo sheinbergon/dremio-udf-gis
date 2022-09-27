@@ -15,9 +15,9 @@ import java.nio.charset.StandardCharsets
 
 private val allocator = RootAllocator()
 
-private val reader = WKTReader()
+private val wktReader = WKTReader()
 
-private val writer = WKBWriter(2, true)
+private val wkbWriter = WKBWriter(2, true)
 
 private val manager = BufferManagerImpl(allocator)
 
@@ -43,9 +43,18 @@ internal fun NullableVarCharHolder.setUtf8(text: String) {
 }
 
 internal fun NullableVarBinaryHolder.setFromWkt(wkt: String, srid: Int? = null) {
-  val geometry = reader.read(StringReader(wkt))
+  val geometry = wktReader.read(StringReader(wkt))
   srid?.let(geometry::setSRID)
-  val bytes = writer.write(geometry)
+  val bytes = wkbWriter.write(geometry)
+  val buffer = allocator.buffer(bytes.size.toLong())
+  buffer.writeBytes(bytes)
+  this.isSet = 1
+  this.start = 0
+  this.end = buffer.capacity().toInt()
+  this.buffer = buffer
+}
+
+internal fun NullableVarBinaryHolder.setBinary(bytes: ByteArray) {
   val buffer = allocator.buffer(bytes.size.toLong())
   buffer.writeBytes(bytes)
   this.isSet = 1

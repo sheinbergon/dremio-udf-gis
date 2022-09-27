@@ -11,11 +11,12 @@ import org.apache.arrow.vector.holders.ValueHolder
 import org.sheinbergon.dremio.udf.gis.util.GeometryHelpers
 import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
+import org.sheinbergon.dremio.udf.gis.util.setBinary
 import org.sheinbergon.dremio.udf.gis.util.setUtf8
 
-abstract class GeometryInputFunSpec<F : SimpleFunction, I : ValueHolder> : FunSpec() {
+abstract class GeometryInputFunSpec<F : SimpleFunction, I : ValueHolder, V : Any> : FunSpec() {
 
-  abstract class NullableVarChar<F : SimpleFunction> : GeometryInputFunSpec<F, NullableVarCharHolder>() {
+  abstract class NullableVarBinary<F : SimpleFunction> : GeometryInputFunSpec<F, NullableVarBinaryHolder, ByteArray>() {
     init {
       beforeEach {
         function.input.reset()
@@ -26,47 +27,21 @@ abstract class GeometryInputFunSpec<F : SimpleFunction, I : ValueHolder> : FunSp
       }
     }
 
-    protected fun testGeometryInput(
-      name: String,
-      text: String,
-      result: ByteArray
-    ) = test(name) {
-      function.apply {
-        input.setUtf8(text)
-        setup()
-        eval()
-        output.valueIs(result)
+    final override fun NullableVarBinaryHolder.set(value: ByteArray) = this.setBinary(value)
+  }
+
+  abstract class NullableVarChar<F : SimpleFunction> : GeometryInputFunSpec<F, NullableVarCharHolder, String>() {
+    init {
+      beforeEach {
+        function.input.reset()
+      }
+
+      afterEach {
+        function.input.release()
       }
     }
 
-    protected fun testGeometryInput(
-      name: String,
-      text: String,
-      result: ByteArray,
-      precursor: suspend TestScope.() -> Unit = {}
-    ) = test(name) {
-      precursor.invoke(this)
-      function.apply {
-        input.setUtf8(text)
-        setup()
-        eval()
-        output.valueIs(result)
-      }
-    }
-
-
-    protected fun testInvalidGeometryInput(
-      name: String,
-      text: String,
-    ) = test(name) {
-      shouldThrowAny {
-        function.apply {
-          input.setUtf8(text)
-          setup()
-          eval()
-        }
-      }
-    }
+    final override fun NullableVarCharHolder.set(value: String) = this.setUtf8(value)
   }
 
   init {
@@ -75,9 +50,38 @@ abstract class GeometryInputFunSpec<F : SimpleFunction, I : ValueHolder> : FunSp
     }
   }
 
-  protected fun NullableVarBinaryHolder.valueIs(bytes: ByteArray) =
+  protected fun testGeometryInput(
+    name: String,
+    value: V,
+    result: ByteArray,
+    precursor: suspend TestScope.() -> Unit = {}
+  ) = test(name) {
+    precursor.invoke(this)
+    function.apply {
+      input.set(value)
+      setup()
+      eval()
+      output.valueIs(result)
+    }
+  }
+
+  protected fun testInvalidGeometryInput(
+    name: String,
+    value: V,
+  ) = test(name) {
+    shouldThrowAny {
+      function.apply {
+        input.set(value)
+        setup()
+        eval()
+      }
+    }
+  }
+
+  private fun NullableVarBinaryHolder.valueIs(bytes: ByteArray) =
     GeometryHelpers.toBinary(GeometryHelpers.toGeometry(this)) shouldBe bytes
 
+  protected abstract fun I.set(value: V)
   protected abstract val function: F
   protected abstract val F.input: I
   protected abstract val F.output: NullableVarBinaryHolder
