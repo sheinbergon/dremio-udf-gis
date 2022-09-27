@@ -32,6 +32,16 @@ internal fun VarCharHolder.setUtf8(text: String) {
   this.buffer = buffer
 }
 
+internal fun NullableVarCharHolder.setUtf8(text: String) {
+  val bytes = text.toByteArray(StandardCharsets.UTF_8)
+  val buffer = allocator.buffer(bytes.size.toLong())
+  buffer.writeBytes(bytes)
+  this.isSet = 1
+  this.start = 0
+  this.end = bytes.size
+  this.buffer = buffer
+}
+
 internal fun NullableVarBinaryHolder.setFromWkt(wkt: String, srid: Int? = null) {
   val geometry = reader.read(StringReader(wkt))
   srid?.let(geometry::setSRID)
@@ -65,6 +75,10 @@ internal fun NullableVarCharHolder.reset() {
 }
 
 internal fun NullableVarBinaryHolder.release() {
+  buffer.close()
+}
+
+internal fun NullableVarCharHolder.release() {
   buffer.close()
 }
 
