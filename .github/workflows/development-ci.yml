@@ -29,11 +29,11 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
-      - name: Run style checks
+      - name: Run tests and style checks
         run: ./mvnw clean verify
 
       - name: Publish to Snapshot repository
-        run: ./mvnw deploy
+        run: ./mvnw deploy -Dmaven.test.skip=true -Dcheckstyle.skip=true -Ddetekt.skip=true
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}

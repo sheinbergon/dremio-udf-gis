@@ -7,13 +7,13 @@ import org.sheinbergon.dremio.udf.gis.spec.GeometryAccessorFunSpec
 internal class STXMaxTests : GeometryAccessorFunSpec<STXMax, Float8Holder>() {
 
   init {
-    testGeometryAccesssor(
+    testGeometryAccessor(
       "Calling ST_XMax on a POINT geometry returns its coordinate's X value",
       "POINT(1.92 345.214)",
       1.92
     )
 
-    testGeometryAccesssor(
+    testGeometryAccessor(
       "Calling ST_XMax on a LINESTRING geometry returns its maximal X value",
       "LINESTRING(1.8 345.2, 1.9 359.2, 2.0 360.0)",
       2.0

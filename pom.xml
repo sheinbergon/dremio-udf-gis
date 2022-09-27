@@ -16,6 +16,7 @@
         <kotlin.version>1.7.10</kotlin.version>
         <kotest.version>5.4.2</kotest.version>
         <joda.version>2.9</joda.version>
+        <detekt.version>1.21.0</detekt.version>
         <carrotsearch.version>0.7.0</carrotsearch.version>
         <arrow-memory-netty.version>8.0.0</arrow-memory-netty.version>
     </properties>
@@ -197,6 +198,30 @@
         <testSourceDirectory>src/test/kotlin</testSourceDirectory>
         <plugins>
             <plugin>
+                <groupId>com.github.ozsie</groupId>
+                <artifactId>detekt-maven-plugin</artifactId>
+                <version>${detekt.version}</version>
+                <configuration>
+                    <jvmTarget>1.8</jvmTarget>
+                    <config>detekt.yml</config>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>io.gitlab.arturbosch.detekt</groupId>
+                        <artifactId>detekt-formatting</artifactId>
+                        <version>${detekt.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
                 <version>1.6.12</version>
@@ -355,6 +380,9 @@
             <id>release</id>
             <properties>
                 <artifact.version.suffix/>
+                <maven.test.skip>true</maven.test.skip>
+                <checkstyle.skip>true</checkstyle.skip>
+                <detekt.skip>true</detekt.skip>
             </properties>
             <build>
                 <plugins>

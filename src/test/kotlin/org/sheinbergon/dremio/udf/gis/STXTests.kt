@@ -7,7 +7,7 @@ import org.sheinbergon.dremio.udf.gis.spec.GeometryAccessorFunSpec
 internal class STXTests : GeometryAccessorFunSpec<STX, NullableFloat8Holder>() {
 
   init {
-    testGeometryAccesssor(
+    testGeometryAccessor(
       "Calling ST_X on a POINT geometry returns its coordinate's X value",
       "POINT(1.92 345.214)",
       1.92

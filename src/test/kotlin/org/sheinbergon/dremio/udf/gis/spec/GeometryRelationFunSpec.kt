@@ -14,7 +14,6 @@ import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setFromWkt
 
-
 abstract class GeometryRelationFunSpec<F : SimpleFunction, O : ValueHolder> : FunSpec() {
 
   abstract class NullableVarCharOutput<F : SimpleFunction> : GeometryRelationFunSpec<F, NullableVarCharHolder>() {
@@ -43,7 +42,6 @@ abstract class GeometryRelationFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
     protected fun NullableVarCharHolder.valueIs(text: String) =
       GeometryHelpers.toUTF8String(this) shouldBe text
   }
-
 
   abstract class BitOutput<F : SimpleFunction> : GeometryRelationFunSpec<F, BitHolder>() {
 

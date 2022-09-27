@@ -29,6 +29,7 @@ jobs:
 
       - name: Publish to Release repository
         run: ./mvnw -P release deploy
+
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}

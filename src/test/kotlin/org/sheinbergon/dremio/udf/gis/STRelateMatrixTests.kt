@@ -29,7 +29,7 @@ internal class STRelateMatrixTests : GeometryRelationFunSpec.BitOutput<STRelateM
     ) { function.apply { matrixInput.setUtf8("T*F**FFF2") } }
 
     testFalseGeometryRelation(
-      "Calling ST_Relate with a matrix param on the given POINT and POLYGON",
+      "Calling ST_Relate with a matrix param on the given POINT and LINESTRING",
       "POINT(0 0)",
       "LINESTRING(1 5,0 1)"
     ) { function.apply { matrixInput.setUtf8("T*T**FFF0") } }

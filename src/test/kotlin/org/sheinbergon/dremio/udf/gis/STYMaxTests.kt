@@ -7,13 +7,13 @@ import org.sheinbergon.dremio.udf.gis.spec.GeometryAccessorFunSpec
 internal class STYMaxTests : GeometryAccessorFunSpec<STYMax, Float8Holder>() {
 
   init {
-    testGeometryAccesssor(
+    testGeometryAccessor(
       "Calling ST_YMax on a POINT geometry returns its coordinate's Y value",
       "POINT(1.92 355.921)",
       355.921
     )
 
-    testGeometryAccesssor(
+    testGeometryAccessor(
       "Calling ST_YMax on a LINESTRING geometry returns its maximal Y value",
       "LINESTRING(1.8 345.2, 1.9 359.2, 2.0 360.0)",
       360.0
