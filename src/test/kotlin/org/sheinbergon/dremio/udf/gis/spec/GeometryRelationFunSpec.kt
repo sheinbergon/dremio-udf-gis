@@ -39,7 +39,7 @@ abstract class GeometryRelationFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
       }
     }
 
-    protected fun NullableVarCharHolder.valueIs(text: String) =
+    private fun NullableVarCharHolder.valueIs(text: String) =
       GeometryHelpers.toUTF8String(this) shouldBe text
   }
 
@@ -83,8 +83,8 @@ abstract class GeometryRelationFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
       }
     }
 
-    protected fun BitHolder.valueIsTrue() = this.value shouldBeExactly 1
-    protected fun BitHolder.valueIsFalse() = this.value shouldBeExactly 0
+    private fun BitHolder.valueIsTrue() = this.value shouldBeExactly 1
+    private fun BitHolder.valueIsFalse() = this.value shouldBeExactly 0
   }
 
   init {

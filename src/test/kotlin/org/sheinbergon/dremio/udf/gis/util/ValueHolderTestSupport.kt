@@ -17,7 +17,7 @@ private val allocator = RootAllocator()
 
 private val reader = WKTReader()
 
-private val writer = WKBWriter()
+private val writer = WKBWriter(2, true)
 
 private val manager = BufferManagerImpl(allocator)
 
@@ -32,8 +32,10 @@ internal fun VarCharHolder.setUtf8(text: String) {
   this.buffer = buffer
 }
 
-internal fun NullableVarBinaryHolder.setFromWkt(wkt: String) {
-  val bytes = writer.write(reader.read(StringReader(wkt)))
+internal fun NullableVarBinaryHolder.setFromWkt(wkt: String, srid: Int? = null) {
+  val geometry = reader.read(StringReader(wkt))
+  srid?.let(geometry::setSRID)
+  val bytes = writer.write(geometry)
   val buffer = allocator.buffer(bytes.size.toLong())
   buffer.writeBytes(bytes)
   this.isSet = 1
