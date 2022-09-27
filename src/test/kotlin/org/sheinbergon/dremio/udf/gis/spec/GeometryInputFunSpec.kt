@@ -3,6 +3,7 @@ package org.sheinbergon.dremio.udf.gis.spec
 import com.dremio.exec.expr.SimpleFunction
 import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.core.test.TestScope
 import io.kotest.matchers.shouldBe
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.apache.arrow.vector.holders.NullableVarCharHolder
@@ -37,6 +38,22 @@ abstract class GeometryInputFunSpec<F : SimpleFunction, I : ValueHolder> : FunSp
         output.valueIs(result)
       }
     }
+
+    protected fun testGeometryInput(
+      name: String,
+      text: String,
+      result: ByteArray,
+      precursor: suspend TestScope.() -> Unit = {}
+    ) = test(name) {
+      precursor.invoke(this)
+      function.apply {
+        input.setUtf8(text)
+        setup()
+        eval()
+        output.valueIs(result)
+      }
+    }
+
 
     protected fun testInvalidGeometryInput(
       name: String,
