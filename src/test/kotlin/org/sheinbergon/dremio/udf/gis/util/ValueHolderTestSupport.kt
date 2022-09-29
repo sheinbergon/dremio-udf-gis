@@ -5,6 +5,7 @@ import io.kotest.matchers.shouldBe
 import org.apache.arrow.memory.RootAllocator
 import org.apache.arrow.vector.holders.BitHolder
 import org.apache.arrow.vector.holders.Float8Holder
+import org.apache.arrow.vector.holders.IntHolder
 import org.apache.arrow.vector.holders.NullableFloat8Holder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.apache.arrow.vector.holders.NullableVarCharHolder
@@ -108,6 +109,10 @@ internal fun NullableFloat8Holder.reset() {
 
 internal fun Float8Holder.reset() {
   value = 0.0
+}
+
+internal fun IntHolder.reset() {
+  value = 0
 }
 
 internal fun BitHolder.reset() {

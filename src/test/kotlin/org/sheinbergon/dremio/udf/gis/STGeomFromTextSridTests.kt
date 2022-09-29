@@ -5,10 +5,16 @@ import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryInputFunSpec
 import org.sheinbergon.dremio.udf.gis.util.allocateBuffer
+import org.sheinbergon.dremio.udf.gis.util.reset
 
 internal class STGeomFromTextSridTests : GeometryInputFunSpec.NullableVarChar<STGeomFromTextSrid>() {
 
   init {
+
+    beforeEach {
+      function.sridInput.reset()
+    }
+
     testGeometryInput(
       "Calling ST_GeomFromText on a POINT",
       "POINT(0.5 0.5)",

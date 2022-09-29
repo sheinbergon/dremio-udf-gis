@@ -4,10 +4,16 @@ import org.apache.arrow.vector.holders.IntHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryInputFunSpec
 import org.sheinbergon.dremio.udf.gis.util.allocateBuffer
+import org.sheinbergon.dremio.udf.gis.util.reset
 
 internal class STGeomFromWKBSridTests : GeometryInputFunSpec.NullableVarBinary<STGeomFromWKBSrid>() {
 
   init {
+
+    beforeEach {
+      function.sridInput.reset()
+    }
+
     testGeometryInput(
       "Calling ST_GeomFromWKB on a POINT WKB representation",
       byteArrayOf(0, 32, 0, 0, 1, 0, 0, 0, 0, 63, -32, 0, 0, 0, 0, 0, 0, 63, -32, 0, 0, 0, 0, 0, 0),
