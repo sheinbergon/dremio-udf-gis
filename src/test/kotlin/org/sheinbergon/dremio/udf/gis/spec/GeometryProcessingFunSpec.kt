@@ -8,17 +8,15 @@ import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setFromWkt
 import org.sheinbergon.dremio.udf.gis.util.valueIsAsDescribedIn
 
-abstract class GeometryOverlayFunSpec<F : SimpleFunction> : FunSpec() {
+abstract class GeometryProcessingFunSpec<F : SimpleFunction> : FunSpec() {
 
-  protected fun testGeometryOverlay(
+  protected fun testGeometryProcessing(
     name: String,
-    wkt1: String,
-    wkt2: String,
+    wkt: String,
     expected: String
   ) = test(name) {
     function.apply {
-      wkbInput1.setFromWkt(wkt1)
-      wkbInput2.setFromWkt(wkt2)
+      wkbInput.setFromWkt(wkt)
       setup()
       eval()
       wkbOutput.valueIsAsDescribedIn(expected)
@@ -27,20 +25,16 @@ abstract class GeometryOverlayFunSpec<F : SimpleFunction> : FunSpec() {
 
   init {
     beforeEach {
-      function.wkbInput1.reset()
-      function.wkbInput2.reset()
+      function.wkbInput.reset()
       function.wkbOutput.reset()
     }
 
     afterEach {
-      function.wkbInput1.release()
-      function.wkbInput2.release()
+      function.wkbInput.release()
     }
   }
 
   protected abstract val function: F
-
-  protected abstract val F.wkbInput1: NullableVarBinaryHolder
-  protected abstract val F.wkbInput2: NullableVarBinaryHolder
+  protected abstract val F.wkbInput: NullableVarBinaryHolder
   protected abstract val F.wkbOutput: NullableVarBinaryHolder
 }

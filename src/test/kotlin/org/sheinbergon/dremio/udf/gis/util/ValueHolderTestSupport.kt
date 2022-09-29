@@ -1,6 +1,7 @@
 package org.sheinbergon.dremio.udf.gis.util
 
 import com.dremio.sabot.exec.context.BufferManagerImpl
+import io.kotest.matchers.shouldBe
 import org.apache.arrow.memory.RootAllocator
 import org.apache.arrow.vector.holders.BitHolder
 import org.apache.arrow.vector.holders.Float8Holder
@@ -61,6 +62,15 @@ internal fun NullableVarBinaryHolder.setBinary(bytes: ByteArray) {
   this.start = 0
   this.end = buffer.capacity().toInt()
   this.buffer = buffer
+}
+
+internal fun NullableVarBinaryHolder.valueIsAsDescribedIn(text: String) {
+  val evaluated = GeometryHelpers.toGeometry(this)
+  println(evaluated)
+  val expected = NullableVarCharHolder()
+    .apply { setUtf8(text) }
+    .let(GeometryHelpers::toGeometry)
+  GeometryHelpers.toBinary(evaluated) shouldBe GeometryHelpers.toBinary(expected)
 }
 
 internal fun NullableVarBinaryHolder.reset() {
