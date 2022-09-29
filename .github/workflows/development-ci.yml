@@ -34,6 +34,8 @@ jobs:
 
       - name: Upload coverage to coveralls
         run: ./mvnw coveralls:report
+        env:
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
 
       - name: Publish to Snapshot repository
         run: ./mvnw deploy -Dmaven.test.skip=true -Dcheckstyle.skip=true -Ddetekt.skip=true
