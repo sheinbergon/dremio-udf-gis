@@ -32,8 +32,10 @@ jobs:
       - name: Run tests and style checks
         run: ./mvnw clean verify
 
-      - name: Codecov coverage upload
-        uses: codecov/codecov-action@v3
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to Snapshot repository
         run: ./mvnw deploy -Dmaven.test.skip=true -Dcheckstyle.skip=true -Ddetekt.skip=true
