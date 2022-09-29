@@ -383,6 +383,15 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>4.3.0</version>
+                <configuration>
+                    <sourceEncoding>UTF-8</sourceEncoding>
+                    <repoToken>${env.COVERALLS_TOKEN}</repoToken>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <distributionManagement>

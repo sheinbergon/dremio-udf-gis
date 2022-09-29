@@ -29,13 +29,11 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
-      - name: Run tests and style checks
+      - name: Run style checks and tests
         run: ./mvnw clean verify
 
-      - name: Coveralls coverage upload
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload coverage to coveralls
+        run: ./mvnw coveralls:report
 
       - name: Publish to Snapshot repository
         run: ./mvnw deploy -Dmaven.test.skip=true -Dcheckstyle.skip=true -Ddetekt.skip=true
