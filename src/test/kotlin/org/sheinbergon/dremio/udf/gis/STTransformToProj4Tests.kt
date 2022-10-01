@@ -2,13 +2,13 @@ package org.sheinbergon.dremio.udf.gis
 
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.apache.arrow.vector.holders.NullableVarCharHolder
-import org.sheinbergon.dremio.udf.gis.spec.GeometrySpatialReferenceSystemFunSpec
+import org.sheinbergon.dremio.udf.gis.spec.GeometryTransformationFunSpec
 import org.sheinbergon.dremio.udf.gis.util.allocateBuffer
 import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setUtf8
 
-internal class STTransformToProj4Tests : GeometrySpatialReferenceSystemFunSpec<STTransformToProj4>() {
+internal class STTransformToProj4Tests : GeometryTransformationFunSpec<STTransformToProj4>() {
 
   init {
 
@@ -21,10 +21,10 @@ internal class STTransformToProj4Tests : GeometrySpatialReferenceSystemFunSpec<S
     }
 
     testGeometryTransformation(
-      "Calling ST_TRANSFORM on a WGS84 POLYGON to transform it using a proj4 string",
-      "POLYGON((170 50,170 72,-130 72,-130 50,170 50))",
-      4326,
-      """
+      name = "Calling ST_TRANSFORM on a WGS84 POLYGON to transform it using a proj4 string",
+      wkt ="POLYGON((170 50,170 72,-130 72,-130 50,170 50))",
+      sourceSrid = 4326,
+      expected = """
       POLYGON (
         (
           -2252039.4845483867 -1829529.613162698,

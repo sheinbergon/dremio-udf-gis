@@ -8,9 +8,9 @@ import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setFromWkt
 import org.sheinbergon.dremio.udf.gis.util.valueIsAsDescribedIn
 
-abstract class GeometryOverlayFunSpec<F : SimpleFunction> : FunSpec() {
+abstract class GeometryOperatorsFunSpec<F : SimpleFunction> : FunSpec() {
 
-  protected fun testGeometryOverlay(
+  protected fun testGeometryOperator(
     name: String,
     wkt1: String,
     wkt2: String,

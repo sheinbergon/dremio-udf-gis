@@ -1,20 +1,20 @@
 package org.sheinbergon.dremio.udf.gis
 
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
-import org.sheinbergon.dremio.udf.gis.spec.GeometryOverlayFunSpec
+import org.sheinbergon.dremio.udf.gis.spec.GeometryOperatorsFunSpec
 import org.sheinbergon.dremio.udf.gis.util.allocateBuffer
 
-internal class STUnionTests : GeometryOverlayFunSpec<STUnion>() {
+internal class STUnionTests : GeometryOperatorsFunSpec<STUnion>() {
 
   init {
-    testGeometryOverlay(
+    testGeometryOperator(
       "Calling ST_Union on different POINTs returns their unionas a MULTIPOINT collection",
       "POINT (1 2)",
       "POINT (-2 3)",
       "MULTIPOINT(-2 3,1 2)"
     )
 
-    testGeometryOverlay(
+    testGeometryOperator(
       "Calling ST_Union on the same POINT returns, well, that very same POINT",
       "POINT (1 2)",
       "POINT (1 2)",

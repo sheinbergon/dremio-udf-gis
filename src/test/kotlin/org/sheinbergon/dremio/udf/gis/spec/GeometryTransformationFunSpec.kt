@@ -9,12 +9,12 @@ import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setFromWkt
 import org.sheinbergon.dremio.udf.gis.util.valueIsAsDescribedIn
 
-abstract class GeometrySpatialReferenceSystemFunSpec<F : SimpleFunction> : FunSpec() {
+abstract class GeometryTransformationFunSpec<F : SimpleFunction> : FunSpec() {
 
   protected fun testGeometryTransformation(
     name: String,
     wkt: String,
-    sourceSrid: Int,
+    sourceSrid: Int? = null,
     expected: String,
     precursor: suspend TestScope.() -> Unit = {}
   ) = test(name) {
