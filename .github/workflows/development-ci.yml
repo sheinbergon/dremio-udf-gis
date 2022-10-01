@@ -10,7 +10,7 @@ on:
 jobs:
   ci:
     name: run style verification and publish to nexus staging repository
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
 
       - name: Git checkout
@@ -29,11 +29,16 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
-      - name: Run style checks
+      - name: Run style checks and tests
         run: ./mvnw clean verify
 
+      - name: Upload coverage to coveralls
+        run: ./mvnw coveralls:report
+        env:
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+
       - name: Publish to Snapshot repository
-        run: ./mvnw deploy
+        run: ./mvnw deploy -Dmaven.test.skip=true -Dcheckstyle.skip=true -Ddetekt.skip=true
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
