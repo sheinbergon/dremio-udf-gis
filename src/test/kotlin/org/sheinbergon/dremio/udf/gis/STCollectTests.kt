@@ -22,6 +22,13 @@ internal class STCollectTests : GeometryOperatorsFunSpec<STCollect>() {
     )
 
     testGeometryOperator(
+      "Calling ST_Collect on two LINESTRINGs returns a MULTILINE collection",
+      "LINESTRING (1 2,3 5)",
+      "LINESTRING (2 6,1 2)",
+      "MULTILINESTRING ((1 2, 3 5), (2 6, 1 2))"
+    )
+
+    testGeometryOperator(
       "Calling ST_Collect on the a POINT and a LINESTRING returns a GEOMETRY collection",
       "POINT (1 2)",
       "LINESTRING (3 5, 2 9)",
