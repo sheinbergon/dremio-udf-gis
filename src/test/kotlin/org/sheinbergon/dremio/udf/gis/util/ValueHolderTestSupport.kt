@@ -10,10 +10,14 @@ import org.apache.arrow.vector.holders.NullableFloat8Holder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.apache.arrow.vector.holders.VarCharHolder
+import org.locationtech.jts.geom.PrecisionModel
 import org.locationtech.jts.io.WKBWriter
 import org.locationtech.jts.io.WKTReader
+import org.locationtech.jts.precision.GeometryPrecisionReducer
 import java.io.StringReader
 import java.nio.charset.StandardCharsets
+
+private val SCALED_PRECISION_MODEL = PrecisionModel(100000.0)
 
 private val allocator = RootAllocator()
 
@@ -67,11 +71,11 @@ internal fun NullableVarBinaryHolder.setBinary(bytes: ByteArray) {
 
 internal fun NullableVarBinaryHolder.valueIsAsDescribedIn(text: String) {
   val evaluated = GeometryHelpers.toGeometry(this)
-  println(evaluated)
+  val reduced = GeometryPrecisionReducer.reducePointwise(evaluated, SCALED_PRECISION_MODEL)
   val expected = NullableVarCharHolder()
     .apply { setUtf8(text) }
     .let(GeometryHelpers::toGeometry)
-  GeometryHelpers.toBinary(evaluated) shouldBe GeometryHelpers.toBinary(expected)
+  GeometryHelpers.toBinary(reduced) shouldBe GeometryHelpers.toBinary(expected)
 }
 
 internal fun NullableVarBinaryHolder.reset() {

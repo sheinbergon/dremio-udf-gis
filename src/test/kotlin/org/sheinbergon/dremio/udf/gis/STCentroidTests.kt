@@ -10,7 +10,7 @@ internal class STCentroidTests : GeometryProcessingFunSpec<STCentroid>() {
     testGeometryProcessing(
       "Calling ST_Centroid on a MULTIPOINT collection",
       "MULTIPOINT(-1 0,-1 2,-1 3,-1 4,-1 7,0 1,0 3,1 1,2 0,6 0,7 8,9 8,10 6)",
-      "POINT (2.3076923076923075 3.3076923076923075)"
+      "POINT (2.30769 3.30769)"
     )
   }
 

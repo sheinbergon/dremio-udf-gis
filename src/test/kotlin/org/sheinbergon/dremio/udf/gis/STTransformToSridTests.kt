@@ -18,7 +18,7 @@ internal class STTransformToSridTests : GeometryTransformationFunSpec<STTransfor
       name = "Calling ST_TRANSFORM on a WebMercator point to transform it to WGS84",
       wkt = "POINT (7910240.56433 5215074.23966)",
       sourceSrid = 3857,
-      expected = "POINT (71.05889999999869 42.36009999997683)"
+      expected = "POINT (71.0589 42.3601)"
     ) { function.targetSridInput.value = 4326 }
   }
 
