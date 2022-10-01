@@ -5,8 +5,6 @@
 [![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/sheinbergon/dremio-udf-gis?color=432f95&style=for-the-badge)](https://app.snyk.io/org/sheinbergon/project/94183993-505b-439c-9078-6276fa4c1626)
 [![Coveralls](https://img.shields.io/coveralls/github/sheinbergon/dremio-udf-gis?style=for-the-badge)](https://coveralls.io/github/sheinbergon/dremio-udf-gis)
 
-
-
 # Dremio Geo-Spatial Extensions
 
 ### What you get
@@ -24,13 +22,13 @@
 
 #### Version Compatbility
 
-| Library Version | Dremio Version | Status           |
-|-----------------|----------------|------------------|
-| 0.2.x           | 20.1.x         | Legacy           |
-| 0.3.x           | 21.1.x         | Maintained       |
-| 0.4.x           | 21.2.x         | Maintained       |
-| 0.5.x           | 22.0.x         | Maintained       |
-| 0.6.x           | 22.1.x         | Work In Progress |
+| Library Version | Dremio Version | Status     |
+|-----------------|----------------|------------|
+| 0.2.x           | 20.1.x         | Legacy     |
+| 0.3.x           | 21.1.x         | Maintained |
+| 0.4.x           | 21.2.x         | Maintained |
+| 0.5.x           | 22.0.x         | Maintained |
+| 0.6.x           | 22.1.x         | Latest     |
 
 ### Usage Notes
 As opposed to PostGIS, Dremio is only a query engine based on existing/projected data sources/lakes.  
