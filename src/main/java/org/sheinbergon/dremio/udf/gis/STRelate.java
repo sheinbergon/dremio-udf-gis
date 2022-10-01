@@ -22,6 +22,8 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
+import javax.inject.Inject;
+import java.nio.charset.StandardCharsets;
 
 @FunctionTemplate(
     name = "ST_Relate",
@@ -34,11 +36,11 @@ public class STRelate implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput2;
 
-  @Param
-  org.apache.arrow.vector.holders.VarCharHolder matrixParam;
-
   @Output
-  org.apache.arrow.vector.holders.BitHolder output;
+  org.apache.arrow.vector.holders.NullableVarCharHolder matrixOutput;
+
+  @Inject
+  org.apache.arrow.memory.ArrowBuf buffer;
 
   @Override
   public void setup() {
@@ -46,9 +48,10 @@ public class STRelate implements SimpleFunction {
 
   @Override
   public void eval() {
-    java.lang.String matrix = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toUTF8String(matrixParam);
     org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
     org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput2);
-    output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBitValue(geom1.relate(geom2, matrix));
+    byte[] matrix = geom1.relate(geom2).toString().getBytes(StandardCharsets.UTF_8);
+    buffer = buffer.reallocIfNeeded(matrix.length);
+    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(matrix, buffer, matrixOutput);
   }
 }
