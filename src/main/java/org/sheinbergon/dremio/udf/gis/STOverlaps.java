@@ -22,7 +22,9 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
-@FunctionTemplate(name = "ST_Overlaps", scope = FunctionTemplate.FunctionScope.SIMPLE,
+@FunctionTemplate(
+    name = "ST_Overlaps",
+    scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
 public class STOverlaps implements SimpleFunction {
   @Param
@@ -40,7 +42,6 @@ public class STOverlaps implements SimpleFunction {
   public void eval() {
     org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
     org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput2);
-    boolean contains = geom1.overlaps(geom2);
-    output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBitValue(contains);
+    output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBitValue(geom1.overlaps(geom2));
   }
 }
