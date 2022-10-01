@@ -22,8 +22,6 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
-
-
 @FunctionTemplate(
     name = "ST_Touches",
     scope = FunctionTemplate.FunctionScope.SIMPLE,

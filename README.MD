@@ -3,6 +3,9 @@
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/sheinbergon/dremio-udf-gis?color=%2340E0D0&style=for-the-badge)](https://github.com/sheinbergon/dremio-udf-gis/releases/latest)
 [![Maven Central](https://img.shields.io/maven-central/v/org.sheinbergon/dremio-udf-gis?color=Crimson&style=for-the-badge)](https://search.maven.org/search?q=g:org.sheinbergon%20a:dremio-udf-gis*)
 [![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/sheinbergon/dremio-udf-gis?color=432f95&style=for-the-badge)](https://app.snyk.io/org/sheinbergon/project/94183993-505b-439c-9078-6276fa4c1626)
+[![Coveralls](https://img.shields.io/coveralls/github/sheinbergon/dremio-udf-gis?style=for-the-badge)](https://coveralls.io/github/sheinbergon/dremio-udf-gis)
+
+
 
 # Dremio Geo-Spatial Extensions
 
@@ -17,15 +20,17 @@
 ### Installation
 - Take the shaded jar for the desired version and place inside your Dremio installation (`$DREMIO_HOME/jars/3rdparty`)
 - Restart your Dremio server(s)
-- Rejoice! (and see the [Cheat Sheet](https://github.com/sheinbergon/dremio-udf-gis/wiki/GIS-Functions-Cheat-Sheet) for detailed usage instructions)
+- Rejoice! (and see the [WIKI](https://github.com/sheinbergon/dremio-udf-gis/wiki) for detailed usage instructions)
 
 #### Version Compatbility
 
-| Library Version | Dremio Version |
-|-----------------|----------------|
-| 0.2.x           | 20.1.x         |
-| 0.3.x           | 21.1.x         |
-| 0.4.x           | 21.2.x         |
+| Library Version | Dremio Version | Status           |
+|-----------------|----------------|------------------|
+| 0.2.x           | 20.1.x         | Legacy           |
+| 0.3.x           | 21.1.x         | Maintained       |
+| 0.4.x           | 21.2.x         | Maintained       |
+| 0.5.x           | 22.0.x         | Maintained       |
+| 0.6.x           | 22.1.x         | Work In Progress |
 
 ### Usage Notes
 As opposed to PostGIS, Dremio is only a query engine based on existing/projected data sources/lakes.  
