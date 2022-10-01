@@ -3,6 +3,9 @@
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/sheinbergon/dremio-udf-gis?color=%2340E0D0&style=for-the-badge)](https://github.com/sheinbergon/dremio-udf-gis/releases/latest)
 [![Maven Central](https://img.shields.io/maven-central/v/org.sheinbergon/dremio-udf-gis?color=Crimson&style=for-the-badge)](https://search.maven.org/search?q=g:org.sheinbergon%20a:dremio-udf-gis*)
 [![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/sheinbergon/dremio-udf-gis?color=432f95&style=for-the-badge)](https://app.snyk.io/org/sheinbergon/project/94183993-505b-439c-9078-6276fa4c1626)
+[![Coveralls](https://img.shields.io/coveralls/github/sheinbergon/dremio-udf-gis?style=for-the-badge)](https://coveralls.io/github/sheinbergon/dremio-udf-gis)
+
+
 
 # Dremio Geo-Spatial Extensions
 
