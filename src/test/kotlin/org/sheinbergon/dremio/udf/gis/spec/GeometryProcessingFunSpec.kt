@@ -2,6 +2,7 @@ package org.sheinbergon.dremio.udf.gis.spec
 
 import com.dremio.exec.expr.SimpleFunction
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.core.test.TestScope
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
@@ -13,8 +14,10 @@ abstract class GeometryProcessingFunSpec<F : SimpleFunction> : FunSpec() {
   protected fun testGeometryProcessing(
     name: String,
     wkt: String,
-    expected: String
+    expected: String,
+    precursor: suspend TestScope.() -> Unit = {}
   ) = test(name) {
+    precursor(this)
     function.apply {
       wkbInput.setFromWkt(wkt)
       setup()
