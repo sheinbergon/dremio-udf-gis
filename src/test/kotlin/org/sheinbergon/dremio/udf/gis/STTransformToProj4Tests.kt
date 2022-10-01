@@ -22,7 +22,7 @@ internal class STTransformToProj4Tests : GeometryTransformationFunSpec<STTransfo
 
     testGeometryTransformation(
       name = "Calling ST_TRANSFORM on a WGS84 POLYGON to transform it using a proj4 string",
-      wkt ="POLYGON((170 50,170 72,-130 72,-130 50,170 50))",
+      wkt = "POLYGON((170 50,170 72,-130 72,-130 50,170 50))",
       sourceSrid = 4326,
       expected = """
       POLYGON (
