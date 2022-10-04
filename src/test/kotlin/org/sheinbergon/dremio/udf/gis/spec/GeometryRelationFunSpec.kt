@@ -3,7 +3,6 @@ package org.sheinbergon.dremio.udf.gis.spec
 import com.dremio.exec.expr.SimpleFunction
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.core.test.TestScope
-import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.shouldBe
 import org.apache.arrow.vector.holders.BitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder

@@ -1,7 +1,6 @@
 package org.sheinbergon.dremio.udf.gis
 
 import org.apache.arrow.vector.holders.BitHolder
-import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.util.allocateBuffer
 

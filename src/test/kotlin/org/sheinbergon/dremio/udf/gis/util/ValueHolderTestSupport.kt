@@ -133,7 +133,6 @@ internal fun NullableBitHolder.reset() {
   value = 0
 }
 
-
 internal fun NullableBitHolder.valueIsTrue() = this.value shouldBeExactly 1
 internal fun NullableBitHolder.valueIsFalse() = this.value shouldBeExactly 0
 internal fun BitHolder.valueIsTrue() = this.value shouldBeExactly 1
