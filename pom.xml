@@ -5,15 +5,16 @@
     <groupId>org.sheinbergon</groupId>
     <artifactId>dremio-udf-gis</artifactId>
     <properties>
-        <checkstyle.version>10.3</checkstyle.version>
+        <checkstyle.version>10.3.2</checkstyle.version>
         <dremio.version>21.1.1-202204292111390812-57b1832f</dremio.version>
         <dremio-arrow.version>7.0.0-20220218200504-acc0d6e-dremio</dremio-arrow.version>
         <proj4j.version>1.1.5</proj4j.version>
         <jts-core.version>1.19.0</jts-core.version>
         <jts-io-common.version>1.19.0</jts-io-common.version>
+        <commons-io.version>2.11.0</commons-io.version>
         <junit.version>4.13.2</junit.version>
         <junit-jupiter.version>5.9.0</junit-jupiter.version>
-        <kotlin.version>1.7.10</kotlin.version>
+        <kotlin.version>1.7.20</kotlin.version>
         <kotest.version>5.4.2</kotest.version>
         <joda.version>2.9</joda.version>
         <detekt.version>1.21.0</detekt.version>
@@ -147,6 +148,12 @@
                     <artifactId>junit</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+            <scope>provided</scope>
         </dependency>
         <!-- Test Dependencies -->
         <dependency>
