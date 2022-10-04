@@ -36,7 +36,7 @@ public class STCollectAggregate implements AggrFunction {
   org.apache.arrow.vector.holders.NullableVarBinaryHolder value;
 
   @Workspace
-  org.apache.arrow.vector.holders.BitHolder indicator;
+  org.apache.arrow.vector.holders.NullableBitHolder indicator;
 
   @Output
   org.apache.arrow.vector.holders.NullableVarBinaryHolder output;
@@ -50,7 +50,7 @@ public class STCollectAggregate implements AggrFunction {
   @Override
   public void setup() {
     value = new org.apache.arrow.vector.holders.NullableVarBinaryHolder();
-    indicator = new org.apache.arrow.vector.holders.BitHolder();
+    indicator = new org.apache.arrow.vector.holders.NullableBitHolder();
     org.locationtech.jts.geom.GeometryCollection collection = org.sheinbergon.dremio.udf.gis.util.GeometryCollections.empty();
     byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(collection);
     valueBuffer = valueBuffer.reallocIfNeeded(bytes.length);
