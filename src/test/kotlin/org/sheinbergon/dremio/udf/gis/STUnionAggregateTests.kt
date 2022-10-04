@@ -1,6 +1,6 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.BitHolder
+import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.util.allocateBuffer
 
@@ -24,7 +24,7 @@ internal class STUnionAggregateTests : GeometryAggregationFunSpec<STUnionAggrega
   override val function = STUnionAggregate().apply {
     value = NullableVarBinaryHolder()
     input = NullableVarBinaryHolder()
-    indicator = BitHolder()
+    indicator = NullableBitHolder()
     output = NullableVarBinaryHolder()
     valueBuffer = allocateBuffer()
     outputBuffer = allocateBuffer()
@@ -33,5 +33,5 @@ internal class STUnionAggregateTests : GeometryAggregationFunSpec<STUnionAggrega
   override val STUnionAggregate.wkbInput: NullableVarBinaryHolder get() = function.input
   override val STUnionAggregate.wkbOutput: NullableVarBinaryHolder get() = function.output
   override val STUnionAggregate.aggregationValue: NullableVarBinaryHolder get() = function.value
-  override val STUnionAggregate.setIndicator: BitHolder get() = function.indicator
+  override val STUnionAggregate.setIndicator: NullableBitHolder get() = function.indicator
 }

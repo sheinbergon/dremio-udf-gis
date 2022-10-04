@@ -265,7 +265,12 @@ public final class GeometryHelpers {
     if (holder instanceof BitHolder) {
       return ((BitHolder) holder).value == BIT_TRUE;
     } else if (holder instanceof NullableBitHolder) {
-      return ((NullableBitHolder) holder).value == BIT_TRUE;
+      NullableBitHolder nullable = (NullableBitHolder) holder;
+      if (nullable.isSet == BIT_TRUE) {
+        return ((NullableBitHolder) holder).value == BIT_TRUE;
+      } else {
+        throw new IllegalStateException("Cannot verify state of a not-set nullable bit holder");
+      }
     } else {
       throw new IllegalArgumentException(
           String.format("Unsupported value holder type - %s",
@@ -277,7 +282,12 @@ public final class GeometryHelpers {
     if (holder instanceof BitHolder) {
       return ((BitHolder) holder).value == BIT_FALSE;
     } else if (holder instanceof NullableBitHolder) {
-      return ((NullableBitHolder) holder).value == BIT_FALSE;
+      NullableBitHolder nullable = (NullableBitHolder) holder;
+      if (nullable.isSet == BIT_TRUE) {
+        return ((NullableBitHolder) holder).value == BIT_FALSE;
+      } else {
+        throw new IllegalStateException("Cannot verify state of a not-set nullable bit holder");
+      }
     } else {
       throw new IllegalArgumentException(
           String.format("Unsupported value holder type - %s",
@@ -289,7 +299,9 @@ public final class GeometryHelpers {
     if (holder instanceof BitHolder) {
       ((BitHolder) holder).value = BIT_FALSE;
     } else if (holder instanceof NullableBitHolder) {
-      ((NullableBitHolder) holder).value = BIT_FALSE;
+      NullableBitHolder nullable = (NullableBitHolder) holder;
+      nullable.value = BIT_FALSE;
+      nullable.isSet = BIT_TRUE;
     } else {
       throw new IllegalArgumentException(
           String.format("Unsupported value holder type - %s",
@@ -301,7 +313,9 @@ public final class GeometryHelpers {
     if (holder instanceof BitHolder) {
       ((BitHolder) holder).value = BIT_TRUE;
     } else if (holder instanceof NullableBitHolder) {
-      ((NullableBitHolder) holder).value = BIT_TRUE;
+      NullableBitHolder nullable = (NullableBitHolder) holder;
+      nullable.value = BIT_TRUE;
+      nullable.isSet = BIT_TRUE;
     } else {
       throw new IllegalArgumentException(
           String.format("Unsupported value holder type - %s",

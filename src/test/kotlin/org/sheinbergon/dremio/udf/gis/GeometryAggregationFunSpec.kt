@@ -2,7 +2,7 @@ package org.sheinbergon.dremio.udf.gis
 
 import com.dremio.exec.expr.AggrFunction
 import io.kotest.core.spec.style.FunSpec
-import org.apache.arrow.vector.holders.BitHolder
+import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
@@ -60,5 +60,5 @@ abstract class GeometryAggregationFunSpec<F : AggrFunction> : FunSpec() {
   protected abstract val F.wkbInput: NullableVarBinaryHolder
   protected abstract val F.wkbOutput: NullableVarBinaryHolder
   protected abstract val F.aggregationValue: NullableVarBinaryHolder
-  protected abstract val F.setIndicator: BitHolder
+  protected abstract val F.setIndicator: NullableBitHolder
 }
