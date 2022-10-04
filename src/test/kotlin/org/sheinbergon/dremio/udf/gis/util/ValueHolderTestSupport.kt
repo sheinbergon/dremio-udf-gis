@@ -1,11 +1,13 @@
 package org.sheinbergon.dremio.udf.gis.util
 
 import com.dremio.sabot.exec.context.BufferManagerImpl
+import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.shouldBe
 import org.apache.arrow.memory.RootAllocator
 import org.apache.arrow.vector.holders.BitHolder
 import org.apache.arrow.vector.holders.Float8Holder
 import org.apache.arrow.vector.holders.IntHolder
+import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableFloat8Holder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.apache.arrow.vector.holders.NullableVarCharHolder
@@ -82,6 +84,7 @@ internal fun NullableVarBinaryHolder.reset() {
   end = 0
   start = 0
   isSet = 0
+  buffer?.clear()
   buffer = null
 }
 
@@ -99,11 +102,13 @@ internal fun NullableVarCharHolder.reset() {
 }
 
 internal fun NullableVarBinaryHolder.release() {
-  buffer.close()
+  buffer?.close()
+  buffer = null
 }
 
 internal fun NullableVarCharHolder.release() {
-  buffer.close()
+  buffer?.close()
+  buffer = null
 }
 
 internal fun NullableFloat8Holder.reset() {
@@ -122,3 +127,14 @@ internal fun IntHolder.reset() {
 internal fun BitHolder.reset() {
   value = 0
 }
+
+internal fun NullableBitHolder.reset() {
+  isSet = 0
+  value = 0
+}
+
+
+internal fun NullableBitHolder.valueIsTrue() = this.value shouldBeExactly 1
+internal fun NullableBitHolder.valueIsFalse() = this.value shouldBeExactly 0
+internal fun BitHolder.valueIsTrue() = this.value shouldBeExactly 1
+internal fun BitHolder.valueIsFalse() = this.value shouldBeExactly 0

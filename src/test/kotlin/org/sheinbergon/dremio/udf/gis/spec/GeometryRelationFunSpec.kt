@@ -13,6 +13,8 @@ import org.sheinbergon.dremio.udf.gis.util.GeometryHelpers
 import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setFromWkt
+import org.sheinbergon.dremio.udf.gis.util.valueIsFalse
+import org.sheinbergon.dremio.udf.gis.util.valueIsTrue
 
 abstract class GeometryRelationFunSpec<F : SimpleFunction, O : ValueHolder> : FunSpec() {
 
@@ -82,9 +84,6 @@ abstract class GeometryRelationFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
         output.valueIsFalse()
       }
     }
-
-    private fun BitHolder.valueIsTrue() = this.value shouldBeExactly 1
-    private fun BitHolder.valueIsFalse() = this.value shouldBeExactly 0
   }
 
   init {

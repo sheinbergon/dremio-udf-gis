@@ -36,24 +36,27 @@ public class STUnionAggregate implements AggrFunction {
   org.apache.arrow.vector.holders.NullableVarBinaryHolder value;
 
   @Workspace
-  org.apache.arrow.vector.holders.NullableBitHolder indicator;
+  org.apache.arrow.vector.holders.BitHolder indicator;
 
   @Output
   org.apache.arrow.vector.holders.NullableVarBinaryHolder output;
 
   @Inject
-  org.apache.arrow.memory.ArrowBuf buffer;
+  org.apache.arrow.memory.ArrowBuf valueBuffer;
+
+  @Inject
+  org.apache.arrow.memory.ArrowBuf outputBuffer;
 
   @Override
   public void setup() {
     value = new org.apache.arrow.vector.holders.NullableVarBinaryHolder();
-    indicator = new org.apache.arrow.vector.holders.NullableBitHolder();
+    indicator = new org.apache.arrow.vector.holders.BitHolder();
     org.locationtech.jts.geom.Geometry empty = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.emptyGeometry();
     byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(empty);
-    buffer = buffer.reallocIfNeeded(bytes.length);
-    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, value);
+    valueBuffer = valueBuffer.reallocIfNeeded(bytes.length);
+    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, valueBuffer, value);
     org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderSet(value);
-    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(indicator);
+    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setValueFalse(indicator);
   }
 
   @Override
@@ -63,19 +66,19 @@ public class STUnionAggregate implements AggrFunction {
       org.locationtech.jts.geom.Geometry accumulated = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(value);
       org.locationtech.jts.geom.Geometry union = accumulated.union(geom);
       byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(union);
-      buffer = buffer.reallocIfNeeded(bytes.length);
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, value);
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderSet(indicator);
+      valueBuffer = valueBuffer.reallocIfNeeded(bytes.length);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, valueBuffer, value);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setValueTrue(indicator);
     }
   }
 
   @Override
   public void output() {
-    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(indicator)) {
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isValueTrue(indicator)) {
       org.locationtech.jts.geom.Geometry union = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(value);
       byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(union);
-      buffer = buffer.reallocIfNeeded(bytes.length);
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, output);
+      outputBuffer = outputBuffer.reallocIfNeeded(bytes.length);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, outputBuffer, output);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderSet(output);
     } else {
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);
@@ -86,9 +89,9 @@ public class STUnionAggregate implements AggrFunction {
   public void reset() {
     org.locationtech.jts.geom.Geometry empty = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.emptyGeometry();
     byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(empty);
-    buffer = buffer.reallocIfNeeded(bytes.length);
-    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, value);
+    valueBuffer = valueBuffer.reallocIfNeeded(bytes.length);
+    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, valueBuffer, value);
     org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderSet(value);
-    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(indicator);
+    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setValueFalse(indicator);
   }
 }
