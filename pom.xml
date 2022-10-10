@@ -19,7 +19,7 @@
         <joda.version>2.9</joda.version>
         <detekt.version>1.21.0</detekt.version>
         <carrotsearch.version>0.7.0</carrotsearch.version>
-        <arrow-memory-netty.version>8.0.0</arrow-memory-netty.version>
+        <arrow-memory-netty.version>7.0.0</arrow-memory-netty.version>
     </properties>
     <version>0.5.4${artifact.version.suffix}</version>
     <name>dremio-udf-gis</name>
