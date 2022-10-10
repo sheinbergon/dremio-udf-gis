@@ -37,7 +37,7 @@ public class STBufferParameters implements SimpleFunction {
   org.apache.arrow.vector.holders.Float8Holder radiusInput;
 
   @Param
-  org.apache.arrow.vector.holders.NullableVarCharHolder bufferStyleParametersInput;
+  org.apache.arrow.vector.holders.NullableVarCharHolder parametersInput;
 
   @Output
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
@@ -50,7 +50,7 @@ public class STBufferParameters implements SimpleFunction {
 
   public void eval() {
     org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-    java.lang.String parameters = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toUTF8String(bufferStyleParametersInput);
+    java.lang.String parameters = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toUTF8String(parametersInput);
     org.locationtech.jts.geom.Geometry buffered = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.buffer(geom, radiusInput.value, parameters);
     byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(buffered);
     buffer = buffer.reallocIfNeeded(bytes.length);
