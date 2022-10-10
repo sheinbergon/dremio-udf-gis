@@ -74,7 +74,6 @@ internal fun NullableVarBinaryHolder.setBinary(bytes: ByteArray) {
 internal fun NullableVarBinaryHolder.valueIsAsDescribedIn(text: String) {
   val evaluated = GeometryHelpers.toGeometry(this)
   val reduced = GeometryPrecisionReducer.reducePointwise(evaluated, SCALED_PRECISION_MODEL)
-  println(reduced)
   val expected = NullableVarCharHolder()
     .apply { setUtf8(text) }
     .let(GeometryHelpers::toGeometry)
