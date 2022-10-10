@@ -49,7 +49,7 @@ public class STBuffer implements SimpleFunction {
 
   public void eval() {
     org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-    org.locationtech.jts.geom.Geometry buffered = geom.buffer(radiusInput.value);
+    org.locationtech.jts.geom.Geometry buffered = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.buffer(geom, radiusInput.value, null);
     byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(buffered);
     buffer = buffer.reallocIfNeeded(bytes.length);
     org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
