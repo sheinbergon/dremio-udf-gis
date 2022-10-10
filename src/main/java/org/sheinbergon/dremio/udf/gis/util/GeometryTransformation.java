@@ -76,18 +76,18 @@ public final class GeometryTransformation {
       transformed = transform(transform, (Polygon) geom);
     } else if (geom instanceof Point) {
       transformed = transform(transform, (Point) geom);
-    } else if (geom instanceof LinearRing) {
-      transformed = transform(transform, (LinearRing) geom);
     } else if (geom instanceof LineString) {
       transformed = transform(transform, (LineString) geom);
     } else if (geom instanceof MultiPolygon) {
       transformed = transform(transform, (MultiPolygon) geom);
-    } else if (geom instanceof MultiPoint) {
+    }  else if (geom instanceof MultiPoint) {
       transformed = transform(transform, (MultiPoint) geom);
     } else if (geom instanceof MultiLineString) {
       transformed = transform(transform, (MultiLineString) geom);
     } else if (geom instanceof GeometryCollection) {
       transformed = transform(transform, (GeometryCollection) geom);
+    } else if (geom instanceof LinearRing) {
+      transformed = transform(transform, (LinearRing) geom);
     } else {
       throw new IllegalArgumentException(
           String.format("Unsupported geometry type for conversion - %s",
