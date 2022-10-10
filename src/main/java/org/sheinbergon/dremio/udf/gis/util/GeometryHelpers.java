@@ -28,6 +28,7 @@ import org.locationtech.jts.algorithm.Angle;
 import org.locationtech.jts.geom.*;
 import org.locationtech.jts.io.*;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
+import org.locationtech.jts.operation.buffer.BufferOp;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -338,6 +339,22 @@ public final class GeometryHelpers {
       }
     } catch (IOException iox) {
       throw new RuntimeException("Could not read existing buffer data", iox);
+    }
+  }
+
+  public static Geometry buffer(
+      final @Nonnull Geometry geometry,
+      final double radius,
+      final @Nullable String parameters) {
+    if (parameters == null || parameters.isEmpty()) {
+      return geometry.buffer(radius);
+    } else {
+      GeometryBufferParameters.Definition definition = GeometryBufferParameters.parse(parameters);
+      GeometryBufferParameters.Value.Sides side = (GeometryBufferParameters.Value.Sides) definition
+          .setting(GeometryBufferParameters.Parameters.SIDE)
+          .orElse(GeometryBufferParameters.Value.Sides.LEFT);
+      double sidedRadius = radius * (side.equals(GeometryBufferParameters.Value.Sides.RIGHT) ? -1 : 1);
+      return BufferOp.bufferOp(geometry, sidedRadius, definition.parameters());
     }
   }
 }

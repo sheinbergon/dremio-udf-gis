@@ -22,7 +22,6 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 import org.apache.arrow.memory.ArrowBuf;
-import org.locationtech.jts.operation.buffer.BufferOp;
 
 import javax.inject.Inject;
 
@@ -30,7 +29,7 @@ import javax.inject.Inject;
     name = "ST_Buffer",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
-public class STBufferStyleParameters implements SimpleFunction {
+public class STBufferParameters implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
@@ -52,11 +51,7 @@ public class STBufferStyleParameters implements SimpleFunction {
   public void eval() {
     org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
     java.lang.String parameters = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toUTF8String(bufferStyleParametersInput);
-    if (parameters.isEmpty()) {
-      org.locationtech.jts.geom.Geometry buffered = geom.buffer(radiusInput.value);
-    } else {
-      BufferOp
-    }
+    org.locationtech.jts.geom.Geometry buffered = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.buffer(geom, radiusInput.value, parameters);
     byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(buffered);
     buffer = buffer.reallocIfNeeded(bytes.length);
     org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
