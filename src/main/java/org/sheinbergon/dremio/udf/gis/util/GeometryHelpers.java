@@ -23,10 +23,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.arrow.memory.ArrowBuf;
 import org.apache.arrow.vector.holders.*;
+import org.apache.commons.io.IOUtils;
 import org.locationtech.jts.algorithm.Angle;
 import org.locationtech.jts.geom.*;
 import org.locationtech.jts.io.*;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
+import org.locationtech.jts.operation.buffer.BufferOp;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -97,12 +99,13 @@ public final class GeometryHelpers {
     }
   }
 
+  @SuppressWarnings("EmptyForIteratorPad")
   public static GeometryCollection toGeometryCollection(final @Nonnull NullableVarBinaryHolder holder) {
     try {
       ArrowBuf buffer = holder.buffer;
       WKBReader reader = new WKBReader();
       List<Geometry> geometries = Lists.newLinkedList();
-      for (long index = 0L; index < buffer.readableBytes();) {
+      for (long index = 0L; index < buffer.readableBytes(); ) {
         int size = buffer.getInt(index);
         index += Integer.BYTES;
         byte[] array = new byte[size];
@@ -149,13 +152,17 @@ public final class GeometryHelpers {
   @Nonnull
   public static Geometry toGeometry(
       final @Nonnull NullableVarBinaryHolder holder) {
-    ByteBuffer buffer = holder.buffer.nioBuffer(holder.start, holder.end - holder.start);
-    try (InputStream stream = ByteBufferInputStream.toInputStream(buffer)) {
-      InputStreamInStream adapter = new InputStreamInStream(stream);
-      WKBReader reader = new WKBReader();
-      return reader.read(adapter);
-    } catch (IOException | ParseException x) {
-      throw new RuntimeException(x);
+    if (holder.buffer != null) {
+      ByteBuffer buffer = holder.buffer.nioBuffer(holder.start, holder.end - holder.start);
+      try (InputStream stream = ByteBufferInputStream.toInputStream(buffer)) {
+        InputStreamInStream adapter = new InputStreamInStream(stream);
+        WKBReader reader = new WKBReader();
+        return reader.read(adapter);
+      } catch (IOException | ParseException x) {
+        throw new RuntimeException(x);
+      }
+    } else {
+      return emptyGeometry();
     }
   }
 
@@ -252,6 +259,102 @@ public final class GeometryHelpers {
       throw new IllegalArgumentException(
           String.format("Unsupported value holder type - %s",
               holder.getClass().getName()));
+    }
+  }
+
+  public static boolean isValueTrue(final @Nonnull ValueHolder holder) {
+    if (holder instanceof BitHolder) {
+      return ((BitHolder) holder).value == BIT_TRUE;
+    } else if (holder instanceof NullableBitHolder) {
+      NullableBitHolder nullable = (NullableBitHolder) holder;
+      if (nullable.isSet == BIT_TRUE) {
+        return ((NullableBitHolder) holder).value == BIT_TRUE;
+      } else {
+        throw new IllegalStateException("Cannot verify state of a not-set nullable bit holder");
+      }
+    } else {
+      throw new IllegalArgumentException(
+          String.format("Unsupported value holder type - %s",
+              holder.getClass().getName()));
+    }
+  }
+
+  public static boolean isValueFalse(final @Nonnull ValueHolder holder) {
+    if (holder instanceof BitHolder) {
+      return ((BitHolder) holder).value == BIT_FALSE;
+    } else if (holder instanceof NullableBitHolder) {
+      NullableBitHolder nullable = (NullableBitHolder) holder;
+      if (nullable.isSet == BIT_TRUE) {
+        return ((NullableBitHolder) holder).value == BIT_FALSE;
+      } else {
+        throw new IllegalStateException("Cannot verify state of a not-set nullable bit holder");
+      }
+    } else {
+      throw new IllegalArgumentException(
+          String.format("Unsupported value holder type - %s",
+              holder.getClass().getName()));
+    }
+  }
+
+  public static void setValueFalse(final @Nonnull ValueHolder holder) {
+    if (holder instanceof BitHolder) {
+      ((BitHolder) holder).value = BIT_FALSE;
+    } else if (holder instanceof NullableBitHolder) {
+      NullableBitHolder nullable = (NullableBitHolder) holder;
+      nullable.value = BIT_FALSE;
+      nullable.isSet = BIT_TRUE;
+    } else {
+      throw new IllegalArgumentException(
+          String.format("Unsupported value holder type - %s",
+              holder.getClass().getName()));
+    }
+  }
+
+  public static void setValueTrue(final @Nonnull ValueHolder holder) {
+    if (holder instanceof BitHolder) {
+      ((BitHolder) holder).value = BIT_TRUE;
+    } else if (holder instanceof NullableBitHolder) {
+      NullableBitHolder nullable = (NullableBitHolder) holder;
+      nullable.value = BIT_TRUE;
+      nullable.isSet = BIT_TRUE;
+    } else {
+      throw new IllegalArgumentException(
+          String.format("Unsupported value holder type - %s",
+              holder.getClass().getName()));
+    }
+  }
+
+  public static ArrowBuf enlargeBufferIfNeeded(
+      final @Nonnull ArrowBuf buffer,
+      final long required) {
+    try {
+      if (required > buffer.capacity()) {
+        ByteBufferInputStream stream = ByteBufferInputStream.toInputStream(buffer.nioBuffer());
+        byte[] data = IOUtils.toByteArray(stream);
+        ArrowBuf reallocated = buffer.reallocIfNeeded(required);
+        reallocated.writeBytes(data);
+        return reallocated;
+      } else {
+        return buffer;
+      }
+    } catch (IOException iox) {
+      throw new RuntimeException("Could not read existing buffer data", iox);
+    }
+  }
+
+  public static Geometry buffer(
+      final @Nonnull Geometry geometry,
+      final double radius,
+      final @Nullable String parameters) {
+    if (parameters == null || parameters.isEmpty()) {
+      return geometry.buffer(radius);
+    } else {
+      GeometryBufferParameters.Definition definition = GeometryBufferParameters.parse(parameters);
+      GeometryBufferParameters.Value.Sides side = (GeometryBufferParameters.Value.Sides) definition
+          .setting(GeometryBufferParameters.Parameters.SIDE)
+          .orElse(GeometryBufferParameters.Value.Sides.LEFT);
+      double sidedRadius = radius * (side.equals(GeometryBufferParameters.Value.Sides.RIGHT) ? -1 : 1);
+      return BufferOp.bufferOp(geometry, sidedRadius, definition.parameters());
     }
   }
 }

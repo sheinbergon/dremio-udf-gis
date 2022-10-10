@@ -3,7 +3,6 @@ package org.sheinbergon.dremio.udf.gis.spec
 import com.dremio.exec.expr.SimpleFunction
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.core.test.TestScope
-import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.shouldBe
 import org.apache.arrow.vector.holders.BitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
@@ -13,6 +12,8 @@ import org.sheinbergon.dremio.udf.gis.util.GeometryHelpers
 import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setFromWkt
+import org.sheinbergon.dremio.udf.gis.util.valueIsFalse
+import org.sheinbergon.dremio.udf.gis.util.valueIsTrue
 
 abstract class GeometryRelationFunSpec<F : SimpleFunction, O : ValueHolder> : FunSpec() {
 
@@ -82,9 +83,6 @@ abstract class GeometryRelationFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
         output.valueIsFalse()
       }
     }
-
-    private fun BitHolder.valueIsTrue() = this.value shouldBeExactly 1
-    private fun BitHolder.valueIsFalse() = this.value shouldBeExactly 0
   }
 
   init {
