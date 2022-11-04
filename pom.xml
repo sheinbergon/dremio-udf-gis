@@ -6,8 +6,8 @@
     <artifactId>dremio-udf-gis</artifactId>
     <properties>
         <checkstyle.version>9.3</checkstyle.version>
-        <dremio.version>22.1.1-202208230402290397-a7010f28</dremio.version>
-        <dremio-arrow.version>8.0.0-20220615173757-4698c877a6-dremio</dremio-arrow.version>
+        <dremio.version>23.0.1-202210141019030815-c1de8bcc</dremio.version>
+        <dremio-arrow.version>9.0.0-20220922165652-3a8c29faef-dremio</dremio-arrow.version>
         <proj4j.version>1.1.5</proj4j.version>
         <jts-core.version>1.19.0</jts-core.version>
         <jts-io-common.version>1.19.0</jts-io-common.version>
