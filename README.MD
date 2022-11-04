@@ -1,9 +1,10 @@
-[![GitHub](https://img.shields.io/github/license/sheinbergon/dremio-udf-gis?color=pink&style=for-the-badge)](https://github.com/sheinbergon/dremio-udf-gis/blob/master/LICENSE)
-[![Github Workflow Status](https://img.shields.io/github/workflow/status/sheinbergon/dremio-udf-gis/Release%20Actions?style=for-the-badge)](https://github.com/sheinbergon/dremio-udf-gis/actions?query=workflow%3Arelease-actions)
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/sheinbergon/dremio-udf-gis?color=%2340E0D0&style=for-the-badge)](https://github.com/sheinbergon/dremio-udf-gis/releases/latest)
-[![Maven Central](https://img.shields.io/maven-central/v/org.sheinbergon/dremio-udf-gis?color=Crimson&style=for-the-badge)](https://search.maven.org/search?q=g:org.sheinbergon%20a:dremio-udf-gis*)
-[![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/sheinbergon/dremio-udf-gis?color=432f95&style=for-the-badge)](https://app.snyk.io/org/sheinbergon/project/94183993-505b-439c-9078-6276fa4c1626)
-[![Coveralls](https://img.shields.io/coveralls/github/sheinbergon/dremio-udf-gis?style=for-the-badge)](https://coveralls.io/github/sheinbergon/dremio-udf-gis)
+[![GitHub](https://img.shields.io/github/license/sheinbergon/dremio-udf-gis?color=pink&logo=apache&style=for-the-badge)](https://github.com/sheinbergon/dremio-udf-gis/blob/master/LICENSE)
+[![Github Workflow Status](https://img.shields.io/github/workflow/status/sheinbergon/dremio-udf-gis/Release%20Actions?logo=githubactions&style=for-the-badge)](https://github.com/sheinbergon/dremio-udf-gis/actions?query=workflow%3Arelease-actions)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/sheinbergon/dremio-udf-gis?logo=github&color=%2340E0D0&style=for-the-badge)](https://github.com/sheinbergon/dremio-udf-gis/releases/latest)
+[![Maven Central](https://img.shields.io/maven-central/v/org.sheinbergon/dremio-udf-gis?logo=apachemaven&color=Crimson&style=for-the-badge)](https://search.maven.org/search?q=g:org.sheinbergon%20a:dremio-udf-gis*)
+[![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/sheinbergon/dremio-udf-gis?logo=snyk&color=432f95&style=for-the-badge)](https://app.snyk.io/org/sheinbergon/project/94183993-505b-439c-9078-6276fa4c1626)
+[![Coveralls](https://img.shields.io/coveralls/github/sheinbergon/dremio-udf-gis?logo=coveralls&style=for-the-badge)](https://coveralls.io/github/sheinbergon/dremio-udf-gis)
+[![Liberapay](https://img.shields.io/liberapay/patrons/sheinbergon?logo=liberapay&style=for-the-badge)](https://liberapay.com/sheinbergon/donate)
 
 # Dremio Geo-Spatial Extensions
 
@@ -15,6 +16,17 @@
 - Dremio CE version compatibility (new versions will be released with each community edition) 
 - Up-2-date Proj4J & JTS geometry based implementation
 
+
+### Sponsorship
+
+Enjoying my work? A show of support would be much obliged :grin:
+
+<a href="https://liberapay.com/sheinbergon/donate">
+<img src="assets/liberapay-donate.png" height="66" align="center">
+</a>&nbsp;&nbsp;<a href="https://www.buymeacoffee.com/sheinbergon">
+<img src="assets/buymeacoffee-donate.png" height="66" align="center">
+</a>
+
 ### Installation
 - Take the shaded jar for the desired version and place inside your Dremio installation (`$DREMIO_HOME/jars/3rdparty`)
 - Restart your Dremio server(s)
@@ -22,14 +34,14 @@
 
 #### Version Compatbility
 
-| Library Version | Dremio Version | Status     |
-|-----------------|----------------|------------|
-| 0.2.x           | 20.1.x         | Legacy     |
-| 0.3.x           | 21.1.x         | Maintained |
-| 0.4.x           | 21.2.x         | Maintained |
-| 0.5.x           | 22.0.x         | Maintained |
-| 0.6.x           | 22.1.x         | Maintained |
-
+| Library Version | Dremio Version | Status      |
+|-----------------|----------------|-------------|
+| 0.2.x           | 20.1.x         | Legacy      |
+| 0.3.x           | 21.1.x         | Legacy      |
+| 0.4.x           | 21.2.x         | Maintained  |
+| 0.5.x           | 22.0.x         | Maintained  |
+| 0.6.x           | 22.1.x         | Maintained  |
+| 0.7.x           | 23.0.x         | In Progress |
 ### Usage Notes
 As opposed to PostGIS, Dremio is only a query engine based on existing/projected data sources/lakes.  
 That means that `Geometry` is not a natively supported data type, and you can only access it if     

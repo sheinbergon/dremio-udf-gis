@@ -5,7 +5,7 @@
     <groupId>org.sheinbergon</groupId>
     <artifactId>dremio-udf-gis</artifactId>
     <properties>
-        <checkstyle.version>10.3.2</checkstyle.version>
+        <checkstyle.version>9.3</checkstyle.version>
         <dremio.version>22.1.1-202208230402290397-a7010f28</dremio.version>
         <dremio-arrow.version>8.0.0-20220615173757-4698c877a6-dremio</dremio-arrow.version>
         <proj4j.version>1.1.5</proj4j.version>
