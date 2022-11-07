@@ -41,7 +41,7 @@ Enjoying my work? A show of support would be much obliged :grin:
 | 0.4.x           | 21.2.x         | Maintained  |
 | 0.5.x           | 22.0.x         | Maintained  |
 | 0.6.x           | 22.1.x         | Maintained  |
-| 0.7.x           | 23.0.x         | In Progress |
+| 0.7.x           | 23.0.x         | Maintained  |
 ### Usage Notes
 As opposed to PostGIS, Dremio is only a query engine based on existing/projected data sources/lakes.  
 That means that `Geometry` is not a natively supported data type, and you can only access it if     
