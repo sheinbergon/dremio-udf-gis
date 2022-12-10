@@ -38,6 +38,8 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class GeometryHelpers {
 
@@ -49,6 +51,8 @@ public final class GeometryHelpers {
   private static final Set<String> LINEAR_TYPES = Sets.newHashSet(Geometry.TYPENAME_LINESTRING, Geometry.TYPENAME_MULTILINESTRING);
   private static final int GEOMETRY_DIMENSIONS = 2;
   private static final double AZIMUTH_NORTH_RADIANS = Angle.toRadians(90.0);
+
+  private static final Pattern EWKT_REGEX_PATTERN = Pattern.compile("^\\s*SRID\\s*=\\s*(\\d+)\\s*;\\s*(.+)\\s*$");
 
   private GeometryHelpers() {
   }
@@ -94,6 +98,27 @@ public final class GeometryHelpers {
       String wkt = toUTF8String(holder);
       WKTReader reader = new WKTReader();
       return reader.read(wkt);
+    } catch (ParseException x) {
+      throw new RuntimeException(x);
+    }
+  }
+
+  @Nonnull
+  public static Geometry toGeometryFromEWKT(final @Nonnull NullableVarCharHolder holder) {
+    try {
+      String ewkt = toUTF8String(holder);
+      WKTReader reader = new WKTReader();
+      Matcher matcher = EWKT_REGEX_PATTERN.matcher(ewkt);
+      boolean found = matcher.find();
+      if (found) {
+        Geometry geometry = reader.read(matcher.group(2));
+        geometry.setSRID(Integer.parseInt(matcher.group(1)));
+        return geometry;
+      } else {
+        throw new IllegalArgumentException(
+            String.format("input '%s' is not a valid EWKT",
+                ewkt));
+      }
     } catch (ParseException x) {
       throw new RuntimeException(x);
     }

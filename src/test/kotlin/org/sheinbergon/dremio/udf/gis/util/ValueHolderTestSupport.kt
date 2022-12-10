@@ -9,6 +9,7 @@ import org.apache.arrow.vector.holders.Float8Holder
 import org.apache.arrow.vector.holders.IntHolder
 import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableFloat8Holder
+import org.apache.arrow.vector.holders.NullableIntHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.apache.arrow.vector.holders.VarCharHolder
@@ -80,6 +81,10 @@ internal fun NullableVarBinaryHolder.valueIsAsDescribedIn(text: String) {
   GeometryHelpers.toBinary(reduced) shouldBe GeometryHelpers.toBinary(expected)
 }
 
+internal fun NullableVarBinaryHolder.valueIsNotSet() {
+  GeometryHelpers.isHolderSet(this) shouldBe false
+}
+
 internal fun NullableVarBinaryHolder.reset() {
   end = 0
   start = 0
@@ -118,6 +123,11 @@ internal fun NullableFloat8Holder.reset() {
 
 internal fun Float8Holder.reset() {
   value = 0.0
+}
+
+internal fun NullableIntHolder.reset() {
+  isSet = 0
+  value = 0
 }
 
 internal fun IntHolder.reset() {

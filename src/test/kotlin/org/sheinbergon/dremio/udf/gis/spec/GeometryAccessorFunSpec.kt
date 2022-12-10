@@ -6,7 +6,9 @@ import io.kotest.matchers.doubles.shouldBeExactly
 import io.kotest.matchers.ints.shouldBeExactly
 import org.apache.arrow.vector.holders.BitHolder
 import org.apache.arrow.vector.holders.Float8Holder
+import org.apache.arrow.vector.holders.IntHolder
 import org.apache.arrow.vector.holders.NullableFloat8Holder
+import org.apache.arrow.vector.holders.NullableIntHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.apache.arrow.vector.holders.ValueHolder
 import org.sheinbergon.dremio.udf.gis.util.release
@@ -29,7 +31,7 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
   protected fun testGeometryAccessor(
     name: String,
     wkt: String,
-    value: Double
+    value: Number
   ) = test(name) {
     function.apply {
       wkbInput.setFromWkt(wkt)
@@ -67,6 +69,8 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
   private fun O.isSetTo(value: Any) = when(this) {
     is NullableFloat8Holder -> this.valueIsSetTo(value as Double)
     is Float8Holder -> this.valueIsSetTo(value as Double)
+    is NullableIntHolder -> this.valueIsSetTo(value as Int)
+    is IntHolder -> this.valueIsSetTo(value as Int)
     is BitHolder -> this.valueIsSetTo(value as Boolean)
     else -> throw IllegalArgumentException("Unsupported value holder type '${this::class.simpleName}'")
   }
@@ -80,6 +84,7 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
     is NullableFloat8Holder -> (this as NullableFloat8Holder).reset()
     is Float8Holder -> (this as Float8Holder).reset()
     is BitHolder -> (this as BitHolder).reset()
+    is IntHolder -> (this as IntHolder).reset()
     else -> throw IllegalArgumentException("Unsupported value holder type '${this::class.simpleName}'")
   }
 
@@ -100,6 +105,19 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
     }
   }
 
+  private fun IntHolder.valueIsSetTo(int: Int) {
+    run {
+      value shouldBeExactly int
+    }
+  }
+
+  private fun NullableIntHolder.valueIsSetTo(int: Int) {
+    run {
+      isSet shouldBeExactly 1
+      value shouldBeExactly int
+    }
+  }
+
   private fun NullableFloat8Holder.valueIsNotSet() {
     run {
       isSet shouldBeExactly 0
@@ -109,8 +127,7 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
 
   private fun BitHolder.valueIsSetTo(value: Boolean) {
     run {
-      if (value) this.value shouldBeExactly 1
-      else this.value shouldBeExactly 0
+      this.value shouldBeExactly if (value) 1 else 0
     }
   }
 }
