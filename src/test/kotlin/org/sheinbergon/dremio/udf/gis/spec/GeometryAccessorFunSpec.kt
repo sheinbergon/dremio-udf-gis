@@ -111,7 +111,6 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
     }
   }
 
-
   private fun NullableIntHolder.valueIsSetTo(int: Int) {
     run {
       isSet shouldBeExactly 1
@@ -128,8 +127,7 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
 
   private fun BitHolder.valueIsSetTo(value: Boolean) {
     run {
-      if (value) this.value shouldBeExactly 1
-      else this.value shouldBeExactly 0
+      this.value shouldBeExactly if (value) 1 else 0
     }
   }
 }
