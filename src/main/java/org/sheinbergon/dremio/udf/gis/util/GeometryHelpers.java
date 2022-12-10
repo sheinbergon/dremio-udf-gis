@@ -52,6 +52,7 @@ public final class GeometryHelpers {
   private static final int GEOMETRY_DIMENSIONS = 2;
   private static final double AZIMUTH_NORTH_RADIANS = Angle.toRadians(90.0);
 
+  private static final String EWKT_TEMPLATE = "SRID=%d;%s";
   private static final Pattern EWKT_REGEX_PATTERN = Pattern.compile("^\\s*SRID\\s*=\\s*(\\d+)\\s*;\\s*(.+)\\s*$");
 
   private GeometryHelpers() {
@@ -85,6 +86,13 @@ public final class GeometryHelpers {
       final @Nonnull Geometry geometry) {
     WKTWriter writer = new WKTWriter(GEOMETRY_DIMENSIONS);
     return writer.write(geometry).getBytes(StandardCharsets.UTF_8);
+  }
+
+  public static byte[] toEWKT(
+      final @Nonnull Geometry geometry) {
+    final WKTWriter writer = new WKTWriter(GEOMETRY_DIMENSIONS);
+    final String wkt = writer.write(geometry);
+    return String.format(EWKT_TEMPLATE, geometry.getSRID(), wkt).getBytes(StandardCharsets.UTF_8);
   }
 
   public static byte[] toGeoJson(final @Nonnull Geometry geometry) {
