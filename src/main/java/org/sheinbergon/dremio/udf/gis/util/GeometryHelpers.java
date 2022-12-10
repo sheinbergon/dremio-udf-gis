@@ -52,7 +52,7 @@ public final class GeometryHelpers {
   private static final int GEOMETRY_DIMENSIONS = 2;
   private static final double AZIMUTH_NORTH_RADIANS = Angle.toRadians(90.0);
 
-  private static final Pattern EWKT_REGEX_PATTERN = Pattern.compile("^SRID\\s*=\\s*(\\d+)\\s*;\\s*(.+)");
+  private static final Pattern EWKT_REGEX_PATTERN = Pattern.compile("^\\s*SRID\\s*=\\s*(\\d+)\\s*;\\s*(.+)\\s*$");
 
   private GeometryHelpers() {
   }
@@ -106,12 +106,19 @@ public final class GeometryHelpers {
   @Nonnull
   public static Geometry toGeometryFromEWKT(final @Nonnull NullableVarCharHolder holder) {
     try {
-      String wkt = toUTF8String(holder);
+      String ewkt = toUTF8String(holder);
       WKTReader reader = new WKTReader();
-      Matcher matcher = EWKT_REGEX_PATTERN.matcher(wkt);
-      Geometry geometry = reader.read(matcher.group(2));
-      geometry.setSRID(Integer.parseInt(matcher.group(1)));
-      return geometry;
+      Matcher matcher = EWKT_REGEX_PATTERN.matcher(ewkt);
+      boolean found = matcher.find();
+      if (found) {
+        Geometry geometry = reader.read(matcher.group(2));
+        geometry.setSRID(Integer.parseInt(matcher.group(1)));
+        return geometry;
+      } else {
+        throw new IllegalArgumentException(
+            String.format("input '%s' is not a valid EWKT",
+                ewkt));
+      }
     } catch (ParseException x) {
       throw new RuntimeException(x);
     }
