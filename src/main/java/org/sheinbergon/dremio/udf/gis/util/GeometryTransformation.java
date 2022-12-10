@@ -20,15 +20,16 @@ package org.sheinbergon.dremio.udf.gis.util;
 // Inspired by https://github.com/teiid/teiid/blob/master/optional-geo/src/main/java/org/teiid/geo/GeometryTransformUtils.java
 
 import org.locationtech.jts.geom.*;
-import org.locationtech.jts.io.ParseException;
-import org.locationtech.jts.io.WKTReader;
-import org.locationtech.jts.io.WKTWriter;
 import org.locationtech.proj4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 
 public final class GeometryTransformation {
 
+  private static final Logger logger = LoggerFactory.getLogger(GeometryTransformation.class);
 
   private static final String CRS_TEMPLATE = "EPSG:%d";
 
@@ -138,9 +139,18 @@ public final class GeometryTransformation {
   private static Polygon transform(
       @Nonnull final CoordinateTransform transform,
       @Nonnull final Polygon polygon) {
-    return polygon.getFactory().createPolygon(
-        transformCoordinates(
-            transform, polygon.getCoordinates()));
+    // TODO - Apply this treatment to every supported geometry transformation
+    Coordinate[] original = polygon.getCoordinates();
+    Coordinate[] transformed = transformCoordinates(transform, original);
+    try {
+      return polygon.getFactory().createPolygon(transformed);
+    } catch (RuntimeException x) {
+      logger.error(
+          "Could not construct polygon from transformed coordinates - '{}'. (Original polygon coordinates - '{}')",
+          Arrays.deepToString(transformed),
+          Arrays.deepToString(original));
+      throw x;
+    }
   }
 
   @Nonnull
@@ -214,18 +224,5 @@ public final class GeometryTransformation {
       geometry[index] = transform(collection.getGeometryN(index), transform);
     }
     return collection.getFactory().createGeometryCollection(geometry);
-  }
-
-  @SuppressWarnings("MagicNumber")
-  public static void main(final String[] args) throws ParseException {
-    Geometry geom = new WKTReader().read(
-        "POLYGON (("
-            + "-97.1637319576448 31.4951677678534, -97.1573788345961 31.4895832298431, "
-            + "-97.1608710038082 31.4866661265403, -97.167224137616 31.4922504784885, -97.1637319576448 31.4951677678534"
-            + "))"
-    );
-    geom.setSRID(4326);
-    Geometry t = transform(geom, 2279);
-    System.out.println(new WKTWriter().write(t));
   }
 }

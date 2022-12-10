@@ -81,6 +81,10 @@ internal fun NullableVarBinaryHolder.valueIsAsDescribedIn(text: String) {
   GeometryHelpers.toBinary(reduced) shouldBe GeometryHelpers.toBinary(expected)
 }
 
+internal fun NullableVarBinaryHolder.valueIsNotSet() {
+  GeometryHelpers.isHolderSet(this) shouldBe false
+}
+
 internal fun NullableVarBinaryHolder.reset() {
   end = 0
   start = 0

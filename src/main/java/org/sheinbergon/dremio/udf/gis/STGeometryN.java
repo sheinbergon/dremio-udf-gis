@@ -46,12 +46,18 @@ public class STGeometryN implements SimpleFunction {
   }
 
   public void eval() {
-    final int index = indexInput.value;
+    final int index = indexInput.value - 1; // JTS Geometries are backed by a 0-based java array
     final org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isACollection(geom)) {
+    final int size = geom.getNumGeometries();
+    if (0 <= index && index < size) {
+      org.locationtech.jts.geom.Geometry nthGeom = null;
+      if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isACollection(geom)) {
+        final org.locationtech.jts.geom.GeometryCollection collection = (GeometryCollection) geom;
+        nthGeom = collection.getGeometryN(index);
+      } else {
+        nthGeom = geom;
+      }
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderSet(binaryOutput);
-      final org.locationtech.jts.geom.GeometryCollection collection = (GeometryCollection) geom;
-      final org.locationtech.jts.geom.Geometry nthGeom = collection.getGeometryN(index);
       byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(nthGeom);
       buffer = buffer.reallocIfNeeded(bytes.length);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);

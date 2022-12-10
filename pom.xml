@@ -17,7 +17,7 @@
         <kotlin.version>1.7.21</kotlin.version>
         <kotest.version>5.5.4</kotest.version>
         <joda.version>2.9</joda.version>
-        <detekt.version>1.21.0</detekt.version>
+        <detekt.version>1.22.0</detekt.version>
         <carrotsearch.version>0.7.0</carrotsearch.version>
         <arrow-memory-netty.version>8.0.0</arrow-memory-netty.version>
     </properties>
