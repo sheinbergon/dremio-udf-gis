@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 
 public final class GeometryTransformation {
 
@@ -84,7 +83,7 @@ public final class GeometryTransformation {
       transformed = transform(transform, (LineString) geom);
     } else if (geom instanceof MultiPolygon) {
       transformed = transform(transform, (MultiPolygon) geom);
-    }  else if (geom instanceof MultiPoint) {
+    } else if (geom instanceof MultiPoint) {
       transformed = transform(transform, (MultiPoint) geom);
     } else if (geom instanceof MultiLineString) {
       transformed = transform(transform, (MultiLineString) geom);
@@ -139,18 +138,9 @@ public final class GeometryTransformation {
   private static Polygon transform(
       @Nonnull final CoordinateTransform transform,
       @Nonnull final Polygon polygon) {
-    // TODO - Apply this treatment to every supported geometry transformation
-    Coordinate[] original = polygon.getCoordinates();
-    Coordinate[] transformed = transformCoordinates(transform, original);
-    try {
-      return polygon.getFactory().createPolygon(transformed);
-    } catch (RuntimeException x) {
-      logger.error(
-          "Could not construct polygon from transformed coordinates - '{}'. (Original polygon coordinates - '{}')",
-          Arrays.deepToString(transformed),
-          Arrays.deepToString(original));
-      throw x;
-    }
+    return polygon.getFactory()
+        .createPolygon(
+            transformCoordinates(transform, polygon.getCoordinates()));
   }
 
   @Nonnull
