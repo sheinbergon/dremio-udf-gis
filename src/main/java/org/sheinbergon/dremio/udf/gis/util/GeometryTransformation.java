@@ -20,6 +20,9 @@ package org.sheinbergon.dremio.udf.gis.util;
 // Inspired by https://github.com/teiid/teiid/blob/master/optional-geo/src/main/java/org/teiid/geo/GeometryTransformUtils.java
 
 import org.locationtech.jts.geom.*;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
+import org.locationtech.jts.io.WKTWriter;
 import org.locationtech.proj4j.*;
 
 import javax.annotation.Nonnull;
@@ -80,7 +83,7 @@ public final class GeometryTransformation {
       transformed = transform(transform, (LineString) geom);
     } else if (geom instanceof MultiPolygon) {
       transformed = transform(transform, (MultiPolygon) geom);
-    }  else if (geom instanceof MultiPoint) {
+    } else if (geom instanceof MultiPoint) {
       transformed = transform(transform, (MultiPoint) geom);
     } else if (geom instanceof MultiLineString) {
       transformed = transform(transform, (MultiLineString) geom);
@@ -211,5 +214,18 @@ public final class GeometryTransformation {
       geometry[index] = transform(collection.getGeometryN(index), transform);
     }
     return collection.getFactory().createGeometryCollection(geometry);
+  }
+
+  @SuppressWarnings("MagicNumber")
+  public static void main(final String[] args) throws ParseException {
+    Geometry geom = new WKTReader().read(
+        "POLYGON (("
+            + "-97.1637319576448 31.4951677678534, -97.1573788345961 31.4895832298431, "
+            + "-97.1608710038082 31.4866661265403, -97.167224137616 31.4922504784885, -97.1637319576448 31.4951677678534"
+            + "))"
+    );
+    geom.setSRID(4326);
+    Geometry t = transform(geom, 2279);
+    System.out.println(new WKTWriter().write(t));
   }
 }

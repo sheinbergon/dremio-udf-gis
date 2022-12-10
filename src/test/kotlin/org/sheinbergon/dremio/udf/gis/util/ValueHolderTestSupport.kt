@@ -9,6 +9,7 @@ import org.apache.arrow.vector.holders.Float8Holder
 import org.apache.arrow.vector.holders.IntHolder
 import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableFloat8Holder
+import org.apache.arrow.vector.holders.NullableIntHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.apache.arrow.vector.holders.VarCharHolder
@@ -118,6 +119,11 @@ internal fun NullableFloat8Holder.reset() {
 
 internal fun Float8Holder.reset() {
   value = 0.0
+}
+
+internal fun NullableIntHolder.reset() {
+  isSet = 0
+  value = 0
 }
 
 internal fun IntHolder.reset() {
