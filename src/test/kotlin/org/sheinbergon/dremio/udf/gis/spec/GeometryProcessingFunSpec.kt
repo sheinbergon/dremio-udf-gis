@@ -8,6 +8,7 @@ import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setFromWkt
 import org.sheinbergon.dremio.udf.gis.util.valueIsAsDescribedIn
+import org.sheinbergon.dremio.udf.gis.util.valueIsNotSet
 
 abstract class GeometryProcessingFunSpec<F : SimpleFunction> : FunSpec() {
 
@@ -23,6 +24,20 @@ abstract class GeometryProcessingFunSpec<F : SimpleFunction> : FunSpec() {
       setup()
       eval()
       wkbOutput.valueIsAsDescribedIn(expected)
+    }
+  }
+
+  protected fun testInvalidGeometryProcessing(
+    name: String,
+    wkt: String,
+    precursor: suspend TestScope.() -> Unit = {}
+  ) = test(name) {
+    precursor(this)
+    function.apply {
+      wkbInput.setFromWkt(wkt)
+      setup()
+      eval()
+      wkbOutput.valueIsNotSet()
     }
   }
 
