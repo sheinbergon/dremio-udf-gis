@@ -21,6 +21,10 @@ internal class STAsEWKTTests : GeometryOutputFunSpec<STAsEWKT>() {
       3857,
       "SRID=3857;POLYGON ((0 0, 1.23 0, 1 1, 0.19 1, 0 0))"
     )
+
+    testNullGeometryOutput(
+      "Calling ST_AsEWKT on null input",
+    )
   }
 
   override val function = STAsEWKT().apply {

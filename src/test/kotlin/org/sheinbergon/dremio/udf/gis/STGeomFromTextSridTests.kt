@@ -6,6 +6,7 @@ import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryInputFunSpec
 import org.sheinbergon.dremio.udf.gis.util.allocateBuffer
 import org.sheinbergon.dremio.udf.gis.util.reset
+import org.sheinbergon.dremio.udf.gis.util.valueIsNotSet
 
 internal class STGeomFromTextSridTests : GeometryInputFunSpec.NullableVarChar<STGeomFromTextSrid>() {
 
@@ -20,6 +21,10 @@ internal class STGeomFromTextSridTests : GeometryInputFunSpec.NullableVarChar<ST
       "POINT(0.5 0.5)",
       byteArrayOf(0, 32, 0, 0, 1, 0, 0, 8, -25, 63, -32, 0, 0, 0, 0, 0, 0, 63, -32, 0, 0, 0, 0, 0, 0)
     ) { function.sridInput.value = 2279 }
+
+    testNullGeometryInput(
+      "Calling ST_GeomFromText (with SRID) on null input"
+    ) { function.sridInput.value = 4326 }
   }
 
   override val function = STGeomFromTextSrid().apply {

@@ -21,6 +21,10 @@ internal class STAsTextTests : GeometryOutputFunSpec<STAsText>() {
       3857,
       "POLYGON ((0 0, 1.23 0, 1 1, 0.19 1, 0 0))"
     )
+
+    testNullGeometryOutput(
+      "Calling ST_AsText on null input",
+    )
   }
 
   override val function = STAsText().apply {

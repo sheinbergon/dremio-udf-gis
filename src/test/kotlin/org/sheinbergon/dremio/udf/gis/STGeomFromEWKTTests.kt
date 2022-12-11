@@ -4,6 +4,7 @@ import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryInputFunSpec
 import org.sheinbergon.dremio.udf.gis.util.allocateBuffer
+import org.sheinbergon.dremio.udf.gis.util.valueIsNotSet
 
 internal class STGeomFromEWKTTests : GeometryInputFunSpec.NullableVarChar<STGeomFromEWKT>() {
 
@@ -17,6 +18,10 @@ internal class STGeomFromEWKTTests : GeometryInputFunSpec.NullableVarChar<STGeom
     testInvalidGeometryInput(
       "Calling ST_GeomFromEWKT on WKT",
       "POINT(0.5 0.5)",
+    )
+
+    testNullGeometryInput(
+      "Calling ST_GeomFromEWKT on null input"
     )
   }
 
