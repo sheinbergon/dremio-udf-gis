@@ -4,6 +4,7 @@ import com.dremio.exec.expr.SimpleFunction
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.core.test.TestScope
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
+import org.sheinbergon.dremio.udf.gis.util.GeometryHelpers
 import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setFromWkt
@@ -24,6 +25,19 @@ abstract class GeometryProcessingFunSpec<F : SimpleFunction> : FunSpec() {
       setup()
       eval()
       wkbOutput.valueIsAsDescribedIn(expected)
+    }
+  }
+
+  protected fun testNullGeometryProcessing(
+    name: String,
+    precursor: suspend TestScope.() -> Unit = {}
+  ) = test(name) {
+    precursor(this)
+    function.apply {
+      GeometryHelpers.markHolderNotSet(wkbInput)
+      setup()
+      eval()
+      wkbOutput.valueIsNotSet()
     }
   }
 
