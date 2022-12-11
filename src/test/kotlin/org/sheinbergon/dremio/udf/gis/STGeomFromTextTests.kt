@@ -4,7 +4,6 @@ import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryInputFunSpec
 import org.sheinbergon.dremio.udf.gis.util.allocateBuffer
-import org.sheinbergon.dremio.udf.gis.util.valueIsNotSet
 
 internal class STGeomFromTextTests : GeometryInputFunSpec.NullableVarChar<STGeomFromText>() {
 
