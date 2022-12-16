@@ -23,7 +23,7 @@ import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
 @FunctionTemplate(
-    name = "ST_IsCollection",
+    name = "ST_IsClosed",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.INTERNAL)
 public class STIsClosed implements SimpleFunction {
