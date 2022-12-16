@@ -1,5 +1,5 @@
 [![GitHub](https://img.shields.io/github/license/sheinbergon/dremio-udf-gis?color=pink&logo=apache&style=for-the-badge)](https://github.com/sheinbergon/dremio-udf-gis/blob/master/LICENSE)
-[![Github Workflow Status](https://img.shields.io/github/workflow/status/sheinbergon/dremio-udf-gis/Release%20Actions?logo=githubactions&style=for-the-badge)](https://github.com/sheinbergon/dremio-udf-gis/actions?query=workflow%3Arelease-actions)
+[![Github Workflow Status](https://img.shields.io/github/actions/workflow/status/sheinbergon/dremio-udf-gis/release-ci.yml?branch=23.0.x&logo=githubactions&style=for-the-badge)](https://github.com/sheinbergon/dremio-udf-gis/actions?query=workflow%3Arelease-actions)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/sheinbergon/dremio-udf-gis?logo=github&color=%2340E0D0&style=for-the-badge)](https://github.com/sheinbergon/dremio-udf-gis/releases/latest)
 [![Maven Central](https://img.shields.io/maven-central/v/org.sheinbergon/dremio-udf-gis?logo=apachemaven&color=Crimson&style=for-the-badge)](https://search.maven.org/search?q=g:org.sheinbergon%20a:dremio-udf-gis*)
 [![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/sheinbergon/dremio-udf-gis?logo=snyk&color=432f95&style=for-the-badge)](https://app.snyk.io/org/sheinbergon/project/94183993-505b-439c-9078-6276fa4c1626)
@@ -11,7 +11,7 @@
 ### What you get
 - Widespread OGC implementation for SQL (adheres to PostGIS standards)
   - Supported input formats: `WKT`, `WKB (HEX or BINARY)`
-  - Supported output formats: `WKT`, `WKB`, `GeoJSON` 
+    - Supported output formats: `WKT`, `WKB`, `GeoJSON` 
 - Easily installable Maven-Central/Github artifacts shaded jar artifact  
 - Dremio CE version compatibility (new versions will be released with each community edition) 
 - Up-2-date Proj4J & JTS geometry based implementation
