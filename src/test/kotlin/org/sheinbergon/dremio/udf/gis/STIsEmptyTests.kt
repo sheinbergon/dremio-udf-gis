@@ -18,6 +18,10 @@ internal class STIsEmptyTests : GeometryAccessorFunSpec<STIsEmpty, BitHolder>() 
       "POLYGON((1 2, 3 4, 5 6, 1 2))",
       false
     )
+
+    testNullGeometryAccessor(
+      "Calling ST_IsEmpty on null input returns false",
+    )
   }
 
   override val function = STIsEmpty().apply {

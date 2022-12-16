@@ -235,6 +235,26 @@ public final class GeometryHelpers {
     holder.buffer.writeBytes(bytes);
   }
 
+  public static boolean isClosed(
+      final @Nullable Geometry geometry) {
+    if (geometry == null) {
+      return false;
+    } else if (geometry.getGeometryType().equals(Geometry.TYPENAME_LINESTRING)) {
+      return ((LineString) geometry).isClosed();
+    } else if (geometry.getGeometryType().equals(Geometry.TYPENAME_POINT)) {
+      return true;
+    } else if (geometry.getGeometryType().equals(Geometry.TYPENAME_POLYGON)) {
+      return ((Polygon) geometry).getExteriorRing().isClosed();
+    } else if (geometry.getGeometryType().equals(Geometry.TYPENAME_LINEARRING)) {
+      return ((LinearRing) geometry).isClosed();
+    } else {
+      throw new IllegalArgumentException(
+          String.format(
+              "Unsupported geometry type - %s",
+              geometry.getGeometryType()));
+    }
+  }
+
   public static boolean isAPoint(
       final @Nullable Geometry geometry) {
     return geometry != null && geometry.getGeometryType().equals(Geometry.TYPENAME_POINT);
