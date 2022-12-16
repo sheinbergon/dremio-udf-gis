@@ -22,34 +22,27 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
-import javax.inject.Inject;
-
 @FunctionTemplate(
-    name = "ST_GeomFromText",
+    name = "ST_IsClosed",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.INTERNAL)
-public class STGeomFromText implements SimpleFunction {
-
+public class STIsClosed implements SimpleFunction {
   @Param
-  org.apache.arrow.vector.holders.NullableVarCharHolder wktInput;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
   @Output
-  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
-
-  @Inject
-  org.apache.arrow.memory.ArrowBuf buffer;
+  org.apache.arrow.vector.holders.NullableBitHolder output;
 
   public void setup() {
   }
 
   public void eval() {
-    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(wktInput)) {
-      org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(wktInput);
-      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(geom);
-      buffer = buffer.reallocIfNeeded(bytes.length);
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
+      org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+      boolean result = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isClosed(geom);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setValue(output, result);
     } else {
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(binaryOutput);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);
     }
   }
 }

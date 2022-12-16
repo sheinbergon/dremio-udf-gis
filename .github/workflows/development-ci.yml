@@ -3,8 +3,6 @@ name: development-actions
 on:
   push:
     branches-ignore:
-      - master
-      - main
       - 'wip*'
       - '[0-9]+.[0-9x]+.x'
 jobs:

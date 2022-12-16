@@ -5,23 +5,23 @@
     <groupId>org.sheinbergon</groupId>
     <artifactId>dremio-udf-gis</artifactId>
     <properties>
-        <checkstyle.version>10.3.2</checkstyle.version>
+        <checkstyle.version>9.3</checkstyle.version>
         <dremio.version>22.0.0-202206221430090603-1fa4049f</dremio.version>
         <dremio-arrow.version>8.0.0-20220615173757-4698c877a6-dremio</dremio-arrow.version>
-        <proj4j.version>1.1.5</proj4j.version>
+        <proj4j.version>1.2.0</proj4j.version>
         <jts-core.version>1.19.0</jts-core.version>
         <jts-io-common.version>1.19.0</jts-io-common.version>
         <commons-io.version>2.11.0</commons-io.version>
         <junit.version>4.13.2</junit.version>
-        <junit-jupiter.version>5.9.0</junit-jupiter.version>
-        <kotlin.version>1.7.20</kotlin.version>
-        <kotest.version>5.4.2</kotest.version>
+        <junit-jupiter.version>5.9.1</junit-jupiter.version>
+        <kotlin.version>1.7.21</kotlin.version>
+        <kotest.version>5.5.4</kotest.version>
         <joda.version>2.9</joda.version>
-        <detekt.version>1.21.0</detekt.version>
+        <detekt.version>1.22.0</detekt.version>
         <carrotsearch.version>0.7.0</carrotsearch.version>
         <arrow-memory-netty.version>8.0.0</arrow-memory-netty.version>
     </properties>
-    <version>0.5.4${artifact.version.suffix}</version>
+    <version>0.5.6${artifact.version.suffix}</version>
     <name>dremio-udf-gis</name>
     <description>GIS UDF extensions for Dremio</description>
     <url>https://github.com/sheinbergon/dremio-udf-gis</url>
@@ -131,6 +131,11 @@
         <dependency>
             <groupId>org.locationtech.proj4j</groupId>
             <artifactId>proj4j</artifactId>
+            <version>${proj4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.locationtech.proj4j</groupId>
+            <artifactId>proj4j-epsg</artifactId>
             <version>${proj4j.version}</version>
         </dependency>
         <dependency>

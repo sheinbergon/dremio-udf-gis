@@ -5,34 +5,34 @@ import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryOutputFunSpec
 import org.sheinbergon.dremio.udf.gis.util.allocateBuffer
 
-internal class STAsTextTests : GeometryOutputFunSpec<STAsText>() {
+internal class STAsEWKTTests : GeometryOutputFunSpec<STAsEWKT>() {
 
   init {
     testGeometryOutput(
-      "Calling ST_AsText on a POINT",
+      "Calling ST_AsEWKT on a POINT",
       "POINT(0.5 0.5)",
       4326,
-      "POINT (0.5 0.5)"
+      "SRID=4326;POINT (0.5 0.5)"
     )
 
     testGeometryOutput(
-      "Calling ST_AsText on a POLYGON",
+      "Calling ST_AsEWKT on a POLYGON",
       "POLYGON((0.0 0.0,1.23 0.0,1.0 1.0,0.19 1.0,0.0 0.0))",
       3857,
-      "POLYGON ((0 0, 1.23 0, 1 1, 0.19 1, 0 0))"
+      "SRID=3857;POLYGON ((0 0, 1.23 0, 1 1, 0.19 1, 0 0))"
     )
 
     testNullGeometryOutput(
-      "Calling ST_AsText on null input",
+      "Calling ST_AsEWKT on null input",
     )
   }
 
-  override val function = STAsText().apply {
+  override val function = STAsEWKT().apply {
     binaryInput = NullableVarBinaryHolder()
-    wktOutput = NullableVarCharHolder()
+    ewktOutput = NullableVarCharHolder()
     buffer = allocateBuffer()
   }
 
-  override val STAsText.wkbInput: NullableVarBinaryHolder get() = function.binaryInput
-  override val STAsText.output: NullableVarCharHolder get() = function.wktOutput
+  override val STAsEWKT.wkbInput: NullableVarBinaryHolder get() = function.binaryInput
+  override val STAsEWKT.output: NullableVarCharHolder get() = function.ewktOutput
 }

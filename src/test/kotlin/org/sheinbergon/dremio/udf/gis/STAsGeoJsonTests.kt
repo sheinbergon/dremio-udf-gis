@@ -25,6 +25,10 @@ internal class STAsGeoJsonTests : GeometryOutputFunSpec<STAsGeoJson>() {
         {"type":"Polygon","coordinates":[[[0.0,0.0],[1.23,0.0],[1,1],[0.19,1],[0.0,0.0]]],"crs":{"type":"name","properties":{"name":"EPSG:3857"}}}
       """.trimIndent()
     )
+
+    testNullGeometryOutput(
+      "Calling ST_AsGeoJson on null input",
+    )
   }
 
   override val function = STAsGeoJson().apply {

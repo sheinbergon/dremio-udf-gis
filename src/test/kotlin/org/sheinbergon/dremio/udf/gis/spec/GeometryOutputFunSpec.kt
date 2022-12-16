@@ -9,6 +9,7 @@ import org.sheinbergon.dremio.udf.gis.util.GeometryHelpers
 import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setFromWkt
+import org.sheinbergon.dremio.udf.gis.util.valueIsNotSet
 
 abstract class GeometryOutputFunSpec<F : SimpleFunction> : FunSpec() {
 
@@ -34,6 +35,17 @@ abstract class GeometryOutputFunSpec<F : SimpleFunction> : FunSpec() {
       setup()
       eval()
       output.valueIs(result)
+    }
+  }
+
+  protected fun testNullGeometryOutput(
+    name: String
+  ) = test(name) {
+    function.apply {
+      wkbInput.isSet = 0
+      setup()
+      eval()
+      output.valueIsNotSet()
     }
   }
 
