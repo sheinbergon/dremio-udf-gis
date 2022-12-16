@@ -34,14 +34,15 @@ Enjoying my work? A show of support would be much obliged :grin:
 
 #### Version Compatbility
 
-| Library Version | Dremio Version | Status      |
-|-----------------|----------------|-------------|
-| 0.2.x           | 20.1.x         | Legacy      |
-| 0.3.x           | 21.1.x         | Legacy      |
-| 0.4.x           | 21.2.x         | Maintained  |
-| 0.5.x           | 22.0.x         | Maintained  |
-| 0.6.x           | 22.1.x         | Maintained  |
-| 0.7.x           | 23.0.x         | Maintained  |
+| Library Version | Dremio Version | Status     |
+|-----------------|----------------|------------|
+| 0.2.x           | 20.1.x         | Legacy     |
+| 0.3.x           | 21.1.x         | Legacy     |
+| 0.4.x           | 21.2.x         | Legacy     |
+| 0.5.x           | 22.0.x         | Maintained |
+| 0.6.x           | 22.1.x         | Maintained |
+| 0.7.x           | 23.0.x         | Maintained |
+
 ### Usage Notes
 As opposed to PostGIS, Dremio is only a query engine based on existing/projected data sources/lakes.  
 That means that `Geometry` is not a natively supported data type, and you can only access it if     
