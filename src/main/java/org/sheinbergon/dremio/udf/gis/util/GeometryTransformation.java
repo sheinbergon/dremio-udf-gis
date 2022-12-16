@@ -21,11 +21,14 @@ package org.sheinbergon.dremio.udf.gis.util;
 
 import org.locationtech.jts.geom.*;
 import org.locationtech.proj4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
 public final class GeometryTransformation {
 
+  private static final Logger logger = LoggerFactory.getLogger(GeometryTransformation.class);
 
   private static final String CRS_TEMPLATE = "EPSG:%d";
 
@@ -135,9 +138,9 @@ public final class GeometryTransformation {
   private static Polygon transform(
       @Nonnull final CoordinateTransform transform,
       @Nonnull final Polygon polygon) {
-    return polygon.getFactory().createPolygon(
-        transformCoordinates(
-            transform, polygon.getCoordinates()));
+    return polygon.getFactory()
+        .createPolygon(
+            transformCoordinates(transform, polygon.getCoordinates()));
   }
 
   @Nonnull

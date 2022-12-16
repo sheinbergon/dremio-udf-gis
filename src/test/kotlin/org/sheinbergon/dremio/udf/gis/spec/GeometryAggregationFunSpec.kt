@@ -1,4 +1,4 @@
-package org.sheinbergon.dremio.udf.gis
+package org.sheinbergon.dremio.udf.gis.spec
 
 import com.dremio.exec.expr.AggrFunction
 import io.kotest.core.spec.style.FunSpec

@@ -25,13 +25,15 @@ import com.dremio.exec.expr.annotations.Param;
 import javax.inject.Inject;
 
 @FunctionTemplate(
-    name = "ST_GeomFromText",
+    name = "ST_GeometryN",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.INTERNAL)
-public class STGeomFromText implements SimpleFunction {
+public class STGeometryN implements SimpleFunction {
+  @Param
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
   @Param
-  org.apache.arrow.vector.holders.NullableVarCharHolder wktInput;
+  org.apache.arrow.vector.holders.IntHolder indexInput;
 
   @Output
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
@@ -43,9 +45,13 @@ public class STGeomFromText implements SimpleFunction {
   }
 
   public void eval() {
-    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(wktInput)) {
-      org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(wktInput);
-      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(geom);
+    final int index = indexInput.value - 1; // JTS Geometries are backed by a 0-based java array
+    final org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+    final int size = geom.getNumGeometries();
+    if (0 <= index && index < size) {
+      org.locationtech.jts.geom.Geometry nthGeom = geom.getGeometryN(index);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderSet(binaryOutput);
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(nthGeom);
       buffer = buffer.reallocIfNeeded(bytes.length);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
     } else {

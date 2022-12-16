@@ -17,6 +17,10 @@ internal class STGeomFromWKBTests : GeometryInputFunSpec.NullableVarBinary<STGeo
       "Calling ST_GeomFromWKB on rubbish data",
       byteArrayOf(-9, 22, 2, 9, 1, 0, 0, 12, 2, 93, -22, 0, 0, 0, 99, 22, 74, 63, -74, 0, 0, -9, -2, 0, 0),
     )
+
+    testNullGeometryInput(
+      "Calling ST_GeomFromWKB on null input"
+    )
   }
 
   override val function = STGeomFromWKB().apply {
