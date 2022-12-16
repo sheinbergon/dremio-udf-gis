@@ -27,7 +27,7 @@ import javax.inject.Inject;
 @FunctionTemplate(
     name = "ST_ConvexHull",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
+    nulls = FunctionTemplate.NullHandling.INTERNAL)
 public class STConvexHull implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
@@ -42,11 +42,15 @@ public class STConvexHull implements SimpleFunction {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-    org.locationtech.jts.algorithm.ConvexHull convexHull = new org.locationtech.jts.algorithm.ConvexHull(geom);
-    org.locationtech.jts.geom.Geometry hull = convexHull.getConvexHull();
-    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(hull);
-    buffer = buffer.reallocIfNeeded(bytes.length);
-    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
+      org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+      org.locationtech.jts.algorithm.ConvexHull convexHull = new org.locationtech.jts.algorithm.ConvexHull(geom);
+      org.locationtech.jts.geom.Geometry hull = convexHull.getConvexHull();
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(hull);
+      buffer = buffer.reallocIfNeeded(bytes.length);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
+    } else {
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(binaryOutput);
+    }
   }
 }

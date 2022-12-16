@@ -18,6 +18,10 @@ internal class STGeomFromEWKTTests : GeometryInputFunSpec.NullableVarChar<STGeom
       "Calling ST_GeomFromEWKT on WKT",
       "POINT(0.5 0.5)",
     )
+
+    testNullGeometryInput(
+      "Calling ST_GeomFromEWKT on null input"
+    )
   }
 
   override val function = STGeomFromEWKT().apply {

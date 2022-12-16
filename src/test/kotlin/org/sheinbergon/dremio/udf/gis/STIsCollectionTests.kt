@@ -18,6 +18,10 @@ internal class STIsCollectionTests : GeometryAccessorFunSpec<STIsCollection, Bit
       "MULTIPOINT((0 0), (42 42))",
       true
     )
+
+    testNullGeometryAccessor(
+      "Calling ST_IsCollection on null input returns false",
+    )
   }
 
   override val function = STIsCollection().apply {

@@ -25,16 +25,16 @@ import com.dremio.exec.expr.annotations.Param;
 import javax.inject.Inject;
 
 @FunctionTemplate(
-    name = "ST_GeomFromText",
+    name = "ST_AsEWKT",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.INTERNAL)
-public class STGeomFromText implements SimpleFunction {
+public class STAsEWKT implements SimpleFunction {
 
   @Param
-  org.apache.arrow.vector.holders.NullableVarCharHolder wktInput;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
   @Output
-  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
+  org.apache.arrow.vector.holders.NullableVarCharHolder ewktOutput;
 
   @Inject
   org.apache.arrow.memory.ArrowBuf buffer;
@@ -43,13 +43,13 @@ public class STGeomFromText implements SimpleFunction {
   }
 
   public void eval() {
-    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(wktInput)) {
-      org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(wktInput);
-      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(geom);
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
+      org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKT(geom);
       buffer = buffer.reallocIfNeeded(bytes.length);
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, ewktOutput);
     } else {
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(binaryOutput);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(ewktOutput);
     }
   }
 }
