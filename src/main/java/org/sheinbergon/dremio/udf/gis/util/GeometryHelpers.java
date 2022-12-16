@@ -355,6 +355,21 @@ public final class GeometryHelpers {
     }
   }
 
+  public static void setValue(final @Nonnull ValueHolder holder, final boolean value) {
+    int bitValue = value ? BIT_TRUE : BIT_FALSE;
+    if (holder instanceof BitHolder) {
+      ((BitHolder) holder).value = bitValue;
+    } else if (holder instanceof NullableBitHolder) {
+      NullableBitHolder nullable = (NullableBitHolder) holder;
+      nullable.value = bitValue;
+      nullable.isSet = BIT_TRUE;
+    } else {
+      throw new IllegalArgumentException(
+          String.format("Unsupported value holder type - %s",
+              holder.getClass().getName()));
+    }
+  }
+
   public static void setValueFalse(final @Nonnull ValueHolder holder) {
     if (holder instanceof BitHolder) {
       ((BitHolder) holder).value = BIT_FALSE;

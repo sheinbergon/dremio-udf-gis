@@ -8,6 +8,7 @@ import io.kotest.matchers.ints.shouldBeExactly
 import org.apache.arrow.vector.holders.BitHolder
 import org.apache.arrow.vector.holders.Float8Holder
 import org.apache.arrow.vector.holders.IntHolder
+import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableFloat8Holder
 import org.apache.arrow.vector.holders.NullableIntHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
@@ -62,7 +63,7 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
       wkbInput.isSet = 0
       setup()
       eval()
-      output.isSetTo(false)
+      output.isNotSet()
     }
   }
 
@@ -151,8 +152,22 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
     }
   }
 
+  private fun NullableBitHolder.valueIsNotSet() {
+    run {
+      isSet shouldBeExactly 0
+      value shouldBeExactly 0
+    }
+  }
+
   private fun BitHolder.valueIsSetTo(value: Boolean) {
     run {
+      this.value shouldBeExactly if (value) 1 else 0
+    }
+  }
+
+  private fun NullableBitHolder.valueIsSetTo(value: Boolean) {
+    run {
+      isSet shouldBeExactly 1
       this.value shouldBeExactly if (value) 1 else 0
     }
   }

@@ -31,7 +31,7 @@ public class STIsEmpty implements SimpleFunction {
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
   @Output
-  org.apache.arrow.vector.holders.BitHolder output;
+  org.apache.arrow.vector.holders.NullableBitHolder output;
 
   public void setup() {
   }
@@ -39,9 +39,10 @@ public class STIsEmpty implements SimpleFunction {
   public void eval() {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-      output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBitValue(geom.isEmpty());
+      boolean result = geom.isEmpty();
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setValue(output, result);
     } else {
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setValueFalse(output);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);
     }
   }
 }
