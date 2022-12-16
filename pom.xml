@@ -8,20 +8,20 @@
         <checkstyle.version>9.3</checkstyle.version>
         <dremio.version>23.0.1-202210141019030815-c1de8bcc</dremio.version>
         <dremio-arrow.version>9.0.0-20220922165652-3a8c29faef-dremio</dremio-arrow.version>
-        <proj4j.version>1.1.5</proj4j.version>
+        <proj4j.version>1.2.0</proj4j.version>
         <jts-core.version>1.19.0</jts-core.version>
         <jts-io-common.version>1.19.0</jts-io-common.version>
         <commons-io.version>2.11.0</commons-io.version>
         <junit.version>4.13.2</junit.version>
-        <junit-jupiter.version>5.9.0</junit-jupiter.version>
-        <kotlin.version>1.7.20</kotlin.version>
-        <kotest.version>5.5.3</kotest.version>
+        <junit-jupiter.version>5.9.1</junit-jupiter.version>
+        <kotlin.version>1.7.21</kotlin.version>
+        <kotest.version>5.5.4</kotest.version>
         <joda.version>2.9</joda.version>
-        <detekt.version>1.21.0</detekt.version>
+        <detekt.version>1.22.0</detekt.version>
         <carrotsearch.version>0.7.0</carrotsearch.version>
         <arrow-memory-netty.version>9.0.0</arrow-memory-netty.version>
     </properties>
-    <version>0.7.0${artifact.version.suffix}</version>
+    <version>0.7.2${artifact.version.suffix}</version>
     <name>dremio-udf-gis</name>
     <description>GIS UDF extensions for Dremio</description>
     <url>https://github.com/sheinbergon/dremio-udf-gis</url>
@@ -134,6 +134,11 @@
             <version>${proj4j.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.locationtech.proj4j</groupId>
+            <artifactId>proj4j-epsg</artifactId>
+            <version>${proj4j.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.locationtech.jts</groupId>
             <artifactId>jts-core</artifactId>
             <version>${jts-core.version}</version>
@@ -148,6 +153,12 @@
                     <artifactId>junit</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

@@ -20,6 +20,10 @@ internal class STGeomFromTextSridTests : GeometryInputFunSpec.NullableVarChar<ST
       "POINT(0.5 0.5)",
       byteArrayOf(0, 32, 0, 0, 1, 0, 0, 8, -25, 63, -32, 0, 0, 0, 0, 0, 0, 63, -32, 0, 0, 0, 0, 0, 0)
     ) { function.sridInput.value = 2279 }
+
+    testNullGeometryInput(
+      "Calling ST_GeomFromText (with SRID) on null input"
+    ) { function.sridInput.value = 4326 }
   }
 
   override val function = STGeomFromTextSrid().apply {
