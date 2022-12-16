@@ -85,6 +85,9 @@ internal fun NullableVarBinaryHolder.valueIsNotSet() {
   GeometryHelpers.isHolderSet(this) shouldBe false
 }
 
+internal fun NullableVarCharHolder.valueIsNotSet() =
+  GeometryHelpers.isHolderSet(this) shouldBe false
+
 internal fun NullableVarBinaryHolder.reset() {
   end = 0
   start = 0

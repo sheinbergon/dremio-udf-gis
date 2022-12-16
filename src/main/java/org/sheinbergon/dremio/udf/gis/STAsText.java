@@ -29,7 +29,7 @@ import javax.inject.Inject;
 @FunctionTemplate(
     name = "ST_AsText",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
+    nulls = FunctionTemplate.NullHandling.INTERNAL)
 public class STAsText implements SimpleFunction {
 
   @Param
@@ -45,9 +45,13 @@ public class STAsText implements SimpleFunction {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toText(geom);
-    buffer = buffer.reallocIfNeeded(bytes.length);
-    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, wktOutput);
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
+      org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toText(geom);
+      buffer = buffer.reallocIfNeeded(bytes.length);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, wktOutput);
+    } else {
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(wktOutput);
+    }
   }
 }

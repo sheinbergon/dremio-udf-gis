@@ -18,6 +18,10 @@ internal class STGeomFromTextTests : GeometryInputFunSpec.NullableVarChar<STGeom
       "Calling ST_GeomFromText on rubbish text",
       "42ifon2 fA!@",
     )
+
+    testNullGeometryInput(
+      "Calling ST_GeomFromText on null input"
+    )
   }
 
   override val function = STGeomFromText().apply {

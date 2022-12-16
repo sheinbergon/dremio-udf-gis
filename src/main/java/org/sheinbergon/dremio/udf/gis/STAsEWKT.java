@@ -27,7 +27,7 @@ import javax.inject.Inject;
 @FunctionTemplate(
     name = "ST_AsEWKT",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
+    nulls = FunctionTemplate.NullHandling.INTERNAL)
 public class STAsEWKT implements SimpleFunction {
 
   @Param
@@ -43,9 +43,13 @@ public class STAsEWKT implements SimpleFunction {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKT(geom);
-    buffer = buffer.reallocIfNeeded(bytes.length);
-    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, ewktOutput);
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
+      org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKT(geom);
+      buffer = buffer.reallocIfNeeded(bytes.length);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, ewktOutput);
+    } else {
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(ewktOutput);
+    }
   }
 }

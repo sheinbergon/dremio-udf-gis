@@ -1,6 +1,7 @@
 package org.sheinbergon.dremio.udf.gis.spec
 
 import com.dremio.exec.expr.SimpleFunction
+import io.kotest.assertions.throwables.shouldThrowMessage
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.doubles.shouldBeExactly
 import io.kotest.matchers.ints.shouldBeExactly
@@ -51,6 +52,31 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
       setup()
       eval()
       output.isSetTo(value)
+    }
+  }
+
+  protected fun testNullGeometryAccessor(
+    name: String,
+  ) = test(name) {
+    function.apply {
+      wkbInput.isSet = 0
+      setup()
+      eval()
+      output.isSetTo(false)
+    }
+  }
+
+  protected fun testThrowingGeometryAccessor(
+    name: String,
+    wkt: String,
+    message: String
+  ) = test(name) {
+    shouldThrowMessage(message) {
+      function.apply {
+        wkbInput.setFromWkt(wkt)
+        setup()
+        eval()
+      }
     }
   }
 

@@ -22,14 +22,12 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
-
-
 import javax.inject.Inject;
 
 @FunctionTemplate(
     name = "ST_AsGeoJSON",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
+    nulls = FunctionTemplate.NullHandling.INTERNAL)
 public class STAsGeoJson implements SimpleFunction {
 
   @Param
@@ -45,9 +43,13 @@ public class STAsGeoJson implements SimpleFunction {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeoJson(geom);
-    buffer = buffer.reallocIfNeeded(bytes.length);
-    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, geoJsonOutput);
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
+      org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeoJson(geom);
+      buffer = buffer.reallocIfNeeded(bytes.length);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, geoJsonOutput);
+    } else {
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(geoJsonOutput);
+    }
   }
 }
