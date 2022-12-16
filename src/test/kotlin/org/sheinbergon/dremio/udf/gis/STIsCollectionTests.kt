@@ -1,10 +1,10 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.BitHolder
+import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryAccessorFunSpec
 
-internal class STIsCollectionTests : GeometryAccessorFunSpec<STIsCollection, BitHolder>() {
+internal class STIsCollectionTests : GeometryAccessorFunSpec<STIsCollection, NullableBitHolder>() {
 
   init {
     testGeometryAccessor(
@@ -26,9 +26,9 @@ internal class STIsCollectionTests : GeometryAccessorFunSpec<STIsCollection, Bit
 
   override val function = STIsCollection().apply {
     binaryInput = NullableVarBinaryHolder()
-    output = BitHolder()
+    output = NullableBitHolder()
   }
 
   override val STIsCollection.wkbInput: NullableVarBinaryHolder get() = function.binaryInput
-  override val STIsCollection.output: BitHolder get() = function.output
+  override val STIsCollection.output: NullableBitHolder get() = function.output
 }
