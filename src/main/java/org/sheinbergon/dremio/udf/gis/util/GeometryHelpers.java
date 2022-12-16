@@ -370,7 +370,6 @@ public final class GeometryHelpers {
     }
   }
 
-
   public static void setValueFalse(final @Nonnull ValueHolder holder) {
     if (holder instanceof BitHolder) {
       ((BitHolder) holder).value = BIT_FALSE;
