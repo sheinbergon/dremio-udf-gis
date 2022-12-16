@@ -19,6 +19,10 @@ internal class STGeomFromWKBSridTests : GeometryInputFunSpec.NullableVarBinary<S
       byteArrayOf(0, 32, 0, 0, 1, 0, 0, 0, 0, 63, -32, 0, 0, 0, 0, 0, 0, 63, -32, 0, 0, 0, 0, 0, 0),
       byteArrayOf(0, 32, 0, 0, 1, 0, 0, 125, 106, 63, -32, 0, 0, 0, 0, 0, 0, 63, -32, 0, 0, 0, 0, 0, 0)
     ) { function.sridInput.value = 32106 }
+
+    testNullGeometryInput(
+      "Calling ST_GeomFromWKB (with SRID) on null input"
+    ) { function.sridInput.value = 4326 }
   }
 
   override val function = STGeomFromWKBSrid().apply {
