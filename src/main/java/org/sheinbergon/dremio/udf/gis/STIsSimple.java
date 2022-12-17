@@ -23,10 +23,10 @@ import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
 @FunctionTemplate(
-    name = "ST_IsEmpty",
+    name = "ST_IsSimple",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.INTERNAL)
-public class STIsEmpty implements SimpleFunction {
+public class STIsSimple implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
@@ -39,7 +39,7 @@ public class STIsEmpty implements SimpleFunction {
   public void eval() {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-      boolean result = geom.isEmpty();
+      boolean result = geom.isSimple();
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setBooleanValue(output, result);
     } else {
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);

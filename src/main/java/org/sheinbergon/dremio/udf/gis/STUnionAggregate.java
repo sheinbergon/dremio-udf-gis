@@ -52,11 +52,11 @@ public class STUnionAggregate implements AggrFunction {
     value = new org.apache.arrow.vector.holders.NullableVarBinaryHolder();
     indicator = new org.apache.arrow.vector.holders.NullableBitHolder();
     org.locationtech.jts.geom.Geometry empty = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.emptyGeometry();
-    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(empty);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(empty);
     valueBuffer = valueBuffer.reallocIfNeeded(bytes.length);
     org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, valueBuffer, value);
     org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderSet(value);
-    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setValueFalse(indicator);
+    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setBooleanValue(indicator, false);
   }
 
   @Override
@@ -65,18 +65,18 @@ public class STUnionAggregate implements AggrFunction {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(input);
       org.locationtech.jts.geom.Geometry accumulated = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(value);
       org.locationtech.jts.geom.Geometry union = accumulated.union(geom);
-      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(union);
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(union);
       valueBuffer = valueBuffer.reallocIfNeeded(bytes.length);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, valueBuffer, value);
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setValueTrue(indicator);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setBooleanValue(indicator, true);
     }
   }
 
   @Override
   public void output() {
-    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isValueTrue(indicator)) {
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.getBooleanValue(indicator)) {
       org.locationtech.jts.geom.Geometry union = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(value);
-      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(union);
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(union);
       outputBuffer = outputBuffer.reallocIfNeeded(bytes.length);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, outputBuffer, output);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderSet(output);
@@ -88,10 +88,10 @@ public class STUnionAggregate implements AggrFunction {
   @Override
   public void reset() {
     org.locationtech.jts.geom.Geometry empty = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.emptyGeometry();
-    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(empty);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(empty);
     valueBuffer = valueBuffer.reallocIfNeeded(bytes.length);
     org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, valueBuffer, value);
     org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderSet(value);
-    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setValueFalse(indicator);
+    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setBooleanValue(indicator, false);
   }
 }

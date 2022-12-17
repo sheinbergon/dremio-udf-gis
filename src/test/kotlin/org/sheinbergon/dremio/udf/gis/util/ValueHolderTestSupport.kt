@@ -78,7 +78,7 @@ internal fun NullableVarBinaryHolder.valueIsAsDescribedIn(text: String) {
   val expected = NullableVarCharHolder()
     .apply { setUtf8(text) }
     .let(GeometryHelpers::toGeometry)
-  GeometryHelpers.toBinary(reduced) shouldBe GeometryHelpers.toBinary(expected)
+  GeometryHelpers.toEWKB(reduced) shouldBe GeometryHelpers.toEWKB(expected)
 }
 
 internal fun NullableVarBinaryHolder.valueIsNotSet() {

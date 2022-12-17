@@ -13,7 +13,7 @@ import org.sheinbergon.dremio.udf.gis.util.valueIsTrue
 
 abstract class GeometryAggregationFunSpec<F : AggrFunction> : FunSpec() {
 
-  protected fun testGeometryAggegration(
+  protected fun testGeometryAggregration(
     name: String,
     wkts: Array<String>,
     expected: String
@@ -32,7 +32,7 @@ abstract class GeometryAggregationFunSpec<F : AggrFunction> : FunSpec() {
     }
   }
 
-  protected fun testGeometryAggegrationNoInput(
+  protected fun testGeometryAggregationNoInput(
     name: String,
   ) = test(name) {
     function.apply {

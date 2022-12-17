@@ -18,7 +18,7 @@ internal class STGeomFromTextSridTests : GeometryInputFunSpec.NullableVarChar<ST
     testGeometryInput(
       "Calling ST_GeomFromText on a POINT",
       "POINT(0.5 0.5)",
-      byteArrayOf(0, 32, 0, 0, 1, 0, 0, 8, -25, 63, -32, 0, 0, 0, 0, 0, 0, 63, -32, 0, 0, 0, 0, 0, 0)
+      byteArrayOf(1, 1, 0, 0, 32, -25, 8, 0, 0, 0, 0, 0, 0, 0, 0, -32, 63, 0, 0, 0, 0, 0, 0, -32, 63)
     ) { function.sridInput.value = 2279 }
 
     testNullGeometryInput(

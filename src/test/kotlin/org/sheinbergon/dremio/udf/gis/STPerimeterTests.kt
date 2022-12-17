@@ -1,6 +1,6 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.Float8Holder
+import org.apache.arrow.vector.holders.NullableFloat8Holder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryMeasurementFunSpec
 
@@ -31,8 +31,8 @@ internal class STPerimeterTests : GeometryMeasurementFunSpec.Unary<STPerimeter>(
 
   override val function = STPerimeter().apply {
     binaryInput = NullableVarBinaryHolder()
-    output = Float8Holder()
+    output = NullableFloat8Holder()
   }
   override val STPerimeter.wkbInput1: NullableVarBinaryHolder get() = function.binaryInput
-  override val STPerimeter.measurementOutput: Float8Holder get() = function.output
+  override val STPerimeter.measurementOutput: NullableFloat8Holder get() = function.output
 }
