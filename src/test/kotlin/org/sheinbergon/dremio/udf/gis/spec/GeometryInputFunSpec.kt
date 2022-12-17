@@ -97,7 +97,7 @@ abstract class GeometryInputFunSpec<F : SimpleFunction, I : ValueHolder, V : Any
   }
 
   private fun NullableVarBinaryHolder.valueIs(bytes: ByteArray) =
-    GeometryHelpers.toBinary(GeometryHelpers.toGeometry(this)) shouldBe bytes
+    GeometryHelpers.toEWKB(GeometryHelpers.toGeometry(this)) shouldBe bytes
 
   protected abstract fun I.set(value: V)
   protected abstract val function: F

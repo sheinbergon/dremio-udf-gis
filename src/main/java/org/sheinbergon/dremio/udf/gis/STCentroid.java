@@ -48,7 +48,7 @@ public class STCentroid implements SimpleFunction {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
       org.locationtech.jts.algorithm.Centroid centroid = new org.locationtech.jts.algorithm.Centroid(geom);
       org.locationtech.jts.geom.Point point = factory.createPoint(centroid.getCentroid());
-      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(point);
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(point);
       buffer = buffer.reallocIfNeeded(bytes.length);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
     } else {

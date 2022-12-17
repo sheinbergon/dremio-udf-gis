@@ -3,7 +3,8 @@ package org.sheinbergon.dremio.udf.gis.spec
 import com.dremio.exec.expr.SimpleFunction
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.doubles.shouldBeExactly
-import org.apache.arrow.vector.holders.Float8Holder
+import io.kotest.matchers.shouldBe
+import org.apache.arrow.vector.holders.NullableFloat8Holder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
@@ -154,11 +155,12 @@ abstract class GeometryMeasurementFunSpec<F : SimpleFunction> : FunSpec() {
   }
 
   protected abstract val function: F
-  protected abstract val F.measurementOutput: Float8Holder
+  protected abstract val F.measurementOutput: NullableFloat8Holder
 
-  protected fun Float8Holder.isSetTo(double: Double) {
+  protected fun NullableFloat8Holder.isSetTo(double: Double) {
     run {
       value shouldBeExactly double
+      isSet shouldBe 1
     }
   }
 }

@@ -25,23 +25,27 @@ import com.dremio.exec.expr.annotations.Param;
 @FunctionTemplate(
     name = "ST_Length",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
+    nulls = FunctionTemplate.NullHandling.INTERNAL,
+    costCategory = FunctionTemplate.FunctionCostCategory.MEDIUM)
 public class STLength implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
   @Output
-  org.apache.arrow.vector.holders.Float8Holder output;
+  org.apache.arrow.vector.holders.NullableFloat8Holder output;
 
   public void setup() {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isLinear(geom)) {
-      output.value = geom.getLength();
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
+      org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+      double length = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isLinear(geom)
+          ? geom.getLength()
+          : 0.0;
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setDoubleValue(output, length);
     } else {
-      output.value = 0.0;
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);
     }
   }
 }

@@ -1,6 +1,6 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.Float8Holder
+import org.apache.arrow.vector.holders.NullableFloat8Holder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryMeasurementFunSpec
 
@@ -18,10 +18,10 @@ internal class STAngle2LinesTests : GeometryMeasurementFunSpec.Binary<STAngle2Li
   override val function = STAngle2Lines().apply {
     binaryInput1 = NullableVarBinaryHolder()
     binaryInput2 = NullableVarBinaryHolder()
-    output = Float8Holder()
+    output = NullableFloat8Holder()
   }
 
   override val STAngle2Lines.wkbInput1: NullableVarBinaryHolder get() = function.binaryInput1
   override val STAngle2Lines.wkbInput2: NullableVarBinaryHolder get() = function.binaryInput2
-  override val STAngle2Lines.measurementOutput: Float8Holder get() = function.output
+  override val STAngle2Lines.measurementOutput: NullableFloat8Holder get() = function.output
 }
