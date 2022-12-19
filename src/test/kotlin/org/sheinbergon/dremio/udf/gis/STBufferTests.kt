@@ -55,6 +55,10 @@ internal class STBufferTests : GeometryProcessingFunSpec<STBuffer>() {
             1 0))
       """.trimIndent()
     ) { function.radiusInput.value = 1.0 }
+
+    testNullGeometryProcessing(
+      "Calling ST_Buffer on a NULL input"
+    )
   }
 
   override val function = STBuffer().apply {

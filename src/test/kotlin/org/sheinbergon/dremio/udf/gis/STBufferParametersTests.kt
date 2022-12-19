@@ -132,6 +132,13 @@ internal class STBufferParametersTests : GeometryProcessingFunSpec<STBufferParam
       function.radiusInput.value = 20.0
       function.parametersInput.setUtf8("side=right")
     }
+
+    testNullGeometryProcessing(
+      "Calling ST_Buffer (with parameters string) on a NULL input"
+    ) {
+      function.radiusInput.value = 29.1
+      function.parametersInput.setUtf8("side=right")
+    }
   }
 
   override val function = STBufferParameters().apply {

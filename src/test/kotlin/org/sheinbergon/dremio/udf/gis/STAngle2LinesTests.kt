@@ -13,6 +13,13 @@ internal class STAngle2LinesTests : GeometryMeasurementFunSpec.Binary<STAngle2Li
       "LINESTRING(0 0, 0.2 0.5, 1 0)",
       0.7853981633974483
     )
+
+    testNullGeometryMeasurement(
+      "Calling ST_Angle on 2 LINESTRINGs, one of them is null",
+      "LINESTRING(0 0, 0.3 0.7, 1 1)",
+      null,
+      4326
+    )
   }
 
   override val function = STAngle2Lines().apply {

@@ -344,6 +344,8 @@ public final class GeometryHelpers {
       ((NullableVarCharHolder) holder).isSet = BIT_FALSE;
     } else if (holder instanceof NullableVarBinaryHolder) {
       ((NullableVarBinaryHolder) holder).isSet = BIT_FALSE;
+    } else if (holder instanceof NullableFloat8Holder) {
+      ((NullableFloat8Holder) holder).isSet = BIT_FALSE;
     } else {
       throw new IllegalArgumentException(
           String.format("Unsupported value holder type - %s",
