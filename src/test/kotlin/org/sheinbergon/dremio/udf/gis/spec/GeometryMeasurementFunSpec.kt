@@ -75,6 +75,23 @@ abstract class GeometryMeasurementFunSpec<F : SimpleFunction> : FunSpec() {
       }
     }
 
+    protected fun testNullGeometryMeasurement(
+      name: String,
+      wkt1: String? = null,
+      wkt2: String? = null,
+      wkt3: String? = null,
+      srid: Int,
+    ) = test(name) {
+      function.apply {
+        wkt1?.also { wkbInput1.setFromWkt(wkt1, srid) }
+        wkt2?.also { wkbInput2.setFromWkt(wkt2, srid) }
+        wkt3?.also { wkbInput2.setFromWkt(wkt3, srid) }
+        setup()
+        eval()
+        measurementOutput.isNotSet()
+      }
+    }
+
     protected abstract val F.wkbInput3: NullableVarBinaryHolder
   }
 
@@ -121,6 +138,21 @@ abstract class GeometryMeasurementFunSpec<F : SimpleFunction> : FunSpec() {
       }
     }
 
+    protected fun testNullGeometryMeasurement(
+      name: String,
+      wkt1: String? = null,
+      wkt2: String? = null,
+      srid: Int,
+    ) = test(name) {
+      function.apply {
+        wkt1?.also { wkbInput1.setFromWkt(wkt1, srid) }
+        wkt2?.also { wkbInput2.setFromWkt(wkt2, srid) }
+        setup()
+        eval()
+        measurementOutput.isNotSet()
+      }
+    }
+
     protected abstract val F.wkbInput2: NullableVarBinaryHolder
   }
 
@@ -161,6 +193,12 @@ abstract class GeometryMeasurementFunSpec<F : SimpleFunction> : FunSpec() {
     run {
       value shouldBeExactly double
       isSet shouldBe 1
+    }
+  }
+
+  protected fun NullableFloat8Holder.isNotSet() {
+    run {
+      isSet shouldBe 0
     }
   }
 }

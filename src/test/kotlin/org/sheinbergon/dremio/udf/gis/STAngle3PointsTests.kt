@@ -14,6 +14,14 @@ internal class STAngle3PointsTests : GeometryMeasurementFunSpec.Ternary<STAngle3
       "POINT(20 0)",
       4.71238898038469
     )
+
+    testNullGeometryMeasurement(
+      "Calling ST_Angle on 3 POINTs, one of them is null",
+      "POINT(10 10)",
+      null,
+      "POINT(10 20)",
+      4326
+    )
   }
 
   override val function = STAngle3Points().apply {
