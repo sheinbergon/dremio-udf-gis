@@ -15,7 +15,7 @@ internal class STGeomFromEWKBTests : GeometryInputFunSpec.NullableVarBinary<STGe
 
     testInvalidGeometryInput(
       "Calling ST_GeomFromEWKB on rubbish data",
-      byteArrayOf(12, 9, 8, 11, 2, 0, 9, 10, 0, 0,11,22, 33, 0, 0, 52, 53, 0, 22, 0, 0, 0, 0, -32, 63),
+      byteArrayOf(12, 9, 8, 11, 2, 0, 9, 10, 0, 0, 11, 22, 33, 0, 0, 52, 53, 0, 22, 0, 0, 0, 0, -32, 63),
     )
 
     testGeometryInput(
