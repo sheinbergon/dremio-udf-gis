@@ -25,7 +25,7 @@ import com.dremio.exec.expr.annotations.Param;
 @FunctionTemplate(
     name = "ST_Perimeter",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.NULL_IF_NULL,
+    nulls = FunctionTemplate.NullHandling.INTERNAL,
     costCategory = FunctionTemplate.FunctionCostCategory.MEDIUM)
 public class STPerimeter implements SimpleFunction {
   @Param
@@ -40,9 +40,7 @@ public class STPerimeter implements SimpleFunction {
   public void eval() {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-      double perimeter = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isAreal(geom)
-          ? geom.getLength()
-          : 0.0;
+      double perimeter = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isAreal(geom) ? geom.getLength() : 0.0;
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setDoubleValue(output, perimeter);
     } else {
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);

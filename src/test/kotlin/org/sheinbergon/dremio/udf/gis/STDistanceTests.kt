@@ -14,6 +14,13 @@ internal class STDistanceTests : GeometryMeasurementFunSpec.Binary<STDistance>()
       4326,
       0.0015056772638228177
     )
+
+    testNullGeometryMeasurement(
+      "Calling ST_Distance on 2 LINESTRINGs, one of them is null",
+      "LINESTRING(0 0, 0.3 0.7, 1 1)",
+      null,
+      4326
+    )
   }
 
   override val function = STDistance().apply {

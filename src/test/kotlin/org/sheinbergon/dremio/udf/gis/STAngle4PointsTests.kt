@@ -15,6 +15,15 @@ internal class STAngle4PointsTests : GeometryMeasurementFunSpec.Quaternary<STAng
       "POINT(100 80)",
       4.71238898038469
     )
+
+    testNullGeometryMeasurement(
+      "Calling ST_Angle on 4 POINTs, one of them is null",
+      "POINT(10 10)",
+      null,
+      "POINT(10 20)",
+      "POINT(6 29)",
+      4326
+    )
   }
 
   override val function = STAngle4Points().apply {

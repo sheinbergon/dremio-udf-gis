@@ -13,6 +13,10 @@ internal class STAzimuthTests : GeometryMeasurementFunSpec.Binary<STAzimuth>() {
       "POINT(75 100)",
       0.7378150601204648
     )
+
+    testNullGeometryMeasurement(
+      "Calling ST_Azimuth on a NULL input"
+    )
   }
 
   override val function = STAzimuth().apply {

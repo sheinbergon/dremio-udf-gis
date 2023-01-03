@@ -27,6 +27,10 @@ internal class STAreaTests : GeometryMeasurementFunSpec.Unary<STArea>() {
       2279,
       928.625
     )
+
+    testNullGeometryMeasurement(
+      "Calling ST_Area on a NULL input"
+    )
   }
 
   override val function = STArea().apply {
