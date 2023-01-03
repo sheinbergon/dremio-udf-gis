@@ -27,6 +27,10 @@ internal class STPerimeterTests : GeometryMeasurementFunSpec.Unary<STPerimeter>(
       2279,
       122.63074400009504
     )
+
+    testNullGeometryMeasurement(
+      "Calling ST_Perimeter on a NULL input"
+    )
   }
 
   override val function = STPerimeter().apply {

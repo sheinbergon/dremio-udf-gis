@@ -27,6 +27,10 @@ internal class STLengthTests : GeometryMeasurementFunSpec.Unary<STLength>() {
       32608,
       2.0
     )
+
+    testNullGeometryMeasurement(
+      "Calling ST_Length on a NULL input"
+    )
   }
 
   override val function = STLength().apply {
