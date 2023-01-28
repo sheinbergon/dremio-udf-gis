@@ -1,4 +1,4 @@
-package org.sheinbergon.dremio.udf.gis
+package org.sheinbergon.dremio.udf.gis.spec
 
 import com.dremio.exec.expr.AggrFunction
 import io.kotest.core.spec.style.FunSpec
@@ -7,13 +7,13 @@ import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setFromWkt
-import org.sheinbergon.dremio.udf.gis.util.valueIsAsDescribedIn
+import org.sheinbergon.dremio.udf.gis.util.valueIsAsDescribedInWKT
 import org.sheinbergon.dremio.udf.gis.util.valueIsFalse
 import org.sheinbergon.dremio.udf.gis.util.valueIsTrue
 
 abstract class GeometryAggregationFunSpec<F : AggrFunction> : FunSpec() {
 
-  protected fun testGeometryAggegration(
+  protected fun testGeometryAggregration(
     name: String,
     wkts: Array<String>,
     expected: String
@@ -27,12 +27,12 @@ abstract class GeometryAggregationFunSpec<F : AggrFunction> : FunSpec() {
         add()
       }
       output()
-      wkbOutput.valueIsAsDescribedIn(expected)
+      wkbOutput.valueIsAsDescribedInWKT(expected)
       setIndicator.valueIsTrue()
     }
   }
 
-  protected fun testGeometryAggegrationNoInput(
+  protected fun testGeometryAggregationNoInput(
     name: String,
   ) = test(name) {
     function.apply {

@@ -5,7 +5,7 @@ import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryOutputFunSpec
 import org.sheinbergon.dremio.udf.gis.util.allocateBuffer
 
-internal class STAsTextTests : GeometryOutputFunSpec<STAsText>() {
+internal class STAsTextTests : GeometryOutputFunSpec.NullableVarChar<STAsText>() {
 
   init {
     testGeometryOutput(
@@ -20,6 +20,10 @@ internal class STAsTextTests : GeometryOutputFunSpec<STAsText>() {
       "POLYGON((0.0 0.0,1.23 0.0,1.0 1.0,0.19 1.0,0.0 0.0))",
       3857,
       "POLYGON ((0 0, 1.23 0, 1 1, 0.19 1, 0 0))"
+    )
+
+    testNullGeometryOutput(
+      "Calling ST_AsText on null input",
     )
   }
 

@@ -35,9 +35,12 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class GeometryHelpers {
 
@@ -49,6 +52,8 @@ public final class GeometryHelpers {
   private static final Set<String> LINEAR_TYPES = Sets.newHashSet(Geometry.TYPENAME_LINESTRING, Geometry.TYPENAME_MULTILINESTRING);
   private static final int GEOMETRY_DIMENSIONS = 2;
   private static final double AZIMUTH_NORTH_RADIANS = Angle.toRadians(90.0);
+
+  private static final Pattern EWKT_REGEX_PATTERN = Pattern.compile("^\\s*SRID\\s*=\\s*(\\d+)\\s*;\\s*(.+)\\s*$");
 
   private GeometryHelpers() {
   }
@@ -72,15 +77,41 @@ public final class GeometryHelpers {
         holder.buffer);
   }
 
-  public static byte[] toBinary(final @Nonnull Geometry geometry) {
-    WKBWriter writer = new WKBWriter(GEOMETRY_DIMENSIONS, true);
+  public static byte[] toEWKB(final @Nonnull Geometry geometry) {
+    int order = nativeWkbByteOrder();
+    WKBWriter writer = new WKBWriter(GEOMETRY_DIMENSIONS, order, true);
     return writer.write(geometry);
+  }
+
+  public static byte[] toBinary(final @Nonnull Geometry geometry) {
+    int order = nativeWkbByteOrder();
+    WKBWriter writer = new WKBWriter(GEOMETRY_DIMENSIONS, order, false);
+    return writer.write(geometry);
+  }
+
+  private static int nativeWkbByteOrder() {
+    return ByteOrder.nativeOrder().equals(ByteOrder.BIG_ENDIAN)
+        ? ByteOrderValues.BIG_ENDIAN
+        : ByteOrderValues.LITTLE_ENDIAN;
   }
 
   public static byte[] toText(
       final @Nonnull Geometry geometry) {
     WKTWriter writer = new WKTWriter(GEOMETRY_DIMENSIONS);
     return writer.write(geometry).getBytes(StandardCharsets.UTF_8);
+  }
+
+  public static byte[] toEWKT(
+      final @Nonnull Geometry geometry) {
+    final WKTWriter writer = new WKTWriter(GEOMETRY_DIMENSIONS);
+    final String wkt = writer.write(geometry);
+    String result;
+    if (geometry.getSRID() > 0) {
+      result = String.format("SRID=%d;%s", geometry.getSRID(), wkt);
+    } else {
+      result = wkt;
+    }
+    return result.getBytes(StandardCharsets.UTF_8);
   }
 
   public static byte[] toGeoJson(final @Nonnull Geometry geometry) {
@@ -94,6 +125,27 @@ public final class GeometryHelpers {
       String wkt = toUTF8String(holder);
       WKTReader reader = new WKTReader();
       return reader.read(wkt);
+    } catch (ParseException x) {
+      throw new RuntimeException(x);
+    }
+  }
+
+  @Nonnull
+  public static Geometry toGeometryFromEWKT(final @Nonnull NullableVarCharHolder holder) {
+    try {
+      String ewkt = toUTF8String(holder);
+      WKTReader reader = new WKTReader();
+      Matcher matcher = EWKT_REGEX_PATTERN.matcher(ewkt);
+      boolean found = matcher.find();
+      if (found) {
+        Geometry geometry = reader.read(matcher.group(2));
+        geometry.setSRID(Integer.parseInt(matcher.group(1)));
+        return geometry;
+      } else {
+        throw new IllegalArgumentException(
+            String.format("input '%s' is not a valid EWKT",
+                ewkt));
+      }
     } catch (ParseException x) {
       throw new RuntimeException(x);
     }
@@ -174,6 +226,7 @@ public final class GeometryHelpers {
       final @Nonnull byte[] bytes,
       final @Nonnull ArrowBuf buffer,
       final @Nonnull NullableVarCharHolder holder) {
+    holder.isSet = BIT_TRUE;
     holder.buffer = buffer;
     holder.start = 0;
     holder.end = bytes.length;
@@ -184,6 +237,7 @@ public final class GeometryHelpers {
       final @Nonnull byte[] bytes,
       final @Nonnull ArrowBuf buffer,
       final @Nonnull NullableVarBinaryHolder holder) {
+    holder.isSet = BIT_TRUE;
     holder.buffer = buffer;
     holder.start = 0;
     holder.end = bytes.length;
@@ -198,6 +252,26 @@ public final class GeometryHelpers {
     holder.end += bytes.length;
     holder.buffer.writeInt(bytes.length);
     holder.buffer.writeBytes(bytes);
+  }
+
+  public static boolean isClosed(
+      final @Nullable Geometry geometry) {
+    if (geometry == null) {
+      return false;
+    } else if (geometry.getGeometryType().equals(Geometry.TYPENAME_LINESTRING)) {
+      return ((LineString) geometry).isClosed();
+    } else if (geometry.getGeometryType().equals(Geometry.TYPENAME_POINT)) {
+      return true;
+    } else if (geometry.getGeometryType().equals(Geometry.TYPENAME_POLYGON)) {
+      return ((Polygon) geometry).getExteriorRing().isClosed();
+    } else if (geometry.getGeometryType().equals(Geometry.TYPENAME_LINEARRING)) {
+      return ((LinearRing) geometry).isClosed();
+    } else {
+      throw new IllegalArgumentException(
+          String.format(
+              "Unsupported geometry type - %s",
+              geometry.getGeometryType()));
+    }
   }
 
   public static boolean isAPoint(
@@ -220,11 +294,24 @@ public final class GeometryHelpers {
     return geometry != null && LINEAR_TYPES.contains(geometry.getGeometryType());
   }
 
+  public static boolean areHoldersSet(final @Nonnull ValueHolder... holders) {
+    boolean result = false;
+    for (ValueHolder holder : holders) {
+      result = isHolderSet(holder);
+      if (!result) {
+        break;
+      }
+    }
+    return result;
+  }
+
   public static boolean isHolderSet(final @Nonnull ValueHolder holder) {
     if (holder instanceof NullableIntHolder) {
       return ((NullableIntHolder) holder).isSet == BIT_TRUE;
     } else if (holder instanceof NullableBitHolder) {
       return ((NullableBitHolder) holder).isSet == BIT_TRUE;
+    } else if (holder instanceof NullableVarCharHolder) {
+      return ((NullableVarCharHolder) holder).isSet == BIT_TRUE;
     } else if (holder instanceof NullableVarBinaryHolder) {
       return ((NullableVarBinaryHolder) holder).isSet == BIT_TRUE;
     } else {
@@ -253,8 +340,12 @@ public final class GeometryHelpers {
       ((NullableIntHolder) holder).isSet = BIT_FALSE;
     } else if (holder instanceof NullableBitHolder) {
       ((NullableBitHolder) holder).isSet = BIT_FALSE;
+    } else if (holder instanceof NullableVarCharHolder) {
+      ((NullableVarCharHolder) holder).isSet = BIT_FALSE;
     } else if (holder instanceof NullableVarBinaryHolder) {
       ((NullableVarBinaryHolder) holder).isSet = BIT_FALSE;
+    } else if (holder instanceof NullableFloat8Holder) {
+      ((NullableFloat8Holder) holder).isSet = BIT_FALSE;
     } else {
       throw new IllegalArgumentException(
           String.format("Unsupported value holder type - %s",
@@ -262,7 +353,7 @@ public final class GeometryHelpers {
     }
   }
 
-  public static boolean isValueTrue(final @Nonnull ValueHolder holder) {
+  public static boolean getBooleanValue(final @Nonnull ValueHolder holder) {
     if (holder instanceof BitHolder) {
       return ((BitHolder) holder).value == BIT_TRUE;
     } else if (holder instanceof NullableBitHolder) {
@@ -279,29 +370,13 @@ public final class GeometryHelpers {
     }
   }
 
-  public static boolean isValueFalse(final @Nonnull ValueHolder holder) {
+  public static void setBooleanValue(final @Nonnull ValueHolder holder, final boolean value) {
+    int bitValue = value ? BIT_TRUE : BIT_FALSE;
     if (holder instanceof BitHolder) {
-      return ((BitHolder) holder).value == BIT_FALSE;
+      ((BitHolder) holder).value = bitValue;
     } else if (holder instanceof NullableBitHolder) {
       NullableBitHolder nullable = (NullableBitHolder) holder;
-      if (nullable.isSet == BIT_TRUE) {
-        return ((NullableBitHolder) holder).value == BIT_FALSE;
-      } else {
-        throw new IllegalStateException("Cannot verify state of a not-set nullable bit holder");
-      }
-    } else {
-      throw new IllegalArgumentException(
-          String.format("Unsupported value holder type - %s",
-              holder.getClass().getName()));
-    }
-  }
-
-  public static void setValueFalse(final @Nonnull ValueHolder holder) {
-    if (holder instanceof BitHolder) {
-      ((BitHolder) holder).value = BIT_FALSE;
-    } else if (holder instanceof NullableBitHolder) {
-      NullableBitHolder nullable = (NullableBitHolder) holder;
-      nullable.value = BIT_FALSE;
+      nullable.value = bitValue;
       nullable.isSet = BIT_TRUE;
     } else {
       throw new IllegalArgumentException(
@@ -310,12 +385,12 @@ public final class GeometryHelpers {
     }
   }
 
-  public static void setValueTrue(final @Nonnull ValueHolder holder) {
-    if (holder instanceof BitHolder) {
-      ((BitHolder) holder).value = BIT_TRUE;
-    } else if (holder instanceof NullableBitHolder) {
-      NullableBitHolder nullable = (NullableBitHolder) holder;
-      nullable.value = BIT_TRUE;
+  public static void setDoubleValue(final @Nonnull ValueHolder holder, final double value) {
+    if (holder instanceof Float8Holder) {
+      ((Float8Holder) holder).value = value;
+    } else if (holder instanceof NullableFloat8Holder) {
+      NullableFloat8Holder nullable = (NullableFloat8Holder) holder;
+      nullable.value = value;
       nullable.isSet = BIT_TRUE;
     } else {
       throw new IllegalArgumentException(

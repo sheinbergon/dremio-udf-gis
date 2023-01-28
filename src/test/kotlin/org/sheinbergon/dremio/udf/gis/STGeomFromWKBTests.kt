@@ -10,12 +10,16 @@ internal class STGeomFromWKBTests : GeometryInputFunSpec.NullableVarBinary<STGeo
     testGeometryInput(
       "Calling ST_GeomFromWKB on a POINT WKB representation",
       byteArrayOf(0, 32, 0, 0, 1, 0, 0, 0, 0, 63, -32, 0, 0, 0, 0, 0, 0, 63, -32, 0, 0, 0, 0, 0, 0),
-      byteArrayOf(0, 32, 0, 0, 1, 0, 0, 0, 0, 63, -32, 0, 0, 0, 0, 0, 0, 63, -32, 0, 0, 0, 0, 0, 0)
+      byteArrayOf(1, 1, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -32, 63, 0, 0, 0, 0, 0, 0, -32, 63)
     )
 
     testInvalidGeometryInput(
       "Calling ST_GeomFromWKB on rubbish data",
       byteArrayOf(-9, 22, 2, 9, 1, 0, 0, 12, 2, 93, -22, 0, 0, 0, 99, 22, 74, 63, -74, 0, 0, -9, -2, 0, 0),
+    )
+
+    testNullGeometryInput(
+      "Calling ST_GeomFromWKB on null input"
     )
   }
 

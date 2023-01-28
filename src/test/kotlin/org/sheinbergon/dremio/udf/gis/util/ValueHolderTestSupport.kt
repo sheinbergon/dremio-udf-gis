@@ -9,9 +9,11 @@ import org.apache.arrow.vector.holders.Float8Holder
 import org.apache.arrow.vector.holders.IntHolder
 import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableFloat8Holder
+import org.apache.arrow.vector.holders.NullableIntHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.apache.arrow.vector.holders.VarCharHolder
+import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.PrecisionModel
 import org.locationtech.jts.io.WKBWriter
 import org.locationtech.jts.io.WKTReader
@@ -71,14 +73,32 @@ internal fun NullableVarBinaryHolder.setBinary(bytes: ByteArray) {
   this.buffer = buffer
 }
 
-internal fun NullableVarBinaryHolder.valueIsAsDescribedIn(text: String) {
+internal fun NullableVarBinaryHolder.valueIsAsDescribedInWKT(text: String) =
+  valueIsAsDescribedIn(text, GeometryHelpers::toGeometry, GeometryHelpers::toBinary)
+
+internal fun NullableVarBinaryHolder.valueIsAsDescribedInEWKT(text: String) =
+  valueIsAsDescribedIn(text, GeometryHelpers::toGeometryFromEWKT, GeometryHelpers::toEWKB)
+
+internal fun NullableVarBinaryHolder.valueIsAsDescribedIn(
+  text: String,
+  adapter: (NullableVarCharHolder) -> Geometry,
+  serializer: (Geometry) -> ByteArray,
+) {
   val evaluated = GeometryHelpers.toGeometry(this)
   val reduced = GeometryPrecisionReducer.reducePointwise(evaluated, SCALED_PRECISION_MODEL)
+  reduced.srid = evaluated.srid
   val expected = NullableVarCharHolder()
     .apply { setUtf8(text) }
-    .let(GeometryHelpers::toGeometry)
-  GeometryHelpers.toBinary(reduced) shouldBe GeometryHelpers.toBinary(expected)
+    .let(adapter)
+  serializer(reduced) shouldBe serializer(expected)
 }
+
+internal fun NullableVarBinaryHolder.valueIsNotSet() {
+  GeometryHelpers.isHolderSet(this) shouldBe false
+}
+
+internal fun NullableVarCharHolder.valueIsNotSet() =
+  GeometryHelpers.isHolderSet(this) shouldBe false
 
 internal fun NullableVarBinaryHolder.reset() {
   end = 0
@@ -118,6 +138,11 @@ internal fun NullableFloat8Holder.reset() {
 
 internal fun Float8Holder.reset() {
   value = 0.0
+}
+
+internal fun NullableIntHolder.reset() {
+  isSet = 0
+  value = 0
 }
 
 internal fun IntHolder.reset() {

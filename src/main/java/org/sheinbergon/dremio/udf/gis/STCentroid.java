@@ -28,7 +28,7 @@ import javax.inject.Inject;
 @FunctionTemplate(
     name = "ST_Centroid",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
+    nulls = FunctionTemplate.NullHandling.INTERNAL)
 public class STCentroid implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
@@ -43,12 +43,16 @@ public class STCentroid implements SimpleFunction {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.GeometryFactory factory = new GeometryFactory();
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-    org.locationtech.jts.algorithm.Centroid centroid = new org.locationtech.jts.algorithm.Centroid(geom);
-    org.locationtech.jts.geom.Point point = factory.createPoint(centroid.getCentroid());
-    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(point);
-    buffer = buffer.reallocIfNeeded(bytes.length);
-    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
+      org.locationtech.jts.geom.GeometryFactory factory = new GeometryFactory();
+      org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+      org.locationtech.jts.algorithm.Centroid centroid = new org.locationtech.jts.algorithm.Centroid(geom);
+      org.locationtech.jts.geom.Point point = factory.createPoint(centroid.getCentroid());
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(point);
+      buffer = buffer.reallocIfNeeded(bytes.length);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
+    } else {
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(binaryOutput);
+    }
   }
 }

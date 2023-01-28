@@ -5,7 +5,7 @@ import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryOutputFunSpec
 import org.sheinbergon.dremio.udf.gis.util.allocateBuffer
 
-internal class STAsGeoJsonTests : GeometryOutputFunSpec<STAsGeoJson>() {
+internal class STAsGeoJsonTests : GeometryOutputFunSpec.NullableVarChar<STAsGeoJson>() {
 
   init {
     testGeometryOutput(
@@ -24,6 +24,10 @@ internal class STAsGeoJsonTests : GeometryOutputFunSpec<STAsGeoJson>() {
       """
         {"type":"Polygon","coordinates":[[[0.0,0.0],[1.23,0.0],[1,1],[0.19,1],[0.0,0.0]]],"crs":{"type":"name","properties":{"name":"EPSG:3857"}}}
       """.trimIndent()
+    )
+
+    testNullGeometryOutput(
+      "Calling ST_AsGeoJson on null input",
     )
   }
 

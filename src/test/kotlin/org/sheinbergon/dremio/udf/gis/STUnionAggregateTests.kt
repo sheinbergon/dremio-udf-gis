@@ -2,12 +2,13 @@ package org.sheinbergon.dremio.udf.gis
 
 import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
+import org.sheinbergon.dremio.udf.gis.spec.GeometryAggregationFunSpec
 import org.sheinbergon.dremio.udf.gis.util.allocateBuffer
 
 internal class STUnionAggregateTests : GeometryAggregationFunSpec<STUnionAggregate>() {
 
   init {
-    testGeometryAggegration(
+    testGeometryAggregration(
       "Calling ST_UNION on several GEOMETRY types returns their union",
       arrayOf(
         "POLYGON((0 0, 4 0, 4 4, 0 4, 0 0))",
@@ -18,7 +19,7 @@ internal class STUnionAggregateTests : GeometryAggregationFunSpec<STUnionAggrega
       "POLYGON ((2.33333 4, 4 4, 4 0, 0 0, 0 4, 1 4, 1 9, 3 5, 2.33333 4))"
     )
 
-    testGeometryAggegrationNoInput("Calling ST_UNION on no/null input returns nothing")
+    testGeometryAggregationNoInput("Calling ST_UNION on no/null input returns nothing")
   }
 
   override val function = STUnionAggregate().apply {

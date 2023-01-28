@@ -13,6 +13,7 @@ import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setBinary
 import org.sheinbergon.dremio.udf.gis.util.setUtf8
+import org.sheinbergon.dremio.udf.gis.util.valueIsNotSet
 
 abstract class GeometryInputFunSpec<F : SimpleFunction, I : ValueHolder, V : Any> : FunSpec() {
 
@@ -27,6 +28,8 @@ abstract class GeometryInputFunSpec<F : SimpleFunction, I : ValueHolder, V : Any
       }
     }
 
+    final override fun NullableVarBinaryHolder.markNotSet() = this.valueIsNotSet()
+
     final override fun NullableVarBinaryHolder.set(value: ByteArray) = this.setBinary(value)
   }
 
@@ -40,6 +43,8 @@ abstract class GeometryInputFunSpec<F : SimpleFunction, I : ValueHolder, V : Any
         function.input.release()
       }
     }
+
+    final override fun NullableVarCharHolder.markNotSet() = this.valueIsNotSet()
 
     final override fun NullableVarCharHolder.set(value: String) = this.setUtf8(value)
   }
@@ -65,6 +70,19 @@ abstract class GeometryInputFunSpec<F : SimpleFunction, I : ValueHolder, V : Any
     }
   }
 
+  protected fun testNullGeometryInput(
+    name: String,
+    precursor: suspend TestScope.() -> Unit = {}
+  ) = test(name) {
+    precursor.invoke(this)
+    function.apply {
+      input.markNotSet()
+      setup()
+      eval()
+      output.valueIsNotSet()
+    }
+  }
+
   protected fun testInvalidGeometryInput(
     name: String,
     value: V,
@@ -79,10 +97,11 @@ abstract class GeometryInputFunSpec<F : SimpleFunction, I : ValueHolder, V : Any
   }
 
   private fun NullableVarBinaryHolder.valueIs(bytes: ByteArray) =
-    GeometryHelpers.toBinary(GeometryHelpers.toGeometry(this)) shouldBe bytes
+    GeometryHelpers.toEWKB(GeometryHelpers.toGeometry(this)) shouldBe bytes
 
   protected abstract fun I.set(value: V)
   protected abstract val function: F
   protected abstract val F.input: I
+  protected abstract fun I.markNotSet()
   protected abstract val F.output: NullableVarBinaryHolder
 }
