@@ -13,6 +13,7 @@ import org.apache.arrow.vector.holders.NullableIntHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.apache.arrow.vector.holders.VarCharHolder
+import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.PrecisionModel
 import org.locationtech.jts.io.WKBWriter
 import org.locationtech.jts.io.WKTReader
@@ -72,13 +73,24 @@ internal fun NullableVarBinaryHolder.setBinary(bytes: ByteArray) {
   this.buffer = buffer
 }
 
-internal fun NullableVarBinaryHolder.valueIsAsDescribedIn(text: String) {
+internal fun NullableVarBinaryHolder.valueIsAsDescribedInWKT(text: String) =
+  valueIsAsDescribedIn(text, GeometryHelpers::toGeometry, GeometryHelpers::toBinary)
+
+internal fun NullableVarBinaryHolder.valueIsAsDescribedInEWKT(text: String) =
+  valueIsAsDescribedIn(text, GeometryHelpers::toGeometryFromEWKT, GeometryHelpers::toEWKB)
+
+internal fun NullableVarBinaryHolder.valueIsAsDescribedIn(
+  text: String,
+  adapter: (NullableVarCharHolder) -> Geometry,
+  serializer: (Geometry) -> ByteArray,
+) {
   val evaluated = GeometryHelpers.toGeometry(this)
   val reduced = GeometryPrecisionReducer.reducePointwise(evaluated, SCALED_PRECISION_MODEL)
+  reduced.srid = evaluated.srid
   val expected = NullableVarCharHolder()
     .apply { setUtf8(text) }
-    .let(GeometryHelpers::toGeometry)
-  GeometryHelpers.toEWKB(reduced) shouldBe GeometryHelpers.toEWKB(expected)
+    .let(adapter)
+  serializer(reduced) shouldBe serializer(expected)
 }
 
 internal fun NullableVarBinaryHolder.valueIsNotSet() {
