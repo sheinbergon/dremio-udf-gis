@@ -11,7 +11,7 @@ internal class STGeomFromEWKTTests : GeometryInputFunSpec.NullableVarChar<STGeom
     testGeometryInput(
       "Calling ST_GeomFromEWKT on an EWKT POINT",
       "SRID=4326;POINT(0.5 0.5)",
-      byteArrayOf(0, 32, 0, 0, 1, 0, 0, 16, -26, 63, -32, 0, 0, 0, 0, 0, 0, 63, -32, 0, 0, 0, 0, 0, 0)
+      byteArrayOf(1, 1, 0, 0, 32, -26, 16, 0, 0, 0, 0, 0, 0, 0, 0, -32, 63, 0, 0, 0, 0, 0, 0, -32, 63)
     )
 
     testInvalidGeometryInput(

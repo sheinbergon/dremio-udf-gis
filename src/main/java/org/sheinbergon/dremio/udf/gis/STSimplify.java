@@ -21,17 +21,27 @@ import com.dremio.exec.expr.SimpleFunction;
 import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
+import org.apache.arrow.memory.ArrowBuf;
+
+import javax.inject.Inject;
 
 @FunctionTemplate(
-    name = "ST_IsEmpty",
+    name = "ST_Simplify",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.INTERNAL)
-public class STIsEmpty implements SimpleFunction {
+    nulls = FunctionTemplate.NullHandling.INTERNAL,
+    costCategory = FunctionTemplate.FunctionCostCategory.COMPLEX)
+public class STSimplify implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
+  @Param(constant = true)
+  org.apache.arrow.vector.holders.Float8Holder toleranceInput;
+
   @Output
-  org.apache.arrow.vector.holders.NullableBitHolder output;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
+
+  @Inject
+  ArrowBuf buffer;
 
   public void setup() {
   }
@@ -39,10 +49,12 @@ public class STIsEmpty implements SimpleFunction {
   public void eval() {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-      boolean result = geom.isEmpty();
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setBooleanValue(output, result);
+      org.locationtech.jts.geom.Geometry simplified = org.locationtech.jts.simplify.DouglasPeuckerSimplifier.simplify(geom, toleranceInput.value);
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(simplified);
+      buffer = buffer.reallocIfNeeded(bytes.length);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
     } else {
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(binaryOutput);
     }
   }
 }

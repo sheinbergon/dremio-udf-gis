@@ -22,16 +22,24 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
+import javax.inject.Inject;
+
 @FunctionTemplate(
-    name = "ST_IsEmpty",
+    name = "ST_ConcaveHull",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.INTERNAL)
-public class STIsEmpty implements SimpleFunction {
+public class STConcaveHullNoHolesAllowed implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
+  @Param(constant = true)
+  org.apache.arrow.vector.holders.Float8Holder percentageConvexInput;
+
   @Output
-  org.apache.arrow.vector.holders.NullableBitHolder output;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
+
+  @Inject
+  org.apache.arrow.memory.ArrowBuf buffer;
 
   public void setup() {
   }
@@ -39,10 +47,14 @@ public class STIsEmpty implements SimpleFunction {
   public void eval() {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-      boolean result = geom.isEmpty();
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setBooleanValue(output, result);
+      org.locationtech.jts.algorithm.hull.ConcaveHull concaveHull = new org.locationtech.jts.algorithm.hull.ConcaveHull(geom);
+      concaveHull.setMaximumEdgeLengthRatio(percentageConvexInput.value);
+      org.locationtech.jts.geom.Geometry hull = concaveHull.getHull();
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(hull);
+      buffer = buffer.reallocIfNeeded(bytes.length);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
     } else {
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(binaryOutput);
     }
   }
 }

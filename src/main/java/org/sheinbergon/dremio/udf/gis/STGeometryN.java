@@ -51,7 +51,7 @@ public class STGeometryN implements SimpleFunction {
     if (0 <= index && index < size) {
       org.locationtech.jts.geom.Geometry nthGeom = geom.getGeometryN(index);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderSet(binaryOutput);
-      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(nthGeom);
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(nthGeom);
       buffer = buffer.reallocIfNeeded(bytes.length);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
     } else {

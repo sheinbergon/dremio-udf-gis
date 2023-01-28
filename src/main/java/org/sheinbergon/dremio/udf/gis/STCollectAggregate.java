@@ -52,30 +52,30 @@ public class STCollectAggregate implements AggrFunction {
     value = new org.apache.arrow.vector.holders.NullableVarBinaryHolder();
     indicator = new org.apache.arrow.vector.holders.NullableBitHolder();
     org.locationtech.jts.geom.GeometryCollection collection = org.sheinbergon.dremio.udf.gis.util.GeometryCollections.empty();
-    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(collection);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(collection);
     valueBuffer = valueBuffer.reallocIfNeeded(bytes.length);
     org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, valueBuffer, value);
     org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderSet(value);
-    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setValueFalse(indicator);
+    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setBooleanValue(indicator, false);
   }
 
   @Override
   public void add() {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(input)) {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(input);
-      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(geom);
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(geom);
       final int required = value.end + bytes.length + Integer.BYTES;
       valueBuffer = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.enlargeBufferIfNeeded(valueBuffer, required);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.append(bytes, valueBuffer, value);
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setValueTrue(indicator);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setBooleanValue(indicator, true);
     }
   }
 
   @Override
   public void output() {
-    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isValueTrue(indicator)) {
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.getBooleanValue(indicator)) {
       org.locationtech.jts.geom.GeometryCollection collection = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometryCollection(value);
-      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(collection);
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(collection);
       outputBuffer = outputBuffer.reallocIfNeeded(bytes.length);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, outputBuffer, output);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderSet(output);
@@ -87,10 +87,10 @@ public class STCollectAggregate implements AggrFunction {
   @Override
   public void reset() {
     org.locationtech.jts.geom.GeometryCollection collection = org.sheinbergon.dremio.udf.gis.util.GeometryCollections.empty();
-    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(collection);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(collection);
     valueBuffer = valueBuffer.reallocIfNeeded(bytes.length);
     org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, valueBuffer, value);
     org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderSet(value);
-    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setValueFalse(indicator);
+    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setBooleanValue(indicator, false);
   }
 }
