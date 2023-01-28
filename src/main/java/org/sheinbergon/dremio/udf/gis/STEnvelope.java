@@ -45,7 +45,7 @@ public class STEnvelope implements SimpleFunction {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
       org.locationtech.jts.geom.Geometry envelope = geom.getEnvelope();
-      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(envelope);
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(envelope);
       buffer = buffer.reallocIfNeeded(bytes.length);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
     } else {

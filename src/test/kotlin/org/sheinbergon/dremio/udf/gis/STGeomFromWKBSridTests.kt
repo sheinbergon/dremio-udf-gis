@@ -17,7 +17,7 @@ internal class STGeomFromWKBSridTests : GeometryInputFunSpec.NullableVarBinary<S
     testGeometryInput(
       "Calling ST_GeomFromWKB on a POINT WKB representation",
       byteArrayOf(0, 32, 0, 0, 1, 0, 0, 0, 0, 63, -32, 0, 0, 0, 0, 0, 0, 63, -32, 0, 0, 0, 0, 0, 0),
-      byteArrayOf(0, 32, 0, 0, 1, 0, 0, 125, 106, 63, -32, 0, 0, 0, 0, 0, 0, 63, -32, 0, 0, 0, 0, 0, 0)
+      byteArrayOf(1, 1, 0, 0, 32, 106, 125, 0, 0, 0, 0, 0, 0, 0, 0, -32, 63, 0, 0, 0, 0, 0, 0, -32, 63)
     ) { function.sridInput.value = 32106 }
 
     testNullGeometryInput(

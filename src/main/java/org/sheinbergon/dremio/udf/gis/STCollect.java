@@ -49,7 +49,7 @@ public class STCollect implements SimpleFunction {
     org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
     org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput2);
     org.locationtech.jts.geom.GeometryCollection collection = org.sheinbergon.dremio.udf.gis.util.GeometryCollections.collect(geom1, geom2);
-    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(collection);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(collection);
     buffer = buffer.reallocIfNeeded(bytes.length);
     org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
   }
