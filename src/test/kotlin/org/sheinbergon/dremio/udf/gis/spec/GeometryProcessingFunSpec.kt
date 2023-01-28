@@ -8,7 +8,7 @@ import org.sheinbergon.dremio.udf.gis.util.GeometryHelpers
 import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setFromWkt
-import org.sheinbergon.dremio.udf.gis.util.valueIsAsDescribedIn
+import org.sheinbergon.dremio.udf.gis.util.valueIsAsDescribedInWKT
 import org.sheinbergon.dremio.udf.gis.util.valueIsNotSet
 
 abstract class GeometryProcessingFunSpec<F : SimpleFunction> : FunSpec() {
@@ -24,7 +24,7 @@ abstract class GeometryProcessingFunSpec<F : SimpleFunction> : FunSpec() {
       wkbInput.setFromWkt(wkt)
       setup()
       eval()
-      wkbOutput.valueIsAsDescribedIn(expected)
+      wkbOutput.valueIsAsDescribedInWKT(expected)
     }
   }
 

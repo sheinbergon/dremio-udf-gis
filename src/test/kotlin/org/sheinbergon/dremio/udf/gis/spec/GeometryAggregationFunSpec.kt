@@ -7,7 +7,7 @@ import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setFromWkt
-import org.sheinbergon.dremio.udf.gis.util.valueIsAsDescribedIn
+import org.sheinbergon.dremio.udf.gis.util.valueIsAsDescribedInWKT
 import org.sheinbergon.dremio.udf.gis.util.valueIsFalse
 import org.sheinbergon.dremio.udf.gis.util.valueIsTrue
 
@@ -27,7 +27,7 @@ abstract class GeometryAggregationFunSpec<F : AggrFunction> : FunSpec() {
         add()
       }
       output()
-      wkbOutput.valueIsAsDescribedIn(expected)
+      wkbOutput.valueIsAsDescribedInWKT(expected)
       setIndicator.valueIsTrue()
     }
   }
