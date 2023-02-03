@@ -25,7 +25,7 @@ import com.dremio.exec.expr.annotations.Param;
 @FunctionTemplate(
     name = "ST_DWithin",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
+    nulls = FunctionTemplate.NullHandling.INTERNAL)
 public class STDWithin implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput1;
@@ -37,15 +37,20 @@ public class STDWithin implements SimpleFunction {
   org.apache.arrow.vector.holders.Float8Holder distanceInput;
 
   @Output
-  org.apache.arrow.vector.holders.BitHolder output;
+  org.apache.arrow.vector.holders.NullableBitHolder output;
 
   public void setup() {
   }
 
   public void eval() {
-    double distance = distanceInput.value;
-    org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
-    org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput2);
-    output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBitValue(geom1.distance(geom2) <= distance);
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.areHoldersSet(binaryInput1, binaryInput2)) {
+      double distance = distanceInput.value;
+      org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
+      org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput2);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.verifyMatchingSRIDs(geom1, geom2);
+      output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBitValue(geom1.distance(geom2) <= distance);
+    } else {
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);
+    }
   }
 }

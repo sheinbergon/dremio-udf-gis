@@ -7,7 +7,7 @@ import org.sheinbergon.dremio.udf.gis.spec.GeometryRelationFunSpec
 import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setUtf8
 
-internal class STRelateMatrixTests : GeometryRelationFunSpec.BitOutput<STRelateMatrix>() {
+internal class STRelateMatrixTests : GeometryRelationFunSpec.NullableBitOutput<STRelateMatrix>() {
 
   override val function = STRelateMatrix().apply {
     binaryInput1 = NullableVarBinaryHolder()
