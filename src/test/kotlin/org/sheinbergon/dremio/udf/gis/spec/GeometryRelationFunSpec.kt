@@ -4,7 +4,7 @@ import com.dremio.exec.expr.SimpleFunction
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.core.test.TestScope
 import io.kotest.matchers.shouldBe
-import org.apache.arrow.vector.holders.BitHolder
+import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.apache.arrow.vector.holders.ValueHolder
@@ -44,7 +44,7 @@ abstract class GeometryRelationFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
       GeometryHelpers.toUTF8String(this) shouldBe text
   }
 
-  abstract class BitOutput<F : SimpleFunction> : GeometryRelationFunSpec<F, BitHolder>() {
+  abstract class NullableBitOutput<F : SimpleFunction> : GeometryRelationFunSpec<F, NullableBitHolder>() {
 
     init {
       beforeEach {

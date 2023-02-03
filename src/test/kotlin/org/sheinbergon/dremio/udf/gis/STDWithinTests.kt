@@ -6,7 +6,7 @@ import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryRelationFunSpec
 import org.sheinbergon.dremio.udf.gis.util.reset
 
-internal class STDWithinTests : GeometryRelationFunSpec.BitOutput<STDWithin>() {
+internal class STDWithinTests : GeometryRelationFunSpec.NullableBitOutput<STDWithin>() {
 
   override val function = STDWithin().apply {
     binaryInput1 = NullableVarBinaryHolder()

@@ -43,6 +43,7 @@ public class STDistance implements SimpleFunction {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.areHoldersSet(binaryInput1, binaryInput2)) {
       org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
       org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput2);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.verifyMatchingSRIDs(geom1, geom2);
       double radians = geom1.distance(geom2);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setDoubleValue(output, radians);
     } else {

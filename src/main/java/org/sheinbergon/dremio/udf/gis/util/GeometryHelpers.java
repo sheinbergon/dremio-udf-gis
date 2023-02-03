@@ -432,4 +432,14 @@ public final class GeometryHelpers {
       return BufferOp.bufferOp(geometry, sidedRadius, definition.parameters());
     }
   }
+
+  public static void verifyMatchingSRIDs(
+      final @Nonnull Geometry g1,
+      final @Nonnull Geometry g2) {
+    if (g1.getSRID() == g2.getSRID()) {
+      throw new IllegalArgumentException(
+          String.format("Cannot operate on mixed SRID geometries (%d != %d)",
+              g1.getSRID(), g2.getSRID()));
+    }
+  }
 }

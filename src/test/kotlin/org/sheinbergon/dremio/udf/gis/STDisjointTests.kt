@@ -4,7 +4,7 @@ import org.apache.arrow.vector.holders.BitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryRelationFunSpec
 
-internal class STDisjointTests : GeometryRelationFunSpec.BitOutput<STDisjoint>() {
+internal class STDisjointTests : GeometryRelationFunSpec.NullableBitOutput<STDisjoint>() {
 
   init {
     testFalseGeometryRelation(
