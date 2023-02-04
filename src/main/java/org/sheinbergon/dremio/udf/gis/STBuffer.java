@@ -23,14 +23,13 @@ import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 import org.apache.arrow.memory.ArrowBuf;
 
-
-
 import javax.inject.Inject;
 
 @FunctionTemplate(
     name = "ST_Buffer",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
+    nulls = FunctionTemplate.NullHandling.INTERNAL,
+    costCategory = FunctionTemplate.FunctionCostCategory.MEDIUM)
 public class STBuffer implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
@@ -48,10 +47,15 @@ public class STBuffer implements SimpleFunction {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-    org.locationtech.jts.geom.Geometry buffered = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.buffer(geom, radiusInput.value, null);
-    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(buffered);
-    buffer = buffer.reallocIfNeeded(bytes.length);
-    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
+      org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+      org.locationtech.jts.geom.Geometry buffered = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.buffer(geom, radiusInput.value, null);
+      buffered.setSRID(geom.getSRID());
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(buffered);
+      buffer = buffer.reallocIfNeeded(bytes.length);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
+    } else {
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(binaryOutput);
+    }
   }
 }

@@ -8,7 +8,7 @@ import org.sheinbergon.dremio.udf.gis.util.allocateBuffer
 internal class STCollectAggregateTests : GeometryAggregationFunSpec<STCollectAggregate>() {
 
   init {
-    testGeometryAggegration(
+    testGeometryAggregration(
       "Calling ST_Collect on several POLYGONs returns a MULTIPOLYGON",
       arrayOf(
         "POLYGON((0 0, 4 0, 4 4, 0 4, 0 0), (1 1, 1 2, 2 2, 2 1, 1 1))",
@@ -19,7 +19,7 @@ internal class STCollectAggregateTests : GeometryAggregationFunSpec<STCollectAgg
       "MULTIPOLYGON (((0 0, 4 0, 4 4, 0 4, 0 0), (1 1, 1 2, 2 2, 2 1, 1 1)), ((30 10, 40 40, 20 40, 10 20, 30 10)), ((50 40, 20 30, 10 20, 50 40)))"
     )
 
-    testGeometryAggegrationNoInput("Calling ST_Collect on no/null input returns nothing")
+    testGeometryAggregationNoInput("Calling ST_Collect on no/null input returns nothing")
   }
 
   override val function = STCollectAggregate().apply {

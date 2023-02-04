@@ -1,6 +1,6 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.Float8Holder
+import org.apache.arrow.vector.holders.NullableFloat8Holder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryMeasurementFunSpec
 
@@ -14,15 +14,22 @@ internal class STDistanceTests : GeometryMeasurementFunSpec.Binary<STDistance>()
       4326,
       0.0015056772638228177
     )
+
+    testNullGeometryMeasurement(
+      "Calling ST_Distance on 2 LINESTRINGs, one of them is null",
+      "LINESTRING(0 0, 0.3 0.7, 1 1)",
+      null,
+      4326
+    )
   }
 
   override val function = STDistance().apply {
     binaryInput1 = NullableVarBinaryHolder()
     binaryInput2 = NullableVarBinaryHolder()
-    output = Float8Holder()
+    output = NullableFloat8Holder()
   }
 
   override val STDistance.wkbInput1: NullableVarBinaryHolder get() = function.binaryInput1
   override val STDistance.wkbInput2: NullableVarBinaryHolder get() = function.binaryInput2
-  override val STDistance.measurementOutput: Float8Holder get() = function.output
+  override val STDistance.measurementOutput: NullableFloat8Holder get() = function.output
 }

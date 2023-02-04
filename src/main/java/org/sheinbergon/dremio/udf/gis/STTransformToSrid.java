@@ -27,7 +27,8 @@ import javax.inject.Inject;
 @FunctionTemplate(
     name = "ST_Transform",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
+    nulls = FunctionTemplate.NullHandling.INTERNAL,
+    costCategory = FunctionTemplate.FunctionCostCategory.COMPLEX)
 public class STTransformToSrid implements SimpleFunction {
 
   @Param
@@ -47,11 +48,16 @@ public class STTransformToSrid implements SimpleFunction {
 
 
   public void eval() {
-    int target = targetSridInput.value;
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-    org.locationtech.jts.geom.Geometry result = org.sheinbergon.dremio.udf.gis.util.GeometryTransformation.transform(geom, target);
-    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(result);
-    buffer = buffer.reallocIfNeeded(bytes.length);
-    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
+      int target = targetSridInput.value;
+      org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+      org.locationtech.jts.geom.Geometry result = org.sheinbergon.dremio.udf.gis.util.GeometryTransformation.transform(geom, target);
+      result.setSRID(target);
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(result);
+      buffer = buffer.reallocIfNeeded(bytes.length);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
+    } else {
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(binaryOutput);
+    }
   }
 }

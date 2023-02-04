@@ -25,27 +25,31 @@ import com.dremio.exec.expr.annotations.Param;
 @FunctionTemplate(
     name = "ST_Angle",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
+    nulls = FunctionTemplate.NullHandling.INTERNAL)
 public class STAngle2Lines implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput1;
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput2;
-
   @Output
-  org.apache.arrow.vector.holders.Float8Holder output;
+  org.apache.arrow.vector.holders.NullableFloat8Holder output;
 
   public void setup() {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.LineString l1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toLineString(binaryInput1);
-    org.locationtech.jts.geom.LineString l2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toLineString(binaryInput2);
-    output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toAngleRadians(
-        l1.getStartPoint(),
-        l1.getEndPoint(),
-        l2.getStartPoint(),
-        l2.getEndPoint()
-    );
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.areHoldersSet(binaryInput1, binaryInput2)) {
+      org.locationtech.jts.geom.LineString l1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toLineString(binaryInput1);
+      org.locationtech.jts.geom.LineString l2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toLineString(binaryInput2);
+      double radians = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toAngleRadians(
+          l1.getStartPoint(),
+          l1.getEndPoint(),
+          l2.getStartPoint(),
+          l2.getEndPoint()
+      );
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setDoubleValue(output, radians);
+    } else {
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);
+    }
   }
 }

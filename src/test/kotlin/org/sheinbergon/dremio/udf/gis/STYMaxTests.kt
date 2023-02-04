@@ -1,10 +1,10 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.Float8Holder
+import org.apache.arrow.vector.holders.NullableFloat8Holder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryAccessorFunSpec
 
-internal class STYMaxTests : GeometryAccessorFunSpec<STYMax, Float8Holder>() {
+internal class STYMaxTests : GeometryAccessorFunSpec<STYMax, NullableFloat8Holder>() {
 
   init {
     testGeometryAccessor(
@@ -18,12 +18,16 @@ internal class STYMaxTests : GeometryAccessorFunSpec<STYMax, Float8Holder>() {
       "LINESTRING(1.8 345.2, 1.9 359.2, 2.0 360.0)",
       360.0
     )
+
+    testNullGeometryAccessor(
+      "Calling ST_YMax on null input",
+    )
   }
 
   override val function = STYMax().apply {
     binaryInput = NullableVarBinaryHolder()
-    output = Float8Holder()
+    output = NullableFloat8Holder()
   }
   override val STYMax.wkbInput: NullableVarBinaryHolder get() = function.binaryInput
-  override val STYMax.output: Float8Holder get() = function.output
+  override val STYMax.output: NullableFloat8Holder get() = function.output
 }

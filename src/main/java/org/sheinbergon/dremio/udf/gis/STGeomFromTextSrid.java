@@ -49,7 +49,7 @@ public class STGeomFromTextSrid implements SimpleFunction {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(wktInput)) {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(wktInput);
       geom.setSRID(sridInput.value);
-      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(geom);
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(geom);
       buffer = buffer.reallocIfNeeded(bytes.length);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
     } else {

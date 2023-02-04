@@ -31,7 +31,7 @@ import javax.inject.Inject;
     name = "ST_Point",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
-public class STPoint implements SimpleFunction {
+public class STPointSrid implements SimpleFunction {
 
   @Param
   org.apache.arrow.vector.holders.Float8Holder longitudeInput;
@@ -58,7 +58,7 @@ public class STPoint implements SimpleFunction {
     org.locationtech.jts.geom.PrecisionModel precisionModel = new org.locationtech.jts.geom.PrecisionModel();
     org.locationtech.jts.geom.GeometryFactory factory = new org.locationtech.jts.geom.GeometryFactory(precisionModel, srid());
     org.locationtech.jts.geom.Point point = factory.createPoint(coordinate);
-    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(point);
+    byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(point);
     buffer = buffer.reallocIfNeeded(bytes.length);
     org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, output);
   }

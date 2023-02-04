@@ -1,6 +1,6 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.Float8Holder
+import org.apache.arrow.vector.holders.NullableFloat8Holder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryMeasurementFunSpec
 
@@ -27,12 +27,16 @@ internal class STLengthTests : GeometryMeasurementFunSpec.Unary<STLength>() {
       32608,
       2.0
     )
+
+    testNullGeometryMeasurement(
+      "Calling ST_Length on a NULL input"
+    )
   }
 
   override val function = STLength().apply {
     binaryInput = NullableVarBinaryHolder()
-    output = Float8Holder()
+    output = NullableFloat8Holder()
   }
   override val STLength.wkbInput1: NullableVarBinaryHolder get() = function.binaryInput
-  override val STLength.measurementOutput: Float8Holder get() = function.output
+  override val STLength.measurementOutput: NullableFloat8Holder get() = function.output
 }

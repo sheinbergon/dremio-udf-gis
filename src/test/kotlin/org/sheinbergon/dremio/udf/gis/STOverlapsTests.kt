@@ -1,10 +1,10 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.BitHolder
+import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryRelationFunSpec
 
-internal class STOverlapsTests : GeometryRelationFunSpec.BitOutput<STOverlaps>() {
+internal class STOverlapsTests : GeometryRelationFunSpec.NullableBitOutput<STOverlaps>() {
 
   init {
     testFalseGeometryRelation(
@@ -48,15 +48,28 @@ internal class STOverlapsTests : GeometryRelationFunSpec.BitOutput<STOverlaps>()
       "POLYGON((0.0 0.0,1.0 0.0,1.0 1.0,0.0 1.0,0.0 0.0))",
       "POLYGON((0.9 0.0,0.9 1.0,1.5 1.0,1.5 0.0,0.9 0.0))",
     )
+
+    testNullGeometryRelation(
+      "Calling ST_Overlaps with one or two null geometries",
+      "LINESTRING(-0.5 0.5,0.5 0.5)",
+      null,
+    )
+
+    testDifferentSRIDGeometryRelation(
+      "Calling ST_Overlaps on geometries specified using different SRID",
+      "POINT(0 0)",
+      "POLYGON((0 0,111319.49079327357 0,111319.49079327357 111325.14286638486,0 111325.14286638486,0 0))",
+      4326
+    )
   }
 
   override val function = STOverlaps().apply {
     binaryInput1 = NullableVarBinaryHolder()
     binaryInput2 = NullableVarBinaryHolder()
-    output = BitHolder()
+    output = NullableBitHolder()
   }
 
   override val STOverlaps.wkbInput1: NullableVarBinaryHolder get() = function.binaryInput1
   override val STOverlaps.wkbInput2: NullableVarBinaryHolder get() = function.binaryInput2
-  override val STOverlaps.output: BitHolder get() = function.output
+  override val STOverlaps.output: NullableBitHolder get() = function.output
 }

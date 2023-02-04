@@ -1,6 +1,6 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.Float8Holder
+import org.apache.arrow.vector.holders.NullableFloat8Holder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryMeasurementFunSpec
 
@@ -27,12 +27,16 @@ internal class STAreaTests : GeometryMeasurementFunSpec.Unary<STArea>() {
       2279,
       928.625
     )
+
+    testNullGeometryMeasurement(
+      "Calling ST_Area on a NULL input"
+    )
   }
 
   override val function = STArea().apply {
     binaryInput = NullableVarBinaryHolder()
-    output = Float8Holder()
+    output = NullableFloat8Holder()
   }
   override val STArea.wkbInput1: NullableVarBinaryHolder get() = function.binaryInput
-  override val STArea.measurementOutput: Float8Holder get() = function.output
+  override val STArea.measurementOutput: NullableFloat8Holder get() = function.output
 }

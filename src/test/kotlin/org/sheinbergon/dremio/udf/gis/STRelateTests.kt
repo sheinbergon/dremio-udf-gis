@@ -29,6 +29,20 @@ internal class STRelateTests : GeometryRelationFunSpec.NullableVarCharOutput<STR
       "LINESTRING(1 5,0 1)",
       "FF0FFF102"
     )
+
+    testNullGeometryRelation(
+      "Calling ST_Relates with one or two null geometries",
+      null,
+      "LINESTRING(-0.5 0.5,0.5 0.5)"
+    )
+
+    testDifferentSRIDGeometryRelation(
+      "Calling ST_Relate on geometries specified using different SRID",
+      "POINT(0 0)",
+      "POLYGON((0 0,111319.49079327357 0,111319.49079327357 111325.14286638486,0 111325.14286638486,0 0))",
+      4326,
+      3857
+    )
   }
 
   override val STRelate.wkbInput1: NullableVarBinaryHolder get() = function.binaryInput1
