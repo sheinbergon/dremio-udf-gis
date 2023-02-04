@@ -1,6 +1,7 @@
 package org.sheinbergon.dremio.udf.gis
 
 import org.apache.arrow.vector.holders.BitHolder
+import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryRelationFunSpec
 
@@ -29,10 +30,10 @@ internal class STWithinTests : GeometryRelationFunSpec.NullableBitOutput<STWithi
   override val function = STWithin().apply {
     binaryInput1 = NullableVarBinaryHolder()
     binaryInput2 = NullableVarBinaryHolder()
-    output = BitHolder()
+    output = NullableBitHolder()
   }
 
   override val STWithin.wkbInput1: NullableVarBinaryHolder get() = function.binaryInput1
   override val STWithin.wkbInput2: NullableVarBinaryHolder get() = function.binaryInput2
-  override val STWithin.output: BitHolder get() = function.output
+  override val STWithin.output: NullableBitHolder get() = function.output
 }
