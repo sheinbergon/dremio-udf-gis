@@ -1,6 +1,7 @@
 package org.sheinbergon.dremio.udf.gis.spec
 
 import com.dremio.exec.expr.SimpleFunction
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.core.test.TestScope
 import io.kotest.matchers.shouldBe
@@ -42,6 +43,9 @@ abstract class GeometryRelationFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
 
     private fun NullableVarCharHolder.valueIs(text: String) =
       GeometryHelpers.toUTF8String(this) shouldBe text
+
+    override fun NullableVarCharHolder.valueIsNotSet() =
+      this.isSet shouldBe 0
   }
 
   abstract class NullableBitOutput<F : SimpleFunction> : GeometryRelationFunSpec<F, NullableBitHolder>() {
@@ -83,6 +87,44 @@ abstract class GeometryRelationFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
         output.valueIsFalse()
       }
     }
+
+    override fun NullableBitHolder.valueIsNotSet() =
+      this.isSet shouldBe 0
+  }
+
+  protected fun testNullGeometryRelation(
+    name: String,
+    wkt1: String? = null,
+    wkt2: String? = null,
+    precursor: suspend TestScope.() -> Unit = {}
+  ) = test(name) {
+    precursor(this)
+    function.apply {
+      wkt1?.also { wkbInput1.setFromWkt(wkt1) }
+      wkt2?.also { wkbInput2.setFromWkt(wkt2) }
+      setup()
+      eval()
+      output.valueIsNotSet()
+    }
+  }
+
+  protected fun testDifferentSRIDGeometryRelation(
+    name: String,
+    wkt1: String,
+    wkt2: String,
+    srid1: Int? = null,
+    srid2: Int? = null,
+    precursor: suspend TestScope.() -> Unit = {}
+  ) = test(name) {
+    shouldThrow<IllegalArgumentException> {
+      precursor(this)
+      function.apply {
+        wkbInput1.setFromWkt(wkt1, srid1)
+        wkbInput2.setFromWkt(wkt2, srid2)
+        setup()
+        eval()
+      }
+    }
   }
 
   init {
@@ -97,6 +139,7 @@ abstract class GeometryRelationFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
     }
   }
 
+  protected abstract fun O.valueIsNotSet()
   protected abstract val function: F
   protected abstract val F.wkbInput1: NullableVarBinaryHolder
   protected abstract val F.wkbInput2: NullableVarBinaryHolder

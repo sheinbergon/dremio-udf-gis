@@ -34,7 +34,7 @@ public class STRelateMatrix implements SimpleFunction {
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput2;
 
   @Param
-  org.apache.arrow.vector.holders.VarCharHolder matrixInput;
+  org.apache.arrow.vector.holders.NullableVarCharHolder matrixInput;
 
   @Output
   org.apache.arrow.vector.holders.NullableBitHolder output;
@@ -45,7 +45,7 @@ public class STRelateMatrix implements SimpleFunction {
 
   @Override
   public void eval() {
-    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.areHoldersSet(binaryInput1, binaryInput2)) {
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.areHoldersSet(binaryInput1, binaryInput2, matrixInput)) {
       java.lang.String matrix = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toUTF8String(matrixInput);
       org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
       org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput2);

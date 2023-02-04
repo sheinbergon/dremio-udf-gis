@@ -2,7 +2,7 @@ package org.sheinbergon.dremio.udf.gis
 
 import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
-import org.apache.arrow.vector.holders.VarCharHolder
+import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryRelationFunSpec
 import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setUtf8
@@ -12,7 +12,7 @@ internal class STRelateMatrixTests : GeometryRelationFunSpec.NullableBitOutput<S
   override val function = STRelateMatrix().apply {
     binaryInput1 = NullableVarBinaryHolder()
     binaryInput2 = NullableVarBinaryHolder()
-    matrixInput = VarCharHolder()
+    matrixInput = NullableVarCharHolder()
     output = NullableBitHolder()
   }
 
@@ -32,6 +32,12 @@ internal class STRelateMatrixTests : GeometryRelationFunSpec.NullableBitOutput<S
       "Calling ST_Relate with a matrix param on the given POINT and LINESTRING",
       "POINT(0 0)",
       "LINESTRING(1 5,0 1)"
+    ) { function.apply { matrixInput.setUtf8("T*T**FFF0") } }
+
+    testNullGeometryRelation(
+      "Calling ST_Relate with one or two null geometries",
+      "LINESTRING(-0.5 0.5,0.5 0.5)",
+      null,
     ) { function.apply { matrixInput.setUtf8("T*T**FFF0") } }
   }
 

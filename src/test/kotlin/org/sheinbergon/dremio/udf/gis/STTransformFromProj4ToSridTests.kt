@@ -22,10 +22,10 @@ internal class STTransformFromProj4ToSridTests : GeometryTransformationFunSpec<S
       function.sourceProj4ParametersInput.release()
     }
 
-    testGeometryTransformation(
+    testGeometryTransformationEWKT(
       name = "Calling ST_TRANSFORM on a WGS84 POLYGON to transform it using a proj4 string",
       wkt = "LINESTRING(1 1,2 3,4 8)",
-      expected = "LINESTRING (37049474.20769 22132952.94676, 36764309.60766 22975620.40908, 35905658.85601 24882339.1246)"
+      expected = "SRID=2279;LINESTRING (37049474.20769 22132952.94676, 36764309.60766 22975620.40908, 35905658.85601 24882339.1246)"
     ) {
       function.targetSridInput.value = 2279
       function.sourceProj4ParametersInput.setUtf8("+proj=longlat +datum=WGS84 +no_defs")
