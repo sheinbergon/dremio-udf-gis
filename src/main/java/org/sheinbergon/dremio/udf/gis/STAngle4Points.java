@@ -25,7 +25,7 @@ import com.dremio.exec.expr.annotations.Param;
 @FunctionTemplate(
     name = "ST_Angle",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
+    nulls = FunctionTemplate.NullHandling.INTERNAL)
 public class STAngle4Points implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput1;
@@ -35,18 +35,22 @@ public class STAngle4Points implements SimpleFunction {
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput3;
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput4;
-
   @Output
-  org.apache.arrow.vector.holders.Float8Holder output;
+  org.apache.arrow.vector.holders.NullableFloat8Holder output;
 
   public void setup() {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Point p1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toPoint(binaryInput1);
-    org.locationtech.jts.geom.Point p2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toPoint(binaryInput2);
-    org.locationtech.jts.geom.Point p3 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toPoint(binaryInput3);
-    org.locationtech.jts.geom.Point p4 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toPoint(binaryInput4);
-    output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toAngleRadians(p1, p2, p3, p4);
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.areHoldersSet(binaryInput1, binaryInput2, binaryInput3, binaryInput4)) {
+      org.locationtech.jts.geom.Point p1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toPoint(binaryInput1);
+      org.locationtech.jts.geom.Point p2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toPoint(binaryInput2);
+      org.locationtech.jts.geom.Point p3 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toPoint(binaryInput3);
+      org.locationtech.jts.geom.Point p4 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toPoint(binaryInput4);
+      double radians = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toAngleRadians(p1, p2, p3, p4);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setDoubleValue(output, radians);
+    } else {
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);
+    }
   }
 }

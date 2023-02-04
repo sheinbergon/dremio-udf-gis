@@ -6,7 +6,7 @@ import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setFromWkt
-import org.sheinbergon.dremio.udf.gis.util.valueIsAsDescribedIn
+import org.sheinbergon.dremio.udf.gis.util.valueIsAsDescribedInWKT
 
 abstract class GeometryOperatorsFunSpec<F : SimpleFunction> : FunSpec() {
 
@@ -21,7 +21,7 @@ abstract class GeometryOperatorsFunSpec<F : SimpleFunction> : FunSpec() {
       wkbInput2.setFromWkt(wkt2)
       setup()
       eval()
-      wkbOutput.valueIsAsDescribedIn(expected)
+      wkbOutput.valueIsAsDescribedInWKT(expected)
     }
   }
 

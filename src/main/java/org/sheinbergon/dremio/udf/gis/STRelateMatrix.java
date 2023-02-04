@@ -25,7 +25,7 @@ import com.dremio.exec.expr.annotations.Param;
 @FunctionTemplate(
     name = "ST_Relate",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
+    nulls = FunctionTemplate.NullHandling.INTERNAL)
 public class STRelateMatrix implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput1;
@@ -34,10 +34,10 @@ public class STRelateMatrix implements SimpleFunction {
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput2;
 
   @Param
-  org.apache.arrow.vector.holders.VarCharHolder matrixInput;
+  org.apache.arrow.vector.holders.NullableVarCharHolder matrixInput;
 
   @Output
-  org.apache.arrow.vector.holders.BitHolder output;
+  org.apache.arrow.vector.holders.NullableBitHolder output;
 
   @Override
   public void setup() {
@@ -45,9 +45,14 @@ public class STRelateMatrix implements SimpleFunction {
 
   @Override
   public void eval() {
-    java.lang.String matrix = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toUTF8String(matrixInput);
-    org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
-    org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput2);
-    output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBitValue(geom1.relate(geom2, matrix));
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.areHoldersSet(binaryInput1, binaryInput2, matrixInput)) {
+      java.lang.String matrix = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toUTF8String(matrixInput);
+      org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
+      org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput2);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.verifyMatchingSRIDs(geom1, geom2);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setBooleanValue(output, geom1.relate(geom2, matrix));
+    } else {
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);
+    }
   }
 }

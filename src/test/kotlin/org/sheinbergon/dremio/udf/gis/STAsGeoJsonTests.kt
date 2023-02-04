@@ -5,7 +5,7 @@ import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryOutputFunSpec
 import org.sheinbergon.dremio.udf.gis.util.allocateBuffer
 
-internal class STAsGeoJsonTests : GeometryOutputFunSpec<STAsGeoJson>() {
+internal class STAsGeoJsonTests : GeometryOutputFunSpec.NullableVarChar<STAsGeoJson>() {
 
   init {
     testGeometryOutput(

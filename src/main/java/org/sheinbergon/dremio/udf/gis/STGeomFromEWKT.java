@@ -45,7 +45,7 @@ public class STGeomFromEWKT implements SimpleFunction {
   public void eval() {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(ewktInput)) {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometryFromEWKT(ewktInput);
-      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBinary(geom);
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(geom);
       buffer = buffer.reallocIfNeeded(bytes.length);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
     } else {

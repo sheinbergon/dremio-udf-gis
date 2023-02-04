@@ -40,7 +40,7 @@ public class STIsCollection implements SimpleFunction {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
       boolean result = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isACollection(geom);
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setValue(output, result);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setBooleanValue(output, result);
     } else {
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);
     }
