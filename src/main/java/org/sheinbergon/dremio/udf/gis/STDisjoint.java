@@ -44,8 +44,7 @@ public class STDisjoint implements SimpleFunction {
       org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
       org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput2);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.verifyMatchingSRIDs(geom1, geom2);
-      boolean disjoint = geom1.disjoint(geom2);
-      output.value = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toBitValue(disjoint);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setBooleanValue(output, geom1.disjoint(geom2));
     } else {
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);
     }
