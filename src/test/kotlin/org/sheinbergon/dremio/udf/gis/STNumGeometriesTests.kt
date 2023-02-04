@@ -1,6 +1,5 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.IntHolder
 import org.apache.arrow.vector.holders.NullableIntHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryAccessorFunSpec
