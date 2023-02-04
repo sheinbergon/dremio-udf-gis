@@ -4,6 +4,7 @@ import com.dremio.exec.expr.SimpleFunction
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.core.test.TestScope
+import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.shouldBe
 import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
@@ -41,8 +42,10 @@ abstract class GeometryRelationFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
       }
     }
 
-    private fun NullableVarCharHolder.valueIs(text: String) =
+    private fun NullableVarCharHolder.valueIs(text: String) {
       GeometryHelpers.toUTF8String(this) shouldBe text
+      this.isSet shouldBeExactly 1
+    }
 
     override fun NullableVarCharHolder.valueIsNotSet() =
       this.isSet shouldBe 0

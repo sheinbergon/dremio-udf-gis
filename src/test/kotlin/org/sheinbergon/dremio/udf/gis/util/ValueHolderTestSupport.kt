@@ -33,15 +33,6 @@ private val manager = BufferManagerImpl(allocator)
 
 internal fun allocateBuffer() = manager.managedBuffer
 
-internal fun VarCharHolder.setUtf8(text: String) {
-  val bytes = text.toByteArray(StandardCharsets.UTF_8)
-  val buffer = allocator.buffer(bytes.size.toLong())
-  buffer.writeBytes(bytes)
-  this.start = 0
-  this.end = bytes.size
-  this.buffer = buffer
-}
-
 internal fun NullableVarCharHolder.setUtf8(text: String) {
   val bytes = text.toByteArray(StandardCharsets.UTF_8)
   val buffer = allocator.buffer(bytes.size.toLong())
@@ -91,6 +82,7 @@ internal fun NullableVarBinaryHolder.valueIsAsDescribedIn(
     .apply { setUtf8(text) }
     .let(adapter)
   serializer(reduced) shouldBe serializer(expected)
+  this.isSet shouldBeExactly 1
 }
 
 internal fun NullableVarBinaryHolder.valueIsNotSet() {
@@ -158,7 +150,5 @@ internal fun NullableBitHolder.reset() {
   value = 0
 }
 
-internal fun NullableBitHolder.valueIsTrue() = this.value shouldBeExactly 1
-internal fun NullableBitHolder.valueIsFalse() = this.value shouldBeExactly 0
-internal fun BitHolder.valueIsTrue() = this.value shouldBeExactly 1
-internal fun BitHolder.valueIsFalse() = this.value shouldBeExactly 0
+internal fun NullableBitHolder.valueIsTrue() = (this.value shouldBeExactly 1) and (this.isSet shouldBeExactly 1)
+internal fun NullableBitHolder.valueIsFalse() = (this.value shouldBeExactly 0) and (this.isSet shouldBeExactly 1)
