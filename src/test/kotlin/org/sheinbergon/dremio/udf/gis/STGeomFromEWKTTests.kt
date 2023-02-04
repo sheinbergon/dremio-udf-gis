@@ -19,6 +19,11 @@ internal class STGeomFromEWKTTests : GeometryInputFunSpec.NullableVarChar<STGeom
       "POINT(0.5 0.5)",
     )
 
+    testInvalidGeometryInput(
+      "Calling ST_GeomFromEWKT on rubbish text",
+      "SRID=4326;42ifon2 fA!@",
+    )
+
     testNullGeometryInput(
       "Calling ST_GeomFromEWKT on null input"
     )
