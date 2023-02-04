@@ -25,7 +25,7 @@ import com.dremio.exec.expr.annotations.Param;
 @FunctionTemplate(
     name = "ST_Y",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
+    nulls = FunctionTemplate.NullHandling.INTERNAL)
 public class STY implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
@@ -37,12 +37,17 @@ public class STY implements SimpleFunction {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isAPoint(geom)) {
-      output.value = ((org.locationtech.jts.geom.Point) geom).getY();
-      output.isSet = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.BIT_TRUE;
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
+      org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+      double value;
+      if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isAPoint(geom)) {
+        value = ((org.locationtech.jts.geom.Point) geom).getY();
+        org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setDoubleValue(output, value);
+      } else {
+        org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);
+      }
     } else {
-      output.isSet = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.BIT_FALSE;
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);
     }
   }
 }

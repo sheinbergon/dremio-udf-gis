@@ -54,6 +54,7 @@ public class STConcaveHull implements SimpleFunction {
       concaveHull.setHolesAllowed(org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.getBooleanValue(allowHolesInput));
       concaveHull.setMaximumEdgeLengthRatio(percentageConvexInput.value);
       org.locationtech.jts.geom.Geometry hull = concaveHull.getHull();
+      hull.setSRID(geom.getSRID());
       byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(hull);
       buffer = buffer.reallocIfNeeded(bytes.length);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);

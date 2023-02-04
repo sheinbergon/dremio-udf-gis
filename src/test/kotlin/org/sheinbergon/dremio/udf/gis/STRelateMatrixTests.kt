@@ -1,19 +1,19 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.BitHolder
+import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
-import org.apache.arrow.vector.holders.VarCharHolder
+import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryRelationFunSpec
 import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setUtf8
 
-internal class STRelateMatrixTests : GeometryRelationFunSpec.BitOutput<STRelateMatrix>() {
+internal class STRelateMatrixTests : GeometryRelationFunSpec.NullableBitOutput<STRelateMatrix>() {
 
   override val function = STRelateMatrix().apply {
     binaryInput1 = NullableVarBinaryHolder()
     binaryInput2 = NullableVarBinaryHolder()
-    matrixInput = VarCharHolder()
-    output = BitHolder()
+    matrixInput = NullableVarCharHolder()
+    output = NullableBitHolder()
   }
 
   init {
@@ -33,9 +33,15 @@ internal class STRelateMatrixTests : GeometryRelationFunSpec.BitOutput<STRelateM
       "POINT(0 0)",
       "LINESTRING(1 5,0 1)"
     ) { function.apply { matrixInput.setUtf8("T*T**FFF0") } }
+
+    testNullGeometryRelation(
+      "Calling ST_Relate with one or two null geometries",
+      "LINESTRING(-0.5 0.5,0.5 0.5)",
+      null,
+    ) { function.apply { matrixInput.setUtf8("T*T**FFF0") } }
   }
 
   override val STRelateMatrix.wkbInput1: NullableVarBinaryHolder get() = function.binaryInput1
   override val STRelateMatrix.wkbInput2: NullableVarBinaryHolder get() = function.binaryInput2
-  override val STRelateMatrix.output: BitHolder get() = function.output
+  override val STRelateMatrix.output: NullableBitHolder get() = function.output
 }
