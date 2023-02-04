@@ -1,10 +1,10 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.BitHolder
+import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryRelationFunSpec
 
-internal class STContainsTests : GeometryRelationFunSpec.BitOutput<STContains>() {
+internal class STContainsTests : GeometryRelationFunSpec.NullableBitOutput<STContains>() {
 
   init {
     testFalseGeometryRelation(
@@ -48,15 +48,28 @@ internal class STContainsTests : GeometryRelationFunSpec.BitOutput<STContains>()
       "POLYGON((0.0 0.0,1.0 0.0,1.0 1.0,0.0 1.0,0.0 0.0))",
       "LINESTRING(0.4 0.5,0.7 0.6)"
     )
+
+    testNullGeometryRelation(
+      "Calling ST_Contains with one or two null geometries",
+      null,
+      "LINESTRING(0.4 0.5,0.7 0.6)"
+    )
+
+    testDifferentSRIDGeometryRelation(
+      "Calling ST_Contains on geometries specified using different SRID",
+      "LINESTRING(2.0 0.5,-2.0 0.6)",
+      "LINESTRING(0.4 0.5,0.7 0.6)",
+      4326,
+    )
   }
 
   override val function = STContains().apply {
     binaryInput1 = NullableVarBinaryHolder()
     binaryInput2 = NullableVarBinaryHolder()
-    output = BitHolder()
+    output = NullableBitHolder()
   }
 
   override val STContains.wkbInput1: NullableVarBinaryHolder get() = function.binaryInput1
   override val STContains.wkbInput2: NullableVarBinaryHolder get() = function.binaryInput2
-  override val STContains.output: BitHolder get() = function.output
+  override val STContains.output: NullableBitHolder get() = function.output
 }

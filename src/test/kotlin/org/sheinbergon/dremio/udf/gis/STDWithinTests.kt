@@ -1,18 +1,18 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.BitHolder
 import org.apache.arrow.vector.holders.Float8Holder
+import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryRelationFunSpec
 import org.sheinbergon.dremio.udf.gis.util.reset
 
-internal class STDWithinTests : GeometryRelationFunSpec.BitOutput<STDWithin>() {
+internal class STDWithinTests : GeometryRelationFunSpec.NullableBitOutput<STDWithin>() {
 
   override val function = STDWithin().apply {
     binaryInput1 = NullableVarBinaryHolder()
     binaryInput2 = NullableVarBinaryHolder()
     distanceInput = Float8Holder()
-    output = BitHolder()
+    output = NullableBitHolder()
   }
 
   init {
@@ -32,9 +32,15 @@ internal class STDWithinTests : GeometryRelationFunSpec.BitOutput<STDWithin>() {
       "POINT(0 0)",
       "LINESTRING(1 5,0 1)"
     ) { function.apply { distanceInput.value = 0.02 } }
+
+    testNullGeometryRelation(
+      "Calling ST_DWithin with one or two null geometries",
+      "POINT(0 0)",
+      null,
+    ) { function.apply { distanceInput.value = 0.02 } }
   }
 
   override val STDWithin.wkbInput1: NullableVarBinaryHolder get() = function.binaryInput1
   override val STDWithin.wkbInput2: NullableVarBinaryHolder get() = function.binaryInput2
-  override val STDWithin.output: BitHolder get() = function.output
+  override val STDWithin.output: NullableBitHolder get() = function.output
 }

@@ -1,10 +1,10 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.BitHolder
+import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryRelationFunSpec
 
-internal class STDisjointTests : GeometryRelationFunSpec.BitOutput<STDisjoint>() {
+internal class STDisjointTests : GeometryRelationFunSpec.NullableBitOutput<STDisjoint>() {
 
   init {
     testFalseGeometryRelation(
@@ -35,10 +35,10 @@ internal class STDisjointTests : GeometryRelationFunSpec.BitOutput<STDisjoint>()
   override val function = STDisjoint().apply {
     binaryInput1 = NullableVarBinaryHolder()
     binaryInput2 = NullableVarBinaryHolder()
-    output = BitHolder()
+    output = NullableBitHolder()
   }
 
   override val STDisjoint.wkbInput1: NullableVarBinaryHolder get() = function.binaryInput1
   override val STDisjoint.wkbInput2: NullableVarBinaryHolder get() = function.binaryInput2
-  override val STDisjoint.output: BitHolder get() = function.output
+  override val STDisjoint.output: NullableBitHolder get() = function.output
 }

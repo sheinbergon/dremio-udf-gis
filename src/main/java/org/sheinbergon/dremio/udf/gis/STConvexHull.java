@@ -46,6 +46,7 @@ public class STConvexHull implements SimpleFunction {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
       org.locationtech.jts.algorithm.ConvexHull convexHull = new org.locationtech.jts.algorithm.ConvexHull(geom);
       org.locationtech.jts.geom.Geometry hull = convexHull.getConvexHull();
+      hull.setSRID(geom.getSRID());
       byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(hull);
       buffer = buffer.reallocIfNeeded(bytes.length);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
