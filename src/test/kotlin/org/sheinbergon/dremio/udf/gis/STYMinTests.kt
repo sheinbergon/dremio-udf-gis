@@ -19,6 +19,10 @@ internal class STYMinTests : GeometryAccessorFunSpec<STYMin, NullableFloat8Holde
       "LINESTRING(1.8 345.2, 1.9 359.2, 2.0 360.0)",
       345.2
     )
+
+    testNullGeometryAccessor(
+      "Calling ST_YMin on null input",
+    )
   }
 
   override val function = STYMin().apply {

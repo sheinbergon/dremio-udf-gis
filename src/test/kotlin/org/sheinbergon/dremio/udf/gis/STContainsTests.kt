@@ -48,6 +48,19 @@ internal class STContainsTests : GeometryRelationFunSpec.NullableBitOutput<STCon
       "POLYGON((0.0 0.0,1.0 0.0,1.0 1.0,0.0 1.0,0.0 0.0))",
       "LINESTRING(0.4 0.5,0.7 0.6)"
     )
+
+    testNullGeometryRelation(
+      "Calling ST_Contains with one or two null geometries",
+      null,
+      "LINESTRING(0.4 0.5,0.7 0.6)"
+    )
+
+    testDifferentSRIDGeometryRelation(
+      "Calling ST_Contains on geometries specified using different SRID",
+      "LINESTRING(2.0 0.5,-2.0 0.6)",
+      "LINESTRING(0.4 0.5,0.7 0.6)",
+      4326,
+    )
   }
 
   override val function = STContains().apply {

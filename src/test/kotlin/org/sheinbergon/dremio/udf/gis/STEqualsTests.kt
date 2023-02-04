@@ -36,6 +36,20 @@ internal class STEqualsTests : GeometryRelationFunSpec.NullableBitOutput<STEqual
       "POLYGON((0.0 0.0,1.0 0.0,1.0 1.0,0.0 1.0,0.0 0.0))",
       "POLYGON((0.0 0.0,1.0 0.0,1.0 1.0,0.0 1.0,0.0 0.0))"
     )
+
+    testNullGeometryRelation(
+      "Calling ST_Equals with one or two null geometries",
+      "POLYGON((0.0 0.0,1.0 0.0,1.0 1.0,0.0 1.0,0.0 0.0))",
+      null,
+    )
+
+    testDifferentSRIDGeometryRelation(
+      "Calling ST_Equals on geometries specified using different SRID",
+      "POLYGON((0.0 0.0,1.0 0.0,1.0 1.0,0.0 1.0,0.0 0.0))",
+      "POLYGON((0 0,111319.49079327357 0,111319.49079327357 111325.14286638486,0 111325.14286638486,0 0))",
+      null,
+      3857
+    )
   }
 
   override val function = STEquals().apply {

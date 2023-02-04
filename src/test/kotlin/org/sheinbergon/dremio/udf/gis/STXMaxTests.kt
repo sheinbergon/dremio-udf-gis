@@ -18,6 +18,10 @@ internal class STXMaxTests : GeometryAccessorFunSpec<STXMax, NullableFloat8Holde
       "LINESTRING(1.8 345.2, 1.9 359.2, 2.0 360.0)",
       2.0
     )
+
+    testNullGeometryAccessor(
+      "Calling ST_XMax on null input",
+    )
   }
 
   override val function = STXMax().apply {

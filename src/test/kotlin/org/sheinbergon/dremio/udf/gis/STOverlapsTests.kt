@@ -48,6 +48,19 @@ internal class STOverlapsTests : GeometryRelationFunSpec.NullableBitOutput<STOve
       "POLYGON((0.0 0.0,1.0 0.0,1.0 1.0,0.0 1.0,0.0 0.0))",
       "POLYGON((0.9 0.0,0.9 1.0,1.5 1.0,1.5 0.0,0.9 0.0))",
     )
+
+    testNullGeometryRelation(
+      "Calling ST_Overlaps with one or two null geometries",
+      "LINESTRING(-0.5 0.5,0.5 0.5)",
+      null,
+    )
+
+    testDifferentSRIDGeometryRelation(
+      "Calling ST_Overlaps on geometries specified using different SRID",
+      "POINT(0 0)",
+      "POLYGON((0 0,111319.49079327357 0,111319.49079327357 111325.14286638486,0 111325.14286638486,0 0))",
+      4326
+    )
   }
 
   override val function = STOverlaps().apply {

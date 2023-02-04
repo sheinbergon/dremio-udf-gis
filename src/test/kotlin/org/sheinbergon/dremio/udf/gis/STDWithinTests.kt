@@ -32,6 +32,12 @@ internal class STDWithinTests : GeometryRelationFunSpec.NullableBitOutput<STDWit
       "POINT(0 0)",
       "LINESTRING(1 5,0 1)"
     ) { function.apply { distanceInput.value = 0.02 } }
+
+    testNullGeometryRelation(
+      "Calling ST_DWithin with one or two null geometries",
+      "POINT(0 0)",
+      null,
+    ) { function.apply { distanceInput.value = 0.02 } }
   }
 
   override val STDWithin.wkbInput1: NullableVarBinaryHolder get() = function.binaryInput1
