@@ -17,6 +17,10 @@ internal class STXTests : GeometryAccessorFunSpec<STX, NullableFloat8Holder>() {
       "Calling ST_X on a non-POINT geometry returns 0",
       "LINESTRING(1.8 345.2, 1.9 359.2, 2.0 360.0)"
     )
+
+    testNullGeometryAccessor(
+      "Calling ST_X on null input",
+    )
   }
 
   override val function = STX().apply {

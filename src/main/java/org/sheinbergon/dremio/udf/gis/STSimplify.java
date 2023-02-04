@@ -50,6 +50,7 @@ public class STSimplify implements SimpleFunction {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
       org.locationtech.jts.geom.Geometry simplified = org.locationtech.jts.simplify.DouglasPeuckerSimplifier.simplify(geom, toleranceInput.value);
+      simplified.setSRID(geom.getSRID());
       byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(simplified);
       buffer = buffer.reallocIfNeeded(bytes.length);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);

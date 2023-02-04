@@ -25,24 +25,30 @@ import com.dremio.exec.expr.annotations.Param;
 @FunctionTemplate(
     name = "ST_YMax",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
+    nulls = FunctionTemplate.NullHandling.INTERNAL)
 public class STYMax implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
   @Output
-  org.apache.arrow.vector.holders.Float8Holder output;
+  org.apache.arrow.vector.holders.NullableFloat8Holder output;
 
   public void setup() {
   }
 
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isAPoint(geom)) {
-      output.value = ((org.locationtech.jts.geom.Point) geom).getY();
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
+      org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
+      double value;
+      if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isAPoint(geom)) {
+        value = ((org.locationtech.jts.geom.Point) geom).getY();
+      } else {
+        org.locationtech.jts.geom.Envelope envelope = geom.getEnvelopeInternal();
+        value = envelope.getMaxY();
+      }
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setDoubleValue(output, value);
     } else {
-      org.locationtech.jts.geom.Envelope envelope = geom.getEnvelopeInternal();
-      output.value = envelope.getMaxY();
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);
     }
   }
 }

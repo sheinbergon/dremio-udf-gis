@@ -7,11 +7,28 @@ import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setFromWkt
+import org.sheinbergon.dremio.udf.gis.util.valueIsAsDescribedInEWKT
 import org.sheinbergon.dremio.udf.gis.util.valueIsAsDescribedInWKT
 
 abstract class GeometryTransformationFunSpec<F : SimpleFunction> : FunSpec() {
 
-  protected fun testGeometryTransformation(
+  protected fun testGeometryTransformationEWKT(
+    name: String,
+    wkt: String,
+    sourceSrid: Int? = null,
+    expected: String,
+    precursor: suspend TestScope.() -> Unit = {}
+  ) = test(name) {
+    precursor.invoke(this)
+    function.apply {
+      wkbInput.setFromWkt(wkt, sourceSrid)
+      setup()
+      eval()
+      wkbOutput.valueIsAsDescribedInEWKT(expected)
+    }
+  }
+
+  protected fun testGeometryTransformationWKT(
     name: String,
     wkt: String,
     sourceSrid: Int? = null,

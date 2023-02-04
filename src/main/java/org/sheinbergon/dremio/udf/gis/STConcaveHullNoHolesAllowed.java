@@ -50,6 +50,7 @@ public class STConcaveHullNoHolesAllowed implements SimpleFunction {
       org.locationtech.jts.algorithm.hull.ConcaveHull concaveHull = new org.locationtech.jts.algorithm.hull.ConcaveHull(geom);
       concaveHull.setMaximumEdgeLengthRatio(percentageConvexInput.value);
       org.locationtech.jts.geom.Geometry hull = concaveHull.getHull();
+      hull.setSRID(geom.getSRID());
       byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(hull);
       buffer = buffer.reallocIfNeeded(bytes.length);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);

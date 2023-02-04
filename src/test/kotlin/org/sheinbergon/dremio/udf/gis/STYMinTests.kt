@@ -1,10 +1,10 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.Float8Holder
+import org.apache.arrow.vector.holders.NullableFloat8Holder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryAccessorFunSpec
 
-internal class STYMinTests : GeometryAccessorFunSpec<STYMin, Float8Holder>() {
+internal class STYMinTests : GeometryAccessorFunSpec<STYMin, NullableFloat8Holder>() {
 
   init {
 
@@ -19,12 +19,16 @@ internal class STYMinTests : GeometryAccessorFunSpec<STYMin, Float8Holder>() {
       "LINESTRING(1.8 345.2, 1.9 359.2, 2.0 360.0)",
       345.2
     )
+
+    testNullGeometryAccessor(
+      "Calling ST_YMin on null input",
+    )
   }
 
   override val function = STYMin().apply {
     binaryInput = NullableVarBinaryHolder()
-    output = Float8Holder()
+    output = NullableFloat8Holder()
   }
   override val STYMin.wkbInput: NullableVarBinaryHolder get() = function.binaryInput
-  override val STYMin.output: Float8Holder get() = function.output
+  override val STYMin.output: NullableFloat8Holder get() = function.output
 }

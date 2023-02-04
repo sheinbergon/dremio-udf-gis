@@ -95,15 +95,16 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
 
   private fun O.isSetTo(value: Any) = when(this) {
     is NullableFloat8Holder -> this.valueIsSetTo(value as Double)
-    is Float8Holder -> this.valueIsSetTo(value as Double)
     is NullableIntHolder -> this.valueIsSetTo(value as Int)
     is NullableBitHolder -> this.valueIsSetTo(value as Boolean)
+    is Float8Holder -> this.valueIsSetTo(value as Double)
     is IntHolder -> this.valueIsSetTo(value as Int)
     is BitHolder -> this.valueIsSetTo(value as Boolean)
     else -> throw IllegalArgumentException("Unsupported value holder type '${this::class.simpleName}'")
   }
 
   private fun O.isNotSet() = when(this) {
+    is NullableIntHolder -> this.valueIsNotSet()
     is NullableFloat8Holder -> this.valueIsNotSet()
     is NullableBitHolder -> this.valueIsNotSet()
     else -> throw IllegalArgumentException("Unsupported value holder type '${this::class.simpleName}'")
@@ -111,9 +112,10 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
 
   private fun O.reset() = when(this) {
     is NullableFloat8Holder -> (this as NullableFloat8Holder).reset()
+    is NullableBitHolder -> (this as NullableBitHolder).reset()
+    is NullableIntHolder -> (this as NullableIntHolder).reset()
     is Float8Holder -> (this as Float8Holder).reset()
     is BitHolder -> (this as BitHolder).reset()
-    is NullableBitHolder -> (this as NullableBitHolder).reset()
     is IntHolder -> (this as IntHolder).reset()
     else -> throw IllegalArgumentException("Unsupported value holder type '${this::class.simpleName}'")
   }
@@ -156,6 +158,13 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
   }
 
   private fun NullableBitHolder.valueIsNotSet() {
+    run {
+      isSet shouldBeExactly 0
+      value shouldBeExactly 0
+    }
+  }
+
+  private fun NullableIntHolder.valueIsNotSet() {
     run {
       isSet shouldBeExactly 0
       value shouldBeExactly 0

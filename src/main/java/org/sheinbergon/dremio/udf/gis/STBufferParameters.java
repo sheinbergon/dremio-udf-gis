@@ -54,6 +54,7 @@ public class STBufferParameters implements SimpleFunction {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
       java.lang.String parameters = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toUTF8String(parametersInput);
       org.locationtech.jts.geom.Geometry buffered = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.buffer(geom, radiusInput.value, parameters);
+      buffered.setSRID(geom.getSRID());
       byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(buffered);
       buffer = buffer.reallocIfNeeded(bytes.length);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
