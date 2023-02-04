@@ -34,7 +34,7 @@ public class STContains implements SimpleFunction {
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput2;
 
   @Output
-  org.apache.arrow.vector.holders.BitHolder output;
+  org.apache.arrow.vector.holders.NullableBitHolder output;
 
   public void setup() {
   }

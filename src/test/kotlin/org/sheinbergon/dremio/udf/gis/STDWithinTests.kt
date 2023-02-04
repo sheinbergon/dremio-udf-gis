@@ -1,7 +1,7 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.BitHolder
 import org.apache.arrow.vector.holders.Float8Holder
+import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryRelationFunSpec
 import org.sheinbergon.dremio.udf.gis.util.reset
@@ -12,7 +12,7 @@ internal class STDWithinTests : GeometryRelationFunSpec.NullableBitOutput<STDWit
     binaryInput1 = NullableVarBinaryHolder()
     binaryInput2 = NullableVarBinaryHolder()
     distanceInput = Float8Holder()
-    output = BitHolder()
+    output = NullableBitHolder()
   }
 
   init {
@@ -36,5 +36,5 @@ internal class STDWithinTests : GeometryRelationFunSpec.NullableBitOutput<STDWit
 
   override val STDWithin.wkbInput1: NullableVarBinaryHolder get() = function.binaryInput1
   override val STDWithin.wkbInput2: NullableVarBinaryHolder get() = function.binaryInput2
-  override val STDWithin.output: BitHolder get() = function.output
+  override val STDWithin.output: NullableBitHolder get() = function.output
 }

@@ -1,6 +1,6 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.BitHolder
+import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.apache.arrow.vector.holders.VarCharHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryRelationFunSpec
@@ -13,7 +13,7 @@ internal class STRelateMatrixTests : GeometryRelationFunSpec.NullableBitOutput<S
     binaryInput1 = NullableVarBinaryHolder()
     binaryInput2 = NullableVarBinaryHolder()
     matrixInput = VarCharHolder()
-    output = BitHolder()
+    output = NullableBitHolder()
   }
 
   init {
@@ -37,5 +37,5 @@ internal class STRelateMatrixTests : GeometryRelationFunSpec.NullableBitOutput<S
 
   override val STRelateMatrix.wkbInput1: NullableVarBinaryHolder get() = function.binaryInput1
   override val STRelateMatrix.wkbInput2: NullableVarBinaryHolder get() = function.binaryInput2
-  override val STRelateMatrix.output: BitHolder get() = function.output
+  override val STRelateMatrix.output: NullableBitHolder get() = function.output
 }

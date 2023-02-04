@@ -39,7 +39,7 @@ public class STNumGeometries implements SimpleFunction {
   public void eval() {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-      output.value = geom.getNumGeometries();
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setIntValue(output, geom.getNumGeometries());
     } else {
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);
     }

@@ -385,6 +385,20 @@ public final class GeometryHelpers {
     }
   }
 
+  public static void setIntValue(final @Nonnull ValueHolder holder, final int value) {
+    if (holder instanceof IntHolder) {
+      ((IntHolder) holder).value = value;
+    } else if (holder instanceof NullableIntHolder) {
+      NullableIntHolder nullable = (NullableIntHolder) holder;
+      nullable.value = value;
+      nullable.isSet = BIT_TRUE;
+    } else {
+      throw new IllegalArgumentException(
+          String.format("Unsupported value holder type - %s",
+              holder.getClass().getName()));
+    }
+  }
+
   public static void setDoubleValue(final @Nonnull ValueHolder holder, final double value) {
     if (holder instanceof Float8Holder) {
       ((Float8Holder) holder).value = value;
@@ -436,7 +450,7 @@ public final class GeometryHelpers {
   public static void verifyMatchingSRIDs(
       final @Nonnull Geometry g1,
       final @Nonnull Geometry g2) {
-    if (g1.getSRID() == g2.getSRID()) {
+    if (g1.getSRID() != g2.getSRID()) {
       throw new IllegalArgumentException(
           String.format("Cannot operate on mixed SRID geometries (%d != %d)",
               g1.getSRID(), g2.getSRID()));

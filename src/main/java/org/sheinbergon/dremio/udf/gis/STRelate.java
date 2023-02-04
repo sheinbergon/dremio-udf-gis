@@ -28,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 @FunctionTemplate(
     name = "ST_Relate",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.NULL_IF_NULL)
+    nulls = FunctionTemplate.NullHandling.INTERNAL)
 public class STRelate implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput1;
@@ -48,10 +48,15 @@ public class STRelate implements SimpleFunction {
 
   @Override
   public void eval() {
-    org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
-    org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput2);
-    byte[] matrix = geom1.relate(geom2).toString().getBytes(StandardCharsets.UTF_8);
-    buffer = buffer.reallocIfNeeded(matrix.length);
-    org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(matrix, buffer, matrixOutput);
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.areHoldersSet(binaryInput1, binaryInput2)) {
+      org.locationtech.jts.geom.Geometry geom1 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput1);
+      org.locationtech.jts.geom.Geometry geom2 = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput2);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.verifyMatchingSRIDs(geom1, geom2);
+      byte[] matrix = geom1.relate(geom2).toString().getBytes(StandardCharsets.UTF_8);
+      buffer = buffer.reallocIfNeeded(matrix.length);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(matrix, buffer, matrixOutput);
+    } else {
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(matrixOutput);
+    }
   }
 }

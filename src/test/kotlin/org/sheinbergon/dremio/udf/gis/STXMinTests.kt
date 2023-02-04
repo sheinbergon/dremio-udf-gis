@@ -1,10 +1,10 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.Float8Holder
+import org.apache.arrow.vector.holders.NullableFloat8Holder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryAccessorFunSpec
 
-internal class STXMinTests : GeometryAccessorFunSpec<STXMin, Float8Holder>() {
+internal class STXMinTests : GeometryAccessorFunSpec<STXMin, NullableFloat8Holder>() {
   init {
     testGeometryAccessor(
       "Calling ST_XMin on a POINT geometry returns its coordinate's X value",
@@ -21,8 +21,8 @@ internal class STXMinTests : GeometryAccessorFunSpec<STXMin, Float8Holder>() {
 
   override val function = STXMin().apply {
     binaryInput = NullableVarBinaryHolder()
-    output = Float8Holder()
+    output = NullableFloat8Holder()
   }
   override val STXMin.wkbInput: NullableVarBinaryHolder get() = function.binaryInput
-  override val STXMin.output: Float8Holder get() = function.output
+  override val STXMin.output: NullableFloat8Holder get() = function.output
 }

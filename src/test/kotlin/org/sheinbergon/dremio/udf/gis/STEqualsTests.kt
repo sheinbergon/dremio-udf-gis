@@ -1,6 +1,6 @@
 package org.sheinbergon.dremio.udf.gis
 
-import org.apache.arrow.vector.holders.BitHolder
+import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryRelationFunSpec
 
@@ -41,10 +41,10 @@ internal class STEqualsTests : GeometryRelationFunSpec.NullableBitOutput<STEqual
   override val function = STEquals().apply {
     binaryInput1 = NullableVarBinaryHolder()
     binaryInput2 = NullableVarBinaryHolder()
-    output = BitHolder()
+    output = NullableBitHolder()
   }
 
   override val STEquals.wkbInput1: NullableVarBinaryHolder get() = function.binaryInput1
   override val STEquals.wkbInput2: NullableVarBinaryHolder get() = function.binaryInput2
-  override val STEquals.output: BitHolder get() = function.output
+  override val STEquals.output: NullableBitHolder get() = function.output
 }

@@ -1,10 +1,11 @@
 package org.sheinbergon.dremio.udf.gis
 
 import org.apache.arrow.vector.holders.IntHolder
+import org.apache.arrow.vector.holders.NullableIntHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.sheinbergon.dremio.udf.gis.spec.GeometryAccessorFunSpec
 
-internal class STNumGeometriesTests : GeometryAccessorFunSpec<STNumGeometries, IntHolder>() {
+internal class STNumGeometriesTests : GeometryAccessorFunSpec<STNumGeometries, NullableIntHolder>() {
 
   init {
     testGeometryAccessor(
@@ -22,9 +23,9 @@ internal class STNumGeometriesTests : GeometryAccessorFunSpec<STNumGeometries, I
 
   override val function = STNumGeometries().apply {
     binaryInput = NullableVarBinaryHolder()
-    output = IntHolder()
+    output = NullableIntHolder()
   }
 
   override val STNumGeometries.wkbInput: NullableVarBinaryHolder get() = function.binaryInput
-  override val STNumGeometries.output: IntHolder get() = function.output
+  override val STNumGeometries.output: NullableIntHolder get() = function.output
 }
