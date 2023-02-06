@@ -21,7 +21,6 @@ import com.dremio.exec.expr.SimpleFunction;
 import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
-import org.locationtech.jts.geom.GeometryFactory;
 
 import javax.inject.Inject;
 
@@ -45,7 +44,7 @@ public class STCentroid implements SimpleFunction {
   public void eval() {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-      org.locationtech.jts.geom.GeometryFactory factory = new GeometryFactory(geom.getPrecisionModel(), geom.getSRID());
+      org.locationtech.jts.geom.GeometryFactory factory = new org.locationtech.jts.geom.GeometryFactory(geom.getPrecisionModel(), geom.getSRID());
       org.locationtech.jts.algorithm.Centroid centroid = new org.locationtech.jts.algorithm.Centroid(geom);
       org.locationtech.jts.geom.Point point = factory.createPoint(centroid.getCentroid());
       byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(point);
