@@ -75,7 +75,6 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
     }
   }
 
-
   protected fun testGeometryAccessor(
     name: String,
     wkt: String,
