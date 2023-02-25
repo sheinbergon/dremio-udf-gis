@@ -30,6 +30,12 @@ internal class STDisjointTests : GeometryRelationFunSpec.NullableBitOutput<STDis
       "LINESTRING(2.0 5.0,9.0 2.0)",
       "POLYGON((0.0 0.0,1.0 0.0,1.0 1.0,0.0 1.0,0.0 0.0))"
     )
+
+    testNullGeometryRelation(
+      "Calling ST_Disjoint with one or two null geometries",
+      "POLYGON((0.0 0.0,1.0 0.0,1.0 1.0,0.0 1.0,0.0 0.0))",
+      null,
+    )
   }
 
   override val function = STDisjoint().apply {
