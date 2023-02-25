@@ -40,7 +40,13 @@ public final class GeometryReparation {
     };
 
     public static Parameters valueFrom(final @Nonnull String value) {
-      return Parameters.valueOf(value.toUpperCase());
+      try {
+        return Parameters.valueOf(value.toUpperCase());
+      } catch (IllegalArgumentException iax) {
+        throw new IllegalArgumentException(
+            String.format("Invalid parameter name '%s'",
+                value));
+      }
     }
 
     abstract void process(@Nonnull String value, @Nonnull GeometryFixer instance);
