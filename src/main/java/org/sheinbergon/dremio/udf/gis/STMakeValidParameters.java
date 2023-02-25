@@ -21,26 +21,27 @@ import com.dremio.exec.expr.SimpleFunction;
 import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
+import org.apache.arrow.memory.ArrowBuf;
 
 import javax.inject.Inject;
 
 @FunctionTemplate(
-    name = "ST_ConcaveHull",
+    name = "ST_MakeValid",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.INTERNAL,
     costCategory = FunctionTemplate.FunctionCostCategory.MEDIUM)
-public class STConcaveHullNoHolesAllowed implements SimpleFunction {
+public class STMakeValidParameters implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
-  @Param(constant = true)
-  org.apache.arrow.vector.holders.Float8Holder percentageConvexInput;
+  @Param
+  org.apache.arrow.vector.holders.NullableVarCharHolder parametersInput;
 
   @Output
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
 
   @Inject
-  org.apache.arrow.memory.ArrowBuf buffer;
+  ArrowBuf buffer;
 
   public void setup() {
   }
@@ -48,11 +49,10 @@ public class STConcaveHullNoHolesAllowed implements SimpleFunction {
   public void eval() {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-      org.locationtech.jts.algorithm.hull.ConcaveHull concaveHull = new org.locationtech.jts.algorithm.hull.ConcaveHull(geom);
-      concaveHull.setMaximumEdgeLengthRatio(percentageConvexInput.value);
-      org.locationtech.jts.geom.Geometry hull = concaveHull.getHull();
-      hull.setSRID(geom.getSRID());
-      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(hull);
+      String parameters = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toUTF8String(parametersInput);
+      org.locationtech.jts.geom.Geometry repaired = org.sheinbergon.dremio.udf.gis.util.GeometryReparation.repair(geom, parameters);
+      repaired.setSRID(geom.getSRID());
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(repaired);
       buffer = buffer.reallocIfNeeded(bytes.length);
       org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
     } else {

@@ -48,6 +48,12 @@ internal class STCrossesTests : GeometryRelationFunSpec.NullableBitOutput<STCros
       "POLYGON((0.0 0.0,1.0 0.0,1.0 1.0,0.0 1.0,0.0 0.0))",
       "LINESTRING(0.4 0.5,0.7 0.6)"
     )
+
+    testNullGeometryRelation(
+      "Calling ST_Crosses with one or two null geometries",
+      "POLYGON((0.0 0.0,1.0 0.0,1.0 1.0,0.0 1.0,0.0 0.0))",
+      null,
+    )
   }
 
   override val function = STCrosses().apply {

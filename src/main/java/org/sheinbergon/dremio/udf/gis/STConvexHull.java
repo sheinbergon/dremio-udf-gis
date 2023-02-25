@@ -27,7 +27,8 @@ import javax.inject.Inject;
 @FunctionTemplate(
     name = "ST_ConvexHull",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.INTERNAL)
+    nulls = FunctionTemplate.NullHandling.INTERNAL,
+    costCategory = FunctionTemplate.FunctionCostCategory.MEDIUM)
 public class STConvexHull implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
