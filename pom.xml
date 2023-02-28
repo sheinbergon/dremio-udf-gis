@@ -21,7 +21,7 @@
         <carrotsearch.version>0.7.0</carrotsearch.version>
         <arrow-memory-netty.version>8.0.0</arrow-memory-netty.version>
     </properties>
-    <version>0.5.14${artifact.version.suffix}</version>
+    <version>0.5.16${artifact.version.suffix}</version>
     <name>dremio-udf-gis</name>
     <description>GIS UDF extensions for Dremio</description>
     <url>https://github.com/sheinbergon/dremio-udf-gis</url>
@@ -299,6 +299,7 @@
                                     <include>org.locationtech.jts:jts-core</include>
                                     <include>org.locationtech.jts.io:jts-io-common</include>
                                     <include>org.locationtech.proj4j:proj4j</include>
+                                    <include>org.locationtech.proj4j:proj4j-epsg</include>
                                     <include>com.googlecode.json-simple:json-simple</include>
                                 </includes>
                             </artifactSet>
