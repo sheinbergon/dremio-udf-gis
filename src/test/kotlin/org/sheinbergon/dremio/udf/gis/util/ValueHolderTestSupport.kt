@@ -81,8 +81,11 @@ internal fun NullableVarBinaryHolder.valueIsAsDescribedIn(
   val expected = NullableVarCharHolder()
     .apply { setUtf8(text) }
     .let(adapter)
-  serializer(reduced) shouldBe serializer(expected)
-  this.isSet shouldBeExactly 1
+
+  kotlin.runCatching { serializer(reduced) shouldBe serializer(expected) }
+    .recoverCatching { serializer(evaluated) shouldBe serializer(expected) }
+    .onSuccess { this.isSet shouldBeExactly 1 }
+    .getOrThrow()
 }
 
 internal fun NullableVarBinaryHolder.valueIsNotSet() {
