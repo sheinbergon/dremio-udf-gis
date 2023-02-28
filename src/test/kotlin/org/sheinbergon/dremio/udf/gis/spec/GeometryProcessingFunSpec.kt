@@ -1,6 +1,7 @@
 package org.sheinbergon.dremio.udf.gis.spec
 
 import com.dremio.exec.expr.SimpleFunction
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.core.test.TestScope
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
@@ -52,6 +53,22 @@ abstract class GeometryProcessingFunSpec<F : SimpleFunction> : FunSpec() {
       setup()
       eval()
       wkbOutput.valueIsNotSet()
+    }
+  }
+
+  protected fun testInvalidArgumentGeometryProcessing(
+    name: String,
+    wkt: String,
+    precursor: suspend TestScope.() -> Unit = {}
+  ) = test(name) {
+    shouldThrow<IllegalArgumentException> {
+      precursor(this)
+      function.apply {
+        wkbInput.setFromWkt(wkt)
+        setup()
+        eval()
+        wkbOutput.valueIsNotSet()
+      }
     }
   }
 

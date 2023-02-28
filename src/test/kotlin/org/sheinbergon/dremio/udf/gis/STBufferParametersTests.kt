@@ -133,6 +133,14 @@ internal class STBufferParametersTests : GeometryProcessingFunSpec<STBufferParam
       function.parametersInput.setUtf8("side=right")
     }
 
+    testInvalidArgumentGeometryProcessing(
+      name = "Calling ST_Buffer on a POLYGON with an invalid parameter string",
+      wkt = "POLYGON ((50 50, 50 150, 150 150, 150 50, 50 50))",
+    ) {
+      function.radiusInput.value = 20.0
+      function.parametersInput.setUtf8("bad=value")
+    }
+
     testNullGeometryProcessing(
       "Calling ST_Buffer (with parameters string) on a NULL input"
     ) {

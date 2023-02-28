@@ -29,6 +29,8 @@ import org.locationtech.jts.geom.*;
 import org.locationtech.jts.io.*;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 import org.locationtech.jts.operation.buffer.BufferOp;
+import org.locationtech.jts.operation.valid.IsValidOp;
+import org.locationtech.jts.operation.valid.TopologyValidationError;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,6 +40,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -444,6 +447,19 @@ public final class GeometryHelpers {
           .orElse(GeometryBufferParameters.Value.Sides.LEFT);
       double sidedRadius = radius * (side.equals(GeometryBufferParameters.Value.Sides.RIGHT) ? -1 : 1);
       return BufferOp.bufferOp(geometry, sidedRadius, definition.parameters());
+    }
+  }
+
+  public static GeometryValidationResult validate(
+      final @Nonnull Geometry geometry,
+      final int flags) {
+    IsValidOp op = new IsValidOp(geometry);
+    op.setSelfTouchingRingFormingHoleValid(Objects.equals(flags, 1));
+    TopologyValidationError error = op.getValidationError();
+    if (error != null) {
+      return GeometryValidationResult.invalid(error);
+    } else {
+      return GeometryValidationResult.valid();
     }
   }
 
