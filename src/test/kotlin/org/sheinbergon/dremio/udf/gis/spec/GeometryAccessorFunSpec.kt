@@ -1,10 +1,13 @@
 package org.sheinbergon.dremio.udf.gis.spec
 
 import com.dremio.exec.expr.SimpleFunction
+import com.dremio.exec.expr.fn.impl.StringFunctionHelpers
 import io.kotest.assertions.throwables.shouldThrowMessage
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.core.test.TestScope
 import io.kotest.matchers.doubles.shouldBeExactly
 import io.kotest.matchers.ints.shouldBeExactly
+import io.kotest.matchers.shouldBe
 import org.apache.arrow.vector.holders.BitHolder
 import org.apache.arrow.vector.holders.Float8Holder
 import org.apache.arrow.vector.holders.IntHolder
@@ -12,6 +15,7 @@ import org.apache.arrow.vector.holders.NullableBitHolder
 import org.apache.arrow.vector.holders.NullableFloat8Holder
 import org.apache.arrow.vector.holders.NullableIntHolder
 import org.apache.arrow.vector.holders.NullableVarBinaryHolder
+import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.apache.arrow.vector.holders.ValueHolder
 import org.sheinbergon.dremio.udf.gis.util.release
 import org.sheinbergon.dremio.udf.gis.util.reset
@@ -46,6 +50,49 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
   protected fun testGeometryAccessor(
     name: String,
     wkt: String,
+    value: String
+  ) = test(name) {
+    function.apply {
+      wkbInput.setFromWkt(wkt)
+      setup()
+      eval()
+      output.isSetTo(value)
+    }
+  }
+
+  protected fun testGeometryAccessor(
+    name: String,
+    wkt: String,
+    value: String,
+    precursor: suspend TestScope.() -> Unit = {}
+  ) = test(name) {
+    precursor(this)
+    function.apply {
+      wkbInput.setFromWkt(wkt)
+      setup()
+      eval()
+      output.isSetTo(value)
+    }
+  }
+
+  protected fun testGeometryAccessor(
+    name: String,
+    wkt: String,
+    value: Boolean,
+    precursor: suspend TestScope.() -> Unit = {}
+  ) = test(name) {
+    precursor(this)
+    function.apply {
+      wkbInput.setFromWkt(wkt)
+      setup()
+      eval()
+      output.isSetTo(value)
+    }
+  }
+
+  protected fun testGeometryAccessor(
+    name: String,
+    wkt: String,
     value: Boolean
   ) = test(name) {
     function.apply {
@@ -58,7 +105,9 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
 
   protected fun testNullGeometryAccessor(
     name: String,
+    precursor: suspend TestScope.() -> Unit = {}
   ) = test(name) {
+    precursor(this)
     function.apply {
       wkbInput.isSet = 0
       setup()
@@ -94,6 +143,7 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
   }
 
   private fun O.isSetTo(value: Any) = when(this) {
+    is NullableVarCharHolder -> this.valueIsSetTo(value as String)
     is NullableFloat8Holder -> this.valueIsSetTo(value as Double)
     is NullableIntHolder -> this.valueIsSetTo(value as Int)
     is NullableBitHolder -> this.valueIsSetTo(value as Boolean)
@@ -104,6 +154,7 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
   }
 
   private fun O.isNotSet() = when(this) {
+    is NullableVarCharHolder -> this.valueIsNotSet()
     is NullableIntHolder -> this.valueIsNotSet()
     is NullableFloat8Holder -> this.valueIsNotSet()
     is NullableBitHolder -> this.valueIsNotSet()
@@ -111,6 +162,7 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
   }
 
   private fun O.reset() = when(this) {
+    is NullableVarCharHolder -> (this as NullableVarCharHolder).reset()
     is NullableFloat8Holder -> (this as NullableFloat8Holder).reset()
     is NullableBitHolder -> (this as NullableBitHolder).reset()
     is NullableIntHolder -> (this as NullableIntHolder).reset()
@@ -128,6 +180,13 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
     run {
       isSet shouldBeExactly 1
       value shouldBeExactly double
+    }
+  }
+
+  private fun NullableVarCharHolder.valueIsSetTo(text: String) {
+    run {
+      isSet shouldBeExactly 1
+      StringFunctionHelpers.getStringFromNullableVarCharHolder(this) shouldBe text
     }
   }
 
@@ -154,6 +213,13 @@ abstract class GeometryAccessorFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
     run {
       isSet shouldBeExactly 0
       value shouldBeExactly 0.0
+    }
+  }
+
+  private fun NullableVarCharHolder.valueIsNotSet() {
+    run {
+      isSet shouldBeExactly 0
+      buffer shouldBe null
     }
   }
 
