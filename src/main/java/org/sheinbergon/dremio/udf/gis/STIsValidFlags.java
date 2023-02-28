@@ -22,41 +22,32 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
-import javax.inject.Inject;
-
 @FunctionTemplate(
-    name = "ST_ConcaveHull",
+    name = "ST_IsValid",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.INTERNAL,
     costCategory = FunctionTemplate.FunctionCostCategory.MEDIUM)
-public class STConcaveHullNoHolesAllowed implements SimpleFunction {
+public class STIsValidFlags implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
-  @Param(constant = true)
-  org.apache.arrow.vector.holders.Float8Holder percentageConvexInput;
+  @Param
+  org.apache.arrow.vector.holders.IntHolder flagsInput;
 
   @Output
-  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
-
-  @Inject
-  org.apache.arrow.memory.ArrowBuf buffer;
+  org.apache.arrow.vector.holders.NullableBitHolder output;
 
   public void setup() {
   }
 
   public void eval() {
-    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.areHoldersSet(binaryInput)) {
+      int flags = flagsInput.value;
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-      org.locationtech.jts.algorithm.hull.ConcaveHull concaveHull = new org.locationtech.jts.algorithm.hull.ConcaveHull(geom);
-      concaveHull.setMaximumEdgeLengthRatio(percentageConvexInput.value);
-      org.locationtech.jts.geom.Geometry hull = concaveHull.getHull();
-      hull.setSRID(geom.getSRID());
-      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(hull);
-      buffer = buffer.reallocIfNeeded(bytes.length);
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
+      org.sheinbergon.dremio.udf.gis.util.GeometryValidationResult result = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.validate(geom, flags);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setBooleanValue(output, result.isValid());
     } else {
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(binaryOutput);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);
     }
   }
 }

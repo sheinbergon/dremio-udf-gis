@@ -25,19 +25,19 @@ import com.dremio.exec.expr.annotations.Param;
 import javax.inject.Inject;
 
 @FunctionTemplate(
-    name = "ST_ConcaveHull",
+    name = "ST_IsValidReason",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
     nulls = FunctionTemplate.NullHandling.INTERNAL,
     costCategory = FunctionTemplate.FunctionCostCategory.MEDIUM)
-public class STConcaveHullNoHolesAllowed implements SimpleFunction {
+public class STIsValidReasonFlags implements SimpleFunction {
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
-  @Param(constant = true)
-  org.apache.arrow.vector.holders.Float8Holder percentageConvexInput;
+  @Param
+  org.apache.arrow.vector.holders.IntHolder flagsInput;
 
   @Output
-  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
+  org.apache.arrow.vector.holders.NullableVarCharHolder textOutput;
 
   @Inject
   org.apache.arrow.memory.ArrowBuf buffer;
@@ -46,17 +46,15 @@ public class STConcaveHullNoHolesAllowed implements SimpleFunction {
   }
 
   public void eval() {
-    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
+    if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.areHoldersSet(binaryInput)) {
+      int flags = flagsInput.value;
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-      org.locationtech.jts.algorithm.hull.ConcaveHull concaveHull = new org.locationtech.jts.algorithm.hull.ConcaveHull(geom);
-      concaveHull.setMaximumEdgeLengthRatio(percentageConvexInput.value);
-      org.locationtech.jts.geom.Geometry hull = concaveHull.getHull();
-      hull.setSRID(geom.getSRID());
-      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(hull);
+      org.sheinbergon.dremio.udf.gis.util.GeometryValidationResult result = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.validate(geom, flags);
+      byte[] bytes = result.getFormattedReason().getBytes(java.nio.charset.StandardCharsets.UTF_8);
       buffer = buffer.reallocIfNeeded(bytes.length);
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, textOutput);
     } else {
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(binaryOutput);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(textOutput);
     }
   }
 }
