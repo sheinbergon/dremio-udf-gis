@@ -14,10 +14,12 @@ import org.apache.arrow.vector.holders.NullableVarBinaryHolder
 import org.apache.arrow.vector.holders.NullableVarCharHolder
 import org.apache.arrow.vector.holders.VarCharHolder
 import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.PrecisionModel
+import org.locationtech.jts.io.InputStreamInStream
+import org.locationtech.jts.io.WKBReader
 import org.locationtech.jts.io.WKBWriter
 import org.locationtech.jts.io.WKTReader
-import org.locationtech.jts.precision.GeometryPrecisionReducer
 import java.io.StringReader
 import java.nio.charset.StandardCharsets
 
@@ -65,27 +67,54 @@ internal fun NullableVarBinaryHolder.setBinary(bytes: ByteArray) {
 }
 
 internal fun NullableVarBinaryHolder.valueIsAsDescribedInWKT(text: String) =
-  valueIsAsDescribedIn(text, GeometryHelpers::toGeometry, GeometryHelpers::toBinary)
+  valueIsAsDescribedIn(text, ::toGeometryFromWKT, GeometryHelpers::toBinary)
 
 internal fun NullableVarBinaryHolder.valueIsAsDescribedInEWKT(text: String) =
-  valueIsAsDescribedIn(text, GeometryHelpers::toGeometryFromEWKT, GeometryHelpers::toEWKB)
+  valueIsAsDescribedIn(text, ::toGeometryFromEWKT, GeometryHelpers::toEWKB)
 
 internal fun NullableVarBinaryHolder.valueIsAsDescribedIn(
   text: String,
   adapter: (NullableVarCharHolder) -> Geometry,
   serializer: (Geometry) -> ByteArray,
 ) {
-  val evaluated = GeometryHelpers.toGeometry(this)
-  val reduced = GeometryPrecisionReducer.reducePointwise(evaluated, SCALED_PRECISION_MODEL)
-  reduced.srid = evaluated.srid
+  val evaluated = toGeometry(this)
   val expected = NullableVarCharHolder()
     .apply { setUtf8(text) }
     .let(adapter)
+  serializer(evaluated) shouldBe serializer(expected)
+  this.isSet shouldBeExactly 1
+}
 
-  kotlin.runCatching { serializer(reduced) shouldBe serializer(expected) }
-    .recoverCatching { serializer(evaluated) shouldBe serializer(expected) }
-    .onSuccess { this.isSet shouldBeExactly 1 }
-    .getOrThrow()
+private fun toGeometry(holder: NullableVarBinaryHolder) = holder.buffer?.run {
+  val buffer = holder.buffer.nioBuffer(holder.start.toLong(), holder.end - holder.start)
+  ByteBufferInputStream.toInputStream(buffer).use { stream ->
+    val adapter = InputStreamInStream(stream)
+    val reader = WKBReader(GeometryFactory(SCALED_PRECISION_MODEL))
+    reader.read(adapter)
+  }
+} ?: GeometryHelpers.emptyGeometry()
+
+private fun toGeometryFromWKT(holder: NullableVarCharHolder): Geometry {
+  val wkt = GeometryHelpers.toUTF8String(holder)
+  val reader = WKTReader(GeometryFactory(SCALED_PRECISION_MODEL))
+  return reader.read(wkt)
+}
+
+private fun toGeometryFromEWKT(
+  holder: NullableVarCharHolder
+): Geometry {
+  val ewkt = GeometryHelpers.toUTF8String(holder)
+  val reader = WKTReader(GeometryFactory(SCALED_PRECISION_MODEL))
+  val matcher = GeometryHelpers.EWKT_REGEX_PATTERN.matcher(ewkt)
+  return if (matcher.find()) {
+    reader
+      .read(matcher.group(2))
+      .also { geometry ->
+        geometry.srid = matcher.group(1).toInt()
+      }
+  } else {
+    throw IllegalArgumentException("input '$ewkt' is not a valid EWKT")
+  }
 }
 
 internal fun NullableVarBinaryHolder.valueIsNotSet() {

@@ -21,7 +21,8 @@
         <carrotsearch.version>0.7.0</carrotsearch.version>
         <arrow-memory-netty.version>8.0.0</arrow-memory-netty.version>
     </properties>
-    <version>0.5.16${artifact.version.suffix}</version>
+    <version>0.5.18-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <name>dremio-udf-gis</name>
     <description>GIS UDF extensions for Dremio</description>
     <url>https://github.com/sheinbergon/dremio-udf-gis</url>
@@ -535,15 +536,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>snapshot</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <artifact.version.suffix>-SNAPSHOT</artifact.version.suffix>
-            </properties>
         </profile>
     </profiles>
 </project>
