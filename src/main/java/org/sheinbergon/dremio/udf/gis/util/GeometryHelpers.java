@@ -56,7 +56,7 @@ public final class GeometryHelpers {
   private static final int GEOMETRY_DIMENSIONS = 2;
   private static final double AZIMUTH_NORTH_RADIANS = Angle.toRadians(90.0);
 
-  private static final Pattern EWKT_REGEX_PATTERN = Pattern.compile("^\\s*SRID\\s*=\\s*(\\d+)\\s*;\\s*(.+)\\s*$");
+  public static final Pattern EWKT_REGEX_PATTERN = Pattern.compile("^\\s*SRID\\s*=\\s*(\\d+)\\s*;\\s*(.+)\\s*$");
 
   private GeometryHelpers() {
   }
