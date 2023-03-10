@@ -25,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.stream.IntStream;
 
 public final class GeometryTransformation {
 
@@ -138,13 +140,16 @@ public final class GeometryTransformation {
   private static Polygon transform(
       @Nonnull final CoordinateTransform transform,
       @Nonnull final Polygon polygon) {
-    return polygon.getFactory()
-        .createPolygon(
-            transformCoordinates(transform, polygon.getCoordinates()));
+    LinearRing exterior = transform(transform, polygon.getExteriorRing());
+    LinearRing[] interior = IntStream.range(0, polygon.getNumInteriorRing())
+        .mapToObj(polygon::getInteriorRingN)
+        .map(ring -> transform(transform, ring))
+        .toArray(LinearRing[]::new);
+    return polygon.getFactory().createPolygon(exterior, interior);
   }
 
   @Nonnull
-  private static Geometry transform(
+  private static Point transform(
       @Nonnull final CoordinateTransform transform,
       @Nonnull final Point point) {
     return point.getFactory().createPoint(
@@ -153,7 +158,7 @@ public final class GeometryTransformation {
   }
 
   @Nonnull
-  private static Geometry transform(
+  private static LinearRing transform(
       @Nonnull final CoordinateTransform transform,
       @Nonnull final LinearRing linearRing) {
     return linearRing.getFactory()
@@ -162,7 +167,7 @@ public final class GeometryTransformation {
   }
 
   @Nonnull
-  private static Geometry transform(
+  private static LineString transform(
       @Nonnull final CoordinateTransform transform,
       @Nonnull final LineString lineString) {
     return lineString.getFactory().createLineString(
@@ -171,16 +176,14 @@ public final class GeometryTransformation {
   }
 
   @Nonnull
-  private static Geometry transform(
+  private static MultiPolygon transform(
       @Nonnull final org.locationtech.proj4j.CoordinateTransform transform,
       @Nonnull final MultiPolygon multiPolygon) {
-    Polygon[] polygon = new Polygon[multiPolygon.getNumGeometries()];
-    for (int i = 0; i < polygon.length; ++i) {
-      polygon[i] = multiPolygon.getFactory()
-          .createPolygon(transformCoordinates(transform,
-              multiPolygon.getGeometryN(i).getCoordinates()));
-    }
-    return multiPolygon.getFactory().createMultiPolygon(polygon);
+    Polygon[] polygons = new Polygon[multiPolygon.getNumGeometries()];
+    Arrays.setAll(polygons, i -> transform(
+        transform,
+        (Polygon) multiPolygon.getGeometryN(i)));
+    return multiPolygon.getFactory().createMultiPolygon(polygons);
   }
 
   @Nonnull
@@ -193,20 +196,18 @@ public final class GeometryTransformation {
   }
 
   @Nonnull
-  private static Geometry transform(
+  private static MultiLineString transform(
       @Nonnull final CoordinateTransform transform,
       @Nonnull final MultiLineString multiLineString) {
     LineString[] lineString = new LineString[multiLineString.getNumGeometries()];
-    for (int index = 0; index < lineString.length; ++index) {
-      lineString[index] = multiLineString.getFactory()
-          .createLineString(transformCoordinates(transform,
-              multiLineString.getGeometryN(index).getCoordinates()));
-    }
+    Arrays.setAll(lineString, index -> transform(
+        transform,
+        (LineString) multiLineString.getGeometryN(index)));
     return multiLineString.getFactory().createMultiLineString(lineString);
   }
 
   @Nonnull
-  private static Geometry transform(
+  private static GeometryCollection transform(
       @Nonnull final CoordinateTransform transform,
       @Nonnull final GeometryCollection collection) {
     Geometry[] geometry = new Geometry[collection.getNumGeometries()];

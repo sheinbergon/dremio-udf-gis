@@ -12,7 +12,7 @@ jobs:
     steps:
 
       - name: Git checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Java JDK 11 setup
         uses: actions/setup-java@v3
@@ -27,9 +27,13 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
+      - name: Remove SNAPSHOT suffix from the project version
+        run: |
+          PACKAGE_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
+          ./mvnw versions:set -DnewVersion=${PACKAGE_VERSION%-SNAPSHOT} -DgenerateBackupPoms=false
+
       - name: Publish to Release repository
         run: ./mvnw -P release deploy
-
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
