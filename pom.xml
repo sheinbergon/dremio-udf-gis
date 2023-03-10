@@ -21,7 +21,8 @@
         <carrotsearch.version>0.7.0</carrotsearch.version>
         <arrow-memory-netty.version>8.0.0</arrow-memory-netty.version>
     </properties>
-    <version>0.5.16${artifact.version.suffix}</version>
+    <version>0.5.18</version>
+    <packaging>jar</packaging>
     <name>dremio-udf-gis</name>
     <description>GIS UDF extensions for Dremio</description>
     <url>https://github.com/sheinbergon/dremio-udf-gis</url>
@@ -212,6 +213,7 @@
         </dependency>
     </dependencies>
     <build>
+        <finalName>dremio-udf-gis-${version}${artifact.version.suffix}</finalName>
         <resources>
             <resource>
                 <directory>src/main/java</directory>
