@@ -66,13 +66,6 @@ public final class GeometryHelpers {
     return factory.createEmpty(GEOMETRY_DIMENSIONS);
   }
 
-  public static String toUTF8String(final @Nonnull VarCharHolder holder) {
-    return StringFunctionHelpers.toStringFromUTF8(
-        holder.start,
-        holder.end,
-        holder.buffer);
-  }
-
   public static String toUTF8String(final @Nonnull NullableVarCharHolder holder) {
     return StringFunctionHelpers.toStringFromUTF8(
         holder.start,
@@ -219,10 +212,6 @@ public final class GeometryHelpers {
     } else {
       return emptyGeometry();
     }
-  }
-
-  public static int toBitValue(final boolean value) {
-    return value ? BIT_TRUE : BIT_FALSE;
   }
 
   public static void populate(
