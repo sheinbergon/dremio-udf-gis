@@ -47,8 +47,9 @@ abstract class GeometryRelationFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
       this.isSet shouldBeExactly 1
     }
 
-    override fun NullableVarCharHolder.valueIsNotSet() =
+    override fun NullableVarCharHolder.valueIsNotSet() {
       this.isSet shouldBe 0
+    }
   }
 
   abstract class NullableBitOutput<F : SimpleFunction> : GeometryRelationFunSpec<F, NullableBitHolder>() {
@@ -91,8 +92,9 @@ abstract class GeometryRelationFunSpec<F : SimpleFunction, O : ValueHolder> : Fu
       }
     }
 
-    override fun NullableBitHolder.valueIsNotSet() =
+    override fun NullableBitHolder.valueIsNotSet() {
       this.isSet shouldBe 0
+    }
   }
 
   protected fun testNullGeometryRelation(

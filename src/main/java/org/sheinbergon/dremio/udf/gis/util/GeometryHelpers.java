@@ -27,6 +27,7 @@ import org.apache.commons.io.IOUtils;
 import org.locationtech.jts.algorithm.Angle;
 import org.locationtech.jts.geom.*;
 import org.locationtech.jts.io.*;
+import org.locationtech.jts.io.geojson.GeoJsonReader;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 import org.locationtech.jts.operation.buffer.BufferOp;
 import org.locationtech.jts.operation.valid.IsValidOp;
@@ -128,6 +129,17 @@ public final class GeometryHelpers {
       String wkt = toUTF8String(holder);
       WKTReader reader = new WKTReader();
       return reader.read(wkt);
+    } catch (ParseException x) {
+      throw new RuntimeException(x);
+    }
+  }
+
+  @Nonnull
+  public static Geometry toGeometryFromGeoJson(final @Nonnull NullableVarCharHolder holder) {
+    try {
+      String json = toUTF8String(holder);
+      GeoJsonReader reader = new GeoJsonReader();
+      return reader.read(json);
     } catch (ParseException x) {
       throw new RuntimeException(x);
     }

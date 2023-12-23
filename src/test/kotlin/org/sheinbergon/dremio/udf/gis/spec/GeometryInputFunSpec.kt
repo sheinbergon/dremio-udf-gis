@@ -14,6 +14,7 @@ import org.sheinbergon.dremio.udf.gis.util.reset
 import org.sheinbergon.dremio.udf.gis.util.setBinary
 import org.sheinbergon.dremio.udf.gis.util.setUtf8
 import org.sheinbergon.dremio.udf.gis.util.valueIsNotSet
+import java.util.*
 
 abstract class GeometryInputFunSpec<F : SimpleFunction, I : ValueHolder, V : Any> : FunSpec() {
 
@@ -44,7 +45,9 @@ abstract class GeometryInputFunSpec<F : SimpleFunction, I : ValueHolder, V : Any
       }
     }
 
-    final override fun NullableVarCharHolder.markNotSet() = this.valueIsNotSet()
+    final override fun NullableVarCharHolder.markNotSet() {
+      this.valueIsNotSet()
+    }
 
     final override fun NullableVarCharHolder.set(value: String) = this.setUtf8(value)
   }
@@ -97,7 +100,10 @@ abstract class GeometryInputFunSpec<F : SimpleFunction, I : ValueHolder, V : Any
   }
 
   private fun NullableVarBinaryHolder.valueIs(bytes: ByteArray) =
-    GeometryHelpers.toEWKB(GeometryHelpers.toGeometry(this)) shouldBe bytes
+    print(Arrays.toString(GeometryHelpers.toEWKB(GeometryHelpers.toGeometry(this))))
+      .also {
+        GeometryHelpers.toEWKB(GeometryHelpers.toGeometry(this)) shouldBe bytes
+      }
 
   protected abstract fun I.set(value: V)
   protected abstract val function: F
