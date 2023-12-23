@@ -21,7 +21,7 @@
         <carrotsearch.version>0.7.0</carrotsearch.version>
         <arrow-memory-netty.version>9.0.0-20221123064031-c39b8a6253-dremio</arrow-memory-netty.version>
     </properties>
-    <version>0.9.2-SNAPSHOT</version>
+    <version>0.9.4-SNAPSHOT</version>
     <name>dremio-udf-gis</name>
     <description>GIS UDF extensions for Dremio</description>
     <url>https://github.com/sheinbergon/dremio-udf-gis</url>
