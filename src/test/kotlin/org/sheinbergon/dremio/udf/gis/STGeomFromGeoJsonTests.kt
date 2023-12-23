@@ -11,9 +11,9 @@ internal class STGeomFromGeoJsonTests : GeometryInputFunSpec.NullableVarChar<STG
     testGeometryInput(
       "Calling ST_GeomFromGeoJSON on a POINT",
       """
-        {"type":"Point","coordinates":[0.5,0.5]}
+        {"type":"Point","coordinates":[0.5,0.5],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}}
       """.trimIndent(),
-      byteArrayOf(1, 1, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -32, 63, 0, 0, 0, 0, 0, 0, -32, 63)
+      byteArrayOf(1, 1, 0, 0, 32, -26, 16, 0, 0, 0, 0, 0, 0, 0, 0, -32, 63, 0, 0, 0, 0, 0, 0, -32, 63)
     )
 
     testInvalidGeometryInput(
