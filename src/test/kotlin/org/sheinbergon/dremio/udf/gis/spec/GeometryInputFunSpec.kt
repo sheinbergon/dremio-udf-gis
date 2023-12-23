@@ -44,7 +44,9 @@ abstract class GeometryInputFunSpec<F : SimpleFunction, I : ValueHolder, V : Any
       }
     }
 
-    final override fun NullableVarCharHolder.markNotSet() = this.valueIsNotSet()
+    final override fun NullableVarCharHolder.markNotSet() {
+      this.valueIsNotSet()
+    }
 
     final override fun NullableVarCharHolder.set(value: String) = this.setUtf8(value)
   }
