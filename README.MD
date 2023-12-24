@@ -54,7 +54,8 @@ Enjoying my work? A show of support would be much obliged :grin:
 | 0.8.x           | 23.1.x         | 
 | 0.9.x           | 24.0.x         | 
 | 0.10.x          | 24.1.x         | 
-| 0.11.x          | 24.2.x         | 
+| 0.11.x          | 24.2.x         |
+| 0.12.x          | 24.3.0         |
 
 ### Usage Notes
 
