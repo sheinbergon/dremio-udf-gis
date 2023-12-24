@@ -46,6 +46,8 @@ Enjoying my work? A show of support would be much obliged :grin:
 | 0.9.x           | 24.0.0         | Maintained |
 | 0.10.x          | 24.1.0         | Maintained |
 | 0.11.x          | 24.2.6         | Maintained |
+| 0.12.x          | 24.3.0         | Maintained |
+
 
 ### Usage Notes
 
