@@ -56,6 +56,7 @@ Enjoying my work? A show of support would be much obliged :grin:
 | 0.10.x          | 24.1.x         | 
 | 0.11.x          | 24.2.x         |
 | 0.12.x          | 24.3.0         |
+| 0.12.x          | 24.3.0         | Maintained |
 
 ### Usage Notes
 
