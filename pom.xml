@@ -16,7 +16,7 @@
         <junit.version>4.13.2</junit.version>
         <junit-jupiter.version>5.10.2</junit-jupiter.version>
         <junit-platform.version>1.10.2</junit-platform.version>
-        <kotlin.version>1.9.23</kotlin.version>
+        <kotlin.version>1.9.24</kotlin.version>
         <kotest.version>5.9.0</kotest.version>
         <joda.version>2.9</joda.version>
         <detekt.version>1.23.5</detekt.version>
@@ -168,12 +168,6 @@
                     <artifactId>junit</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
