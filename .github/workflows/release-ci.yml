@@ -25,7 +25,7 @@ jobs:
           server-username: NEXUS_USERNAME
           server-password: NEXUS_PASSWORD
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: GPG_PASSPHRASE
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Remove SNAPSHOT suffix from the project version
         run: |
