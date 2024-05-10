@@ -36,18 +36,18 @@ Enjoying my work? A show of support would be much obliged :grin:
 
 | Library Version | Dremio Version | Status     |
 |-----------------|----------------|------------|
-| 0.2.x           | 20.1.0         | Legacy     |
-| 0.3.x           | 21.1.1         | Legacy     |
-| 0.4.x           | 21.2.0         | Legacy     |
-| 0.5.x           | 22.0.0         | Legacy     |
-| 0.6.x           | 22.1.1         | Legacy     |
-| 0.7.x           | 23.0.1         | Legacy     |
-| 0.8.x           | 23.1.0         | Legacy     |
-| 0.9.x           | 24.0.0         | Maintained |
-| 0.10.x          | 24.1.0         | Maintained |
-| 0.11.x          | 24.2.6         | Maintained |
-| 0.12.x          | 24.3.0         | Maintained |
-
+| 0.2.x           | 20.1.x         | Legacy     |
+| 0.3.x           | 21.1.x         | Legacy     |
+| 0.4.x           | 21.2.x         | Legacy     |
+| 0.5.x           | 22.0.x         | Legacy     |
+| 0.6.x           | 22.1.x         | Legacy     |
+| 0.7.x           | 23.0.x         | Legacy     |
+| 0.8.x           | 23.1.x         | Legacy     |
+| 0.9.x           | 24.0.x         | Legacy     |
+| 0.10.x          | 24.1.x         | Legacy     |
+| 0.11.x          | 24.2.x         | Legacy     |
+| 0.12.x          | 24.3.x         | Maintained |
+| 0.13.x          | 25.0.x         | Maintained |
 
 ### Usage Notes
 

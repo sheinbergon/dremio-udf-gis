@@ -1,28 +1,11 @@
 build:
   maxIssues: 0
-  weights:
-  # complexity: 2
-  # LongParameterList: 1
-  # style: 1
-  # comments: 1
 
 processors:
   active: true
-  exclude:
-  # - 'FunctionCountProcessor'
-  # - 'PropertyCountProcessor'
-  # - 'ClassCountProcessor'
-  # - 'PackageCountProcessor'
-  # - 'KtFileCountProcessor'
 
 console-reports:
   active: true
-  exclude:
-  #  - 'ProjectStatisticsReport'
-  #  - 'ComplexityReport'
-  #  - 'NotificationReport'
-  #  - 'FindingsReport'
-  #  - 'BuildFailureReport'
 
 comments:
   active: true
@@ -304,13 +287,11 @@ naming:
     excludes: "**/test/**,**/androidTest/**,**/*.Test.kt,**/*.Spec.kt,**/*.Spek.kt"
     functionPattern: '^([a-z$][a-zA-Z$0-9]*)|(`.*`)$'
     excludeClassPattern: '$^'
-    ignoreOverridden: true
   FunctionParameterNaming:
     active: true
     excludes: "**/test/**,**/androidTest/**,**/*.Test.kt,**/*.Spec.kt,**/*.Spek.kt"
     parameterPattern: '[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
-    ignoreOverridden: true
   InvalidPackageDeclaration:
     active: false
     rootPackage: ''
@@ -349,7 +330,6 @@ naming:
     variablePattern: '[a-z][A-Za-z0-9]*'
     privateVariablePattern: '(_)?[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
-    ignoreOverridden: true
 
 performance:
   active: true
@@ -421,7 +401,7 @@ style:
     includeLineWrapping: false
   ForbiddenComment:
     active: true
-    values: [ 'FIXME:','STOPSHIP:' ]
+    comments: [ 'FIXME:','STOPSHIP:' ]
   ForbiddenImport:
     active: false
     imports: [ ]
@@ -432,7 +412,7 @@ style:
     active: false
     ignoreOverridableFunction: true
     excludedFunctions:
-     - 'describeContents'
+      - 'describeContents'
   LoopWithTooManyJumpStatements:
     active: false
     maxJumpCount: 1
@@ -448,8 +428,6 @@ style:
     ignoreNamedArgument: true
     ignoreEnums: false
     ignoreRanges: false
-  MandatoryBracesIfStatements:
-    active: false
   MaxLineLength:
     active: true
     excludes: "**/*Configuration.kt"
@@ -471,8 +449,6 @@ style:
     active: true
   OptionalUnit:
     active: false
-  OptionalWhenBraces:
-    active: false
   PreferToOverPairSyntax:
     active: false
   ProtectedMemberInFinalClass:
@@ -483,7 +459,7 @@ style:
     active: true
     max: 2
     excludedFunctions:
-     - "equals"
+      - "equals"
     excludeLabeled: false
     excludeReturnFromLambda: true
   SafeCast:
