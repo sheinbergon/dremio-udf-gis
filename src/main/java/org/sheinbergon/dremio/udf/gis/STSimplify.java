@@ -21,7 +21,6 @@ import com.dremio.exec.expr.SimpleFunction;
 import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
-import org.apache.arrow.memory.ArrowBuf;
 
 import javax.inject.Inject;
 
@@ -31,25 +30,29 @@ import javax.inject.Inject;
     nulls = FunctionTemplate.NullHandling.INTERNAL,
     costCategory = FunctionTemplate.FunctionCostCategory.COMPLEX)
 public class STSimplify implements SimpleFunction {
+
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
-  @Param(constant = true)
+  @Param
   org.apache.arrow.vector.holders.Float8Holder toleranceInput;
 
   @Output
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
 
   @Inject
-  ArrowBuf buffer;
+  org.apache.arrow.memory.ArrowBuf buffer;
 
   public void setup() {
   }
 
   public void eval() {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
+      double tolerance = toleranceInput.value;
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-      org.locationtech.jts.geom.Geometry simplified = org.locationtech.jts.simplify.DouglasPeuckerSimplifier.simplify(geom, toleranceInput.value);
+      org.locationtech.jts.simplify.DouglasPeuckerSimplifier simplifier = new org.locationtech.jts.simplify.DouglasPeuckerSimplifier(geom);
+      simplifier.setDistanceTolerance(tolerance);
+      org.locationtech.jts.geom.Geometry simplified = simplifier.getResultGeometry();
       simplified.setSRID(geom.getSRID());
       byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(simplified);
       buffer = buffer.reallocIfNeeded(bytes.length);
