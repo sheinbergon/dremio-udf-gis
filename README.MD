@@ -40,6 +40,8 @@ Enjoying my work? A show of support would be much obliged :grin:
 |-----------------|----------------|
 | 0.12.x          | 24.3.x         |
 | 0.14.x          | 25.0.0         |
+| 0.16.x          | 25.0.5         |
+
 
 ##### Legacy
 
