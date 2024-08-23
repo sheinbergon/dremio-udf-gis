@@ -3,7 +3,7 @@ name: release-actions
 on:
   push:
     branches:
-      - '[0-9]+.[0-9x]+.x'
+      - '[0-9]+.[0-9x]+.[0-9x]+'
 
 jobs:
   ci:

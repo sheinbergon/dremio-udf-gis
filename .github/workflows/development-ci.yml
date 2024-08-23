@@ -4,7 +4,7 @@ on:
   push:
     branches-ignore:
       - 'wip*'
-      - '[0-9]+.[0-9x]+.x'
+      - '[0-9]+.[0-9x]+.[0-9x]+'
 jobs:
   ci:
     name: run style verification, tests and then publish to nexus staging repository
