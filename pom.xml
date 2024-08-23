@@ -6,8 +6,8 @@
     <artifactId>dremio-udf-gis</artifactId>
     <properties>
         <checkstyle.version>10.15.0</checkstyle.version>
-        <dremio.version>25.0.0-202404051521110861-ed9515a8</dremio.version>
-        <dremio-arrow.version>14.0.2-20240131150813-452ae43b2e-dremio</dremio-arrow.version>
+        <dremio.version>25.0.5-202407020141140611-dca7a083</dremio.version>
+        <dremio-arrow.version>14.0.2-20240522200622-b83f0e8144-dremio</dremio-arrow.version>
         <proj4j.version>1.3.0</proj4j.version>
         <jts-core.version>1.19.0</jts-core.version>
         <jts-io-common.version>1.19.0</jts-io-common.version>
@@ -22,7 +22,7 @@
         <carrotsearch.version>0.7.0</carrotsearch.version>
         <arrow-memory-netty.version>14.0.2</arrow-memory-netty.version>
     </properties>
-    <version>0.14.2-SNAPSHOT</version>
+    <version>0.16.0-SNAPSHOT</version>
     <name>dremio-udf-gis</name>
     <description>GIS UDF extensions for Dremio</description>
     <url>https://github.com/sheinbergon/dremio-udf-gis</url>
