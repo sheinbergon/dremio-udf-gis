@@ -15,10 +15,10 @@
         <junit.version>4.13.2</junit.version>
         <junit-jupiter.version>5.10.1</junit-jupiter.version>
         <junit-platform.version>1.10.1</junit-platform.version>
-        <kotlin.version>1.9.21</kotlin.version>
+        <kotlin.version>1.9.24</kotlin.version>
         <kotest.version>5.7.2</kotest.version>
         <joda.version>2.9</joda.version>
-        <detekt.version>1.23.4</detekt.version>
+        <detekt.version>1.23.5</detekt.version>
         <carrotsearch.version>0.7.0</carrotsearch.version>
         <arrow-memory-netty.version>12.0.1</arrow-memory-netty.version>
     </properties>
