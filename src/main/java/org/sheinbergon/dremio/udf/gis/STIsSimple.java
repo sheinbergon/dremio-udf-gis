@@ -21,7 +21,6 @@ import com.dremio.exec.expr.SimpleFunction;
 import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
-import org.locationtech.jts.operation.valid.IsSimpleOp;
 
 @FunctionTemplate(
     name = "ST_IsSimple",
