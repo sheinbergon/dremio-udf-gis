@@ -39,7 +39,7 @@ Enjoying my work? A show of support would be much obliged :grin:
 | Library Version | Dremio Version |
 |-----------------|----------------|
 | 0.12.x          | 24.3.x         |
-| 0.14.x          | 25.0.x         |
+| 0.14.x          | 25.0.0         |
 
 ##### Legacy
 
