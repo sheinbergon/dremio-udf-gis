@@ -11,7 +11,7 @@
 
 - Widespread OGC implementation for SQL (adheres to PostGIS standards)
     - Supported input formats: `WKT`, `WKB (HEX or BINARY)`
-        - Supported output formats: `WKT`, `WKB`, `GeoJSON`
+    - Supported output formats: `WKT`, `WKB`, `GeoJSON`
 - Easily installable Maven-Central/Github artifacts shaded jar artifact
 - Dremio CE version compatibility (new versions will be released with each community edition)
 - Up-2-date Proj4J & JTS geometry based implementation
