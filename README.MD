@@ -32,22 +32,30 @@ Enjoying my work? A show of support would be much obliged :grin:
 - Restart your Dremio server(s)
 - Rejoice! (and see the [WIKI](https://github.com/sheinbergon/dremio-udf-gis/wiki) for detailed usage instructions)
 
-#### Version Compatbility
+#### Version Compatibility
 
-| Library Version | Dremio Version | Status     |
-|-----------------|----------------|------------|
-| 0.2.x           | 20.1.x         | Legacy     |
-| 0.3.x           | 21.1.x         | Legacy     |
-| 0.4.x           | 21.2.x         | Legacy     |
-| 0.5.x           | 22.0.x         | Legacy     |
-| 0.6.x           | 22.1.x         | Legacy     |
-| 0.7.x           | 23.0.x         | Legacy     |
-| 0.8.x           | 23.1.x         | Legacy     |
-| 0.9.x           | 24.0.x         | Legacy     |
-| 0.10.x          | 24.1.x         | Legacy     |
-| 0.11.x          | 24.2.x         | Legacy     |
-| 0.12.x          | 24.3.x         | Maintained |
-| 0.13.x          | 25.0.x         | Maintained |
+##### Actively Maintained
+
+| Library Version | Dremio Version |
+|-----------------|----------------|
+| 0.12.x          | 24.3.x         |
+| 0.14.x          | 25.0.0         |
+
+##### Legacy
+
+| Library Version | Dremio Version |
+|-----------------|----------------|
+| 0.2.x           | 20.1.x         | 
+| 0.3.x           | 21.1.x         | 
+| 0.4.x           | 21.2.x         | 
+| 0.5.x           | 22.0.x         | 
+| 0.6.x           | 22.1.x         | 
+| 0.7.x           | 23.0.x         | 
+| 0.8.x           | 23.1.x         | 
+| 0.9.x           | 24.0.x         | 
+| 0.10.x          | 24.1.x         | 
+| 0.11.x          | 24.2.x         |
+| 0.12.x          | 24.3.0         |
 
 ### Usage Notes
 

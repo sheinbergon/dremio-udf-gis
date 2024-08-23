@@ -22,27 +22,42 @@ import com.dremio.exec.expr.annotations.FunctionTemplate;
 import com.dremio.exec.expr.annotations.Output;
 import com.dremio.exec.expr.annotations.Param;
 
+import javax.inject.Inject;
+
 @FunctionTemplate(
-    name = "ST_IsSimple",
+    name = "ST_SimplifyPreserveTopology",
     scope = FunctionTemplate.FunctionScope.SIMPLE,
-    nulls = FunctionTemplate.NullHandling.INTERNAL)
-public class STIsSimple implements SimpleFunction {
+    nulls = FunctionTemplate.NullHandling.INTERNAL,
+    costCategory = FunctionTemplate.FunctionCostCategory.COMPLEX)
+public class STSimplifyPreserveTopology implements SimpleFunction {
+
   @Param
   org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryInput;
 
+  @Param
+  org.apache.arrow.vector.holders.Float8Holder toleranceInput;
+
   @Output
-  org.apache.arrow.vector.holders.NullableBitHolder output;
+  org.apache.arrow.vector.holders.NullableVarBinaryHolder binaryOutput;
+
+  @Inject
+  org.apache.arrow.memory.ArrowBuf buffer;
 
   public void setup() {
   }
 
   public void eval() {
     if (org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.isHolderSet(binaryInput)) {
+      double tolerance = toleranceInput.value;
       org.locationtech.jts.geom.Geometry geom = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toGeometry(binaryInput);
-      boolean result = org.locationtech.jts.operation.valid.IsSimpleOp.isSimple(geom);
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.setBooleanValue(output, result);
+      org.locationtech.jts.simplify.TopologyPreservingSimplifier simplifier = new org.locationtech.jts.simplify.TopologyPreservingSimplifier(geom);
+      simplifier.setDistanceTolerance(tolerance);
+      org.locationtech.jts.geom.Geometry result = simplifier.getResultGeometry();
+      byte[] bytes = org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.toEWKB(result);
+      buffer = buffer.reallocIfNeeded(bytes.length);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.populate(bytes, buffer, binaryOutput);
     } else {
-      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(output);
+      org.sheinbergon.dremio.udf.gis.util.GeometryHelpers.markHolderNotSet(binaryOutput);
     }
   }
 }
