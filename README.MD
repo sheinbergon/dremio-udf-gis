@@ -38,10 +38,8 @@ Enjoying my work? A show of support would be much obliged :grin:
 
 | Library Version | Dremio Version |
 |-----------------|----------------|
-| 0.12.x          | 24.3.x         |
-| 0.14.x          | 25.0.0         |
 | 0.16.x          | 25.0.5         |
-
+| 0.18.x          | 25.1.1         |
 
 ##### Legacy
 
@@ -57,6 +55,8 @@ Enjoying my work? A show of support would be much obliged :grin:
 | 0.9.x           | 24.0.x         | 
 | 0.10.x          | 24.1.x         | 
 | 0.11.x          | 24.2.x         |
+| 0.12.x          | 24.3.x         |
+| 0.14.x          | 25.0.0         |
 
 ### Usage Notes
 
